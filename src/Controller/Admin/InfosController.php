@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 /**
- * Logs Controller
+ * Infos Controller
  *
- * @property \App\Model\Table\LogsTable $Logs
- * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @property \App\Model\Table\InfosTable $Infos
+ * @method \App\Model\Entity\Info[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class LogsController extends AppController
+class InfosController extends AppController
 {
     /**
      * Index method
@@ -21,25 +21,25 @@ class LogsController extends AppController
         $this->paginate = [
             'contain' => ['Users'],
         ];
-        $logs = $this->paginate($this->Logs);
+        $infos = $this->paginate($this->Infos);
 
-        $this->set(compact('logs'));
+        $this->set(compact('infos'));
     }
 
     /**
      * View method
      *
-     * @param string|null $id Log id.
+     * @param string|null $id Info id.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
     {
-        $log = $this->Logs->get($id, [
+        $info = $this->Infos->get($id, [
             'contain' => ['Users'],
         ]);
 
-        $this->set(compact('log'));
+        $this->set(compact('info'));
     }
 
     /**
@@ -49,60 +49,60 @@ class LogsController extends AppController
      */
     public function add()
     {
-        $log = $this->Logs->newEmptyEntity();
+        $info = $this->Infos->newEmptyEntity();
         if ($this->request->is('post')) {
-            $log = $this->Logs->patchEntity($log, $this->request->getData());
-            if ($this->Logs->save($log)) {
-                $this->Flash->success(__('The log has been saved.'));
+            $info = $this->Infos->patchEntity($info, $this->request->getData());
+            if ($this->Infos->save($info)) {
+                $this->Flash->success(__('The info has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The log could not be saved. Please, try again.'));
+            $this->Flash->error(__('The info could not be saved. Please, try again.'));
         }
-        $users = $this->Logs->Users->find('list', ['limit' => 200]);
-        $this->set(compact('log', 'users'));
+        $users = $this->Infos->Users->find('list', ['limit' => 200]);
+        $this->set(compact('info', 'users'));
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id Log id.
+     * @param string|null $id Info id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function edit($id = null)
     {
-        $log = $this->Logs->get($id, [
+        $info = $this->Infos->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $log = $this->Logs->patchEntity($log, $this->request->getData());
-            if ($this->Logs->save($log)) {
-                $this->Flash->success(__('The log has been saved.'));
+            $info = $this->Infos->patchEntity($info, $this->request->getData());
+            if ($this->Infos->save($info)) {
+                $this->Flash->success(__('The info has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The log could not be saved. Please, try again.'));
+            $this->Flash->error(__('The info could not be saved. Please, try again.'));
         }
-        $users = $this->Logs->Users->find('list', ['limit' => 200]);
-        $this->set(compact('log', 'users'));
+        $users = $this->Infos->Users->find('list', ['limit' => 200]);
+        $this->set(compact('info', 'users'));
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id Log id.
+     * @param string|null $id Info id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $log = $this->Logs->get($id);
-        if ($this->Logs->delete($log)) {
-            $this->Flash->success(__('The log has been deleted.'));
+        $info = $this->Infos->get($id);
+        if ($this->Infos->delete($info)) {
+            $this->Flash->success(__('The info has been deleted.'));
         } else {
-            $this->Flash->error(__('The log could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The info could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
