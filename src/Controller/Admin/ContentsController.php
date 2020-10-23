@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 /**
  * Contents Controller
@@ -9,7 +9,7 @@ namespace App\Controller;
  * @property \App\Model\Table\ContentsTable $Contents
  * @method \App\Model\Entity\Content[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class ContentsController extends AppController
+class ContentsController extends AdminController
 {
     /**
      * Index method

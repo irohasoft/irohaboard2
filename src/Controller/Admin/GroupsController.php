@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 /**
  * Groups Controller
@@ -9,7 +9,7 @@ namespace App\Controller;
  * @property \App\Model\Table\GroupsTable $Groups
  * @method \App\Model\Entity\Group[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class GroupsController extends AppController
+class GroupsController extends AdminController
 {
     /**
      * Index method

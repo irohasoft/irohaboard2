@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 /**
  * Courses Controller
@@ -9,7 +9,7 @@ namespace App\Controller;
  * @property \App\Model\Table\CoursesTable $Courses
  * @method \App\Model\Entity\Course[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class CoursesController extends AppController
+class CoursesController extends AdminController
 {
     /**
      * Index method
