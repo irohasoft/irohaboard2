@@ -74,4 +74,63 @@ class SettingsTable extends Table
 
         return $validator;
     }
+
+	/**
+	 * システム設定の値を取得
+	 * @param int $setting_key 設定キー
+	 * @return string 設定値
+	 */
+	public function getSettingValue($setting_key)
+	{
+		$setting_value = "";
+		
+		$sql = <<<EOF
+SELECT setting_value
+  FROM ib_settings
+ WHERE setting_key = :setting_key
+EOF;
+		$params = array(
+				'setting_key' => $setting_key
+		);
+		
+		$data = $this->query($sql, $params);
+		
+		
+		return $setting_value;
+	}
+	
+	/**
+	 * システム設定の値のリストを取得
+	 * @return array 設定値リスト（連想配列）
+	 */
+	public function getSettings()
+	{
+		$result = array();
+		
+		$settings = $this->find('all')->toList();
+		
+		foreach ($settings as $setting)
+		{
+			$result[$setting['setting_key']] = $setting['setting_value'];
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * システム設定を保存
+	 * @param array 保存する設定値リスト（連想配列）
+	 */
+	public function setSettings($settings)
+	{
+		foreach ($settings as $key => $value)
+		{
+			$params = array(
+				'setting_key' => $key,
+				'setting_value' => $value
+			);
+			
+			$this->query("UPDATE ib_settings SET setting_value = :setting_value WHERE setting_key = :setting_key", $params);
+		}
+	}
 }
