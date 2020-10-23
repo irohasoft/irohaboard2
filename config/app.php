@@ -63,7 +63,10 @@ return [
         'jsBaseUrl' => 'js/',
         'paths' => [
             'plugins' => [ROOT . DS . 'plugins' . DS],
-            'templates' => [ROOT . DS . 'templates' . DS],
+            'templates' => [
+            	ROOT . DS . 'src/Custom/View' . DS,
+            	ROOT . DS . 'templates' . DS
+            ],
             'locales' => [RESOURCES . 'locales' . DS],
         ],
     ],

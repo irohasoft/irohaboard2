@@ -26,6 +26,9 @@
     },
     "autoload": {
         "psr-4": {
+            "App\\Controller\\": "src/Custom/Controller/",
+            "App\\Model\\": "src/Custom/Model/",
+            "App\\View\\": "src/Custom/View/",
             "App\\": "src/"
         }
     },
