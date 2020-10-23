@@ -1,0 +1,129 @@
+@charset "utf-8";
+/**
+ * iroha Board Project
+ *
+ * @author        Kotaro Miura
+ * @copyright     2015-2016 iroha Soft, Inc. (http://irohasoft.jp)
+ * @link          http://irohaboard.irohasoft.jp
+ * @license       http://www.gnu.org/licenses/gpl-3.0.en.html GPL License
+ */
+
+
+html, body
+{
+	margin				: 0px;
+	padding				: 0px;
+	height				: 100%;
+	background-color	: #EDEFF1;
+}
+
+.content-view
+{
+	height				: 100%;
+}
+
+.content-title
+{
+	font-size			: 14px;
+	padding				: 5px;
+	border-bottom		: 1px solid #ddd;
+
+}
+
+.content-body
+{
+	height				: calc(100% - 110px);
+	border-bottom		: 1px solid #ddd;
+	background			: #f9f9f9;
+	padding				: 5px;
+
+}
+
+.content-body-html
+{
+	overflow-y			: scroll;
+}
+
+.content-body-movie
+{
+	display				: flex;
+	justify-content		: center;
+	align-items			: center;
+}
+
+.content-foot
+{
+	position			: fixed;
+	bottom				: 0px;
+	width				: 100%;
+	background-color	: #EDEFF1;
+	display				: flex;
+	justify-content		: center;
+	align-items			: center;
+	height				: 80px;
+}
+
+.content-foot button
+{
+	margin-left			: 5px;
+}
+
+.content-foot .understanding-spn
+{
+	display				: none;
+}
+
+.content-foot .select-message
+{
+	padding-bottom		: 5px;
+	text-align			: center;
+}
+
+#contentFrame
+{
+	min-height			: 600px;
+	border				: 1px;
+}
+
+@media only screen and (max-width:800px)
+{
+	img,
+	iframe
+	{
+		max-width		: 100%;
+	}
+	
+	.content-body
+	{
+		height			: initial;
+		min-height		: calc(100% - 100px);
+		overflow-y			: scroll;
+}
+
+	.content-foot
+{
+		height			: initial;
+		padding-bottom	: 10px;
+
+	}
+
+	.content-foot button
+	{
+		min-width		: 40px;
+	}
+	
+	.content-foot .select-message
+	{
+		padding			: 0px;
+	}
+	
+	.content-foot .understanding-pc
+	{
+		display			: none;
+	}
+	
+	.content-foot .understanding-spn
+	{
+		display			: initial;
+	}
+}
