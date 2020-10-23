@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Routing\Router;
 
 /**
  * Application Controller
@@ -44,6 +45,11 @@ class AppController extends Controller
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
 
+        // add 2020.10.6
+        $this->loadComponent('Authentication.Authentication');
+
+        $this->set('loginedUser', $this->getRequest()->getSession()->read('Auth'));
+        
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html

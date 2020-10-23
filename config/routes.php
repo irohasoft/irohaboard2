@@ -23,6 +23,7 @@
 
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
+use Cake\Routing\Router; // add 2020.6.7
 
 /*
  * The default class to use for all routes
@@ -50,7 +51,9 @@ $routes->scope('/', function (RouteBuilder $builder) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, templates/Pages/home.php)...
      */
-    $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    //$builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+	// edit 2020.10.2
+    $builder->connect('/', ['controller' => 'UsersCourses', 'action' => 'display', 'index']);
 
     /*
      * ...and connect the rest of 'Pages' controller's URLs.
@@ -84,3 +87,10 @@ $routes->scope('/', function (RouteBuilder $builder) {
  * });
  * ```
  */
+
+    // add 2020.6.7
+	Router::prefix('admin', function ($routes) {
+        $routes->fallbacks('DashedRoute');
+        $routes->connect('/', ['controller' => 'Users', 'action' => 'index']);
+    });
+

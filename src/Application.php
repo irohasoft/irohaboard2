@@ -25,6 +25,16 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\Router; // add 2020.6.7
+
+// add 2020.6.7
+use Authentication\AuthenticationService;
+use Authentication\AuthenticationServiceInterface;
+use Authentication\AuthenticationServiceProviderInterface;
+use Authentication\Identifier\IdentifierInterface;
+use Authentication\Middleware\AuthenticationMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
+
 
 /**
  * Application setup class.
@@ -32,7 +42,9 @@ use Cake\Routing\Middleware\RoutingMiddleware;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication
+//class Application extends BaseApplication
+// edit 2020.6.7
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -43,6 +55,9 @@ class Application extends BaseApplication
     {
         // Call parent to load bootstrap from files.
         parent::bootstrap();
+
+        // edit 2020.10.6
+        $this->addPlugin('Authentication');
 
         if (PHP_SAPI === 'cli') {
             $this->bootstrapCli();
@@ -94,7 +109,8 @@ class Application extends BaseApplication
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
-            ]));
+            ]))
+            ->add(new AuthenticationMiddleware($this)); // add 2020.10.6
 
         return $middlewareQueue;
     }
@@ -117,5 +133,49 @@ class Application extends BaseApplication
         $this->addPlugin('Migrations');
 
         // Load more plugins here
+    }
+
+	// add 2020.10.6
+    public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+    {
+        $service = new AuthenticationService();
+
+        // Define where users should be redirected to when they are not authenticated
+        $service->setConfig([
+            'unauthenticatedRedirect' => Router::url('/users/login'),
+            'queryParam' => 'redirect',
+        ]);
+
+        $fields = [
+            IdentifierInterface::CREDENTIAL_USERNAME => 'username',
+            IdentifierInterface::CREDENTIAL_PASSWORD => 'password'
+        ];
+        // Load the authenticators. Session should be first.
+        $service->loadAuthenticator('Authentication.Session');
+        $service->loadAuthenticator('Authentication.Form', [
+            'fields' => $fields,
+            'loginUrl' => Router::url('/users/login')
+        ]);
+
+        // Load identifiers
+        //$service->loadIdentifier('Authentication.Password', compact('fields'));
+		// custom 2020.06.07
+		// CakePHP2 からの移行の為、SHA-1にてパスワード認証を行う
+		$service->loadIdentifier('Authentication.Password', [
+		    // Other config options
+		    'passwordHasher' => [
+		        'className' => 'Authentication.Fallback',
+		        'hashers' => [
+		            'Authentication.Default',
+		            [
+		                'className' => 'Authentication.Legacy',
+//		                'hashType' => 'md5',
+		                'hashType' => 'sha1',
+		                'salt' => false // turn off default usage of salt
+		            ],
+		        ]
+		    ]
+		]);
+        return $service;
     }
 }

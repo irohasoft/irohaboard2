@@ -161,7 +161,8 @@ ConnectionManager::setConfig(Configure::consume('Datasources'));
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
-Security::setSalt(Configure::consume('Security.salt'));
+//Security::setSalt(Configure::consume('Security.salt'));
+Security::setSalt('397110e45242a23e5802e78f4eec95a7bd39e0f0');
 
 /*
  * Setup detectors for mobile and tablet.

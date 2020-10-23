@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Routing\Router;
+
 /**
  * Users Controller
  *
@@ -11,6 +13,39 @@ namespace App\Controller;
  */
 class UsersController extends AppController
 {
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+	    parent::beforeFilter($event);
+	    // custom 2020.10.6
+	    // ログインアクションを認証を必要としないように設定することで、
+	    // 無限リダイレクトループの問題を防ぐことができます
+	    $this->Authentication->addUnauthenticatedActions(['login']);
+	}
+	
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+        //debug($result);
+        // If the user is logged in send them away.
+        if ($result->isValid()) {
+            return $this->redirect(['controller' => 'UsersCourses', 'action' => 'index']);
+        }
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error('Invalid username or password');
+        }
+    }
+
+    public function logout()
+    {
+	    $result = $this->Authentication->getResult();
+	    // POSTやGETに関係なく、ユーザーがログインしていればリダイレクトします
+	    if ($result->isValid()) {
+	        $this->Authentication->logout();
+	        return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+	    }
+	}
+	
     /**
      * Index method
      *
