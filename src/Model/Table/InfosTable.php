@@ -41,7 +41,7 @@ class InfosTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('infos');
+        $this->setTable('ib_infos');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 

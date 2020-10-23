@@ -44,7 +44,7 @@ class CoursesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('courses');
+        $this->setTable('ib_courses');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 

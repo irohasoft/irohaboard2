@@ -42,7 +42,7 @@ class UsersCoursesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('users_courses');
+        $this->setTable('ib_users_courses');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 

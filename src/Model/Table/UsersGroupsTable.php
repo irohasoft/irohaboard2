@@ -42,7 +42,7 @@ class UsersGroupsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('users_groups');
+        $this->setTable('ib_users_groups');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 

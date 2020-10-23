@@ -41,7 +41,7 @@ class LogsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('logs');
+        $this->setTable('ib_logs');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 

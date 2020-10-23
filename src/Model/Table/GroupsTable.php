@@ -41,7 +41,7 @@ class GroupsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('groups');
+        $this->setTable('ib_groups');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 

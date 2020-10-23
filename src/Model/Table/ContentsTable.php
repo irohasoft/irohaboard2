@@ -44,7 +44,7 @@ class ContentsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('contents');
+        $this->setTable('ib_contents');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 

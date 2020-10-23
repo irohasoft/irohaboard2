@@ -44,7 +44,7 @@ class RecordsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('records');
+        $this->setTable('ib_records');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 

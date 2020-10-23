@@ -42,7 +42,7 @@ class RecordsQuestionsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('records_questions');
+        $this->setTable('ib_records_questions');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 

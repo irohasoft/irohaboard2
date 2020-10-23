@@ -41,7 +41,7 @@ class ContentsQuestionsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('contents_questions');
+        $this->setTable('ib_contents_questions');
         $this->setDisplayField('title');
         $this->setPrimaryKey('id');
 

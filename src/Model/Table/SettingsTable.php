@@ -37,7 +37,7 @@ class SettingsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('settings');
+        $this->setTable('ib_settings');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
     }

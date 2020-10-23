@@ -47,7 +47,7 @@ class UsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('users');
+        $this->setTable('ib_users');
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
