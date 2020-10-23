@@ -213,3 +213,6 @@ ServerRequest::addDetector('tablet', function ($request) {
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
+
+// iroha Board 設定ファイルをロード
+Configure::load("ib_config");
