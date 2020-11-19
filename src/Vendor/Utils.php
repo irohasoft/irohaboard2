@@ -7,6 +7,7 @@
  * @link          http://irohaboard.irohasoft.jp
  * @license       http://www.gnu.org/licenses/gpl-3.0.en.html GPL License
  */
+namespace App\Vendor;
 
 // ユーティリティクラス
 class Utils
