@@ -1,3 +1,4 @@
+<?php echo $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
