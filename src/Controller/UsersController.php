@@ -31,8 +31,10 @@ class UsersController extends AppController
         if ($result->isValid()) {
             return $this->redirect(['controller' => 'UsersCourses', 'action' => 'index']);
         }
+
+		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
         if ($this->request->is('post') && !$result->isValid()) {
-            $this->Flash->error('Invalid username or password');
+			$this->Flash->error(__('Invalid username or password'));
         }
     }
 

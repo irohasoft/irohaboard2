@@ -150,11 +150,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             IdentifierInterface::CREDENTIAL_USERNAME => 'username',
             IdentifierInterface::CREDENTIAL_PASSWORD => 'password'
         ];
+        
+        $login_url = ($request->getParam('prefix')=='Admin') ? '/admin/users/login' : '/users/login';
+        
         // Load the authenticators. Session should be first.
         $service->loadAuthenticator('Authentication.Session');
         $service->loadAuthenticator('Authentication.Form', [
             'fields' => $fields,
-            'loginUrl' => Router::url('/users/login')
+            'loginUrl' => Router::url($login_url)
         ]);
 
         // Load identifiers

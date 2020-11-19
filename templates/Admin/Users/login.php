@@ -1,20 +1,17 @@
+<?php use Cake\Core\Configure;?>
+<?php $this->Form->setTemplates(Configure::read('bootstrap_form_template'));?>
 <div class="admin-users-login">
 	<div class="panel panel-default form-signin">
 		<div class="panel-heading">
-			<?php echo __('管理者ログイン')?>
+			<?= __('管理者ログイン')?>
 		</div>
 		<div class="panel-body">
-			<div class="text-right"><a href="<?php echo Router::url(array('action' => 'login', 'admin' => false)) ?>"><?php echo __('受講者ログインへ')?></a></div>
-			<?php echo $this->Flash->render('auth'); ?>
-			<?php echo $this->Form->create('User'); ?>
-			
-			<div class="form-group">
-				<?php echo $this->Form->input('username', array('label' => __('ログインID'), 'class'=>'form-control')); ?>
-			</div>
-			<div class="form-group">
-				<?php echo $this->Form->input('password', array('label' => __('パスワード'), 'class'=>'form-control'));?>
-			</div>
-			<?php echo $this->Form->end(array('label' => __('ログイン'), 'class'=>'btn btn-lg btn-primary btn-block')); ?>
+			<div class="text-right"><?= $this->Html->link(__('受講者ログインへ'), '/users/login')?>
+			<?= $this->Form->create(null, Configure::read('form_defaults')) ?>
+			<?= $this->Form->control('username', ['label' => __('ログインID')]) ?>
+			<?= $this->Form->control('password', ['label' => __('パスワード')]) ?>
+			<input class="btn btn-lg btn-primary btn-block" type="submit" value="ログイン">
+			<?= $this->Form->end() ?>
 		</div>
 	</div>
 </div>

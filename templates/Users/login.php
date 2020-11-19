@@ -6,7 +6,7 @@
 			<?php echo __('受講者ログイン')?>
 		</div>
 		<div class="panel-body">
-			<div class="text-right"><a href="<?= $this->Url->build(['action' => 'login', 'admin' => true]) ?>"><?php echo __('管理者ログインへ')?></a></div>
+			<div class="text-right"><?= $this->Html->link(__('管理者ログインへ'), '/admin/users/login')?>
 			<?= $this->Form->create(null, Configure::read('form_defaults')) ?>
 			<?= $this->Form->control('username', ['label' => __('ログインID')]) ?>
 			<?= $this->Form->control('password', ['label' => __('パスワード')]) ?>
