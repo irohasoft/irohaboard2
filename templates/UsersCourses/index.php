@@ -3,52 +3,59 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\UsersCourse[]|\Cake\Collection\CollectionInterface $usersCourses
  */
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
 ?>
-<div class="usersCourses index content">
-    <?= $this->Html->link(__('New Users Course'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Users Courses') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th><?= $this->Paginator->sort('course_id') ?></th>
-                    <th><?= $this->Paginator->sort('started') ?></th>
-                    <th><?= $this->Paginator->sort('ended') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
+<div class="users-courses-index">
+	<div class="panel panel-success">
+		<div class="panel-heading"><?php echo __('お知らせ'); ?></div>
+		<div class="panel-body">
+			<?php if($info!=""){?>
+			<div class="well">
+				<?php
+				$info = $this->Text->autoLinkUrls($info, [ 'target' => '_blank']);
+				$info = nl2br($info);
+				echo $info;
+				?>
+			</div>
+			<?php }?>
+			
+			<?php if(count($infos) > 0){?>
+			<table cellpadding="0" cellspacing="0">
             <tbody>
-                <?php foreach ($usersCourses as $usersCourse): ?>
+			<?php foreach ($infos as $info): ?>
                 <tr>
-                    <td><?= $this->Number->format($usersCourse->id) ?></td>
-                    <td><?= $usersCourse->has('user') ? $this->Html->link($usersCourse->user->name, ['controller' => 'Users', 'action' => 'view', $usersCourse->user->id]) : '' ?></td>
-                    <td><?= $usersCourse->has('course') ? $this->Html->link($usersCourse->course->title, ['controller' => 'Courses', 'action' => 'view', $usersCourse->course->id]) : '' ?></td>
-                    <td><?= h($usersCourse->started) ?></td>
-                    <td><?= h($usersCourse->ended) ?></td>
-                    <td><?= h($usersCourse->created) ?></td>
-                    <td><?= h($usersCourse->modified) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $usersCourse->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $usersCourse->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $usersCourse->id], ['confirm' => __('Are you sure you want to delete # {0}?', $usersCourse->id)]) ?>
-                    </td>
+				<td width="100" valign="top"><?php echo h(Utils::getYMD($info['created'])); ?></td>
+				<td><?php echo $this->Html->link($info['title'], ['controller' => 'infos', 'action' => 'view', $info['id']]); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+			<div class="text-right"><?php echo $this->Html->link(__('一覧を表示'), ['controller' => 'infos', 'action' => 'index']); ?></div>
+			<?php }?>
+			<?php echo $no_info;?>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
+	</div>
+	<div class="panel panel-info">
+	<div class="panel-heading"><?php echo __('コース一覧'); ?></div>
+	<div class="panel-body">
+		<ul class="list-group">
+		<?php foreach ($courses as $course): ?>
+		<?php //debug($course)?>
+			<a href="<?php echo Router::url(['controller' => 'contents', 'action' => 'index', $course['id']]);?>" class="list-group-item">
+				<?php if($course['left_cnt']!=0){?>
+				<button type="button" class="btn btn-danger btn-rest"><?php echo __('残り')?> <span class="badge"><?php echo h($course['left_cnt']); ?></span></button>
+				<?php }?>
+				<h4 class="list-group-item-heading"><?php echo h($course['title']);?></h4>
+				<p class="list-group-item-text">
+					<span><?php echo __('学習開始日').': '.Utils::getYMD($course['first_date']); ?></span>
+					<span><?php echo __('最終学習日').': '.Utils::getYMD($course['last_date']); ?></span>
+				</p>
+			</a>
+		<?php endforeach; ?>
+		<?php echo $no_record;?>
         </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+	</div>
     </div>
 </div>

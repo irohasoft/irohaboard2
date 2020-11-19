@@ -18,95 +18,36 @@ class UsersCoursesController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users', 'Courses'],
-        ];
-        $usersCourses = $this->paginate($this->UsersCourses);
+		$user_id = $this->readSession('Auth.id');
 
-        $this->set(compact('usersCourses'));
-    }
+		// 全体のお知らせの取得
+		$this->loadModel('Settings');
+		$data = $this->Settings->find()->where(['setting_key' => 'information'])->toArray();;
+		//debug($data);
+		$info = $data[0]->setting_value;
 
-    /**
-     * View method
-     *
-     * @param string|null $id Users Course id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $usersCourse = $this->UsersCourses->get($id, [
-            'contain' => ['Users', 'Courses'],
-        ]);
+		// お知らせ一覧を取得
+		$this->loadModel('Infos');
+		$infos = $this->Infos->getInfos($user_id, 2);
+		//debug($infos);
 
-        $this->set(compact('usersCourse'));
-    }
+		$no_info = "";
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $usersCourse = $this->UsersCourses->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $usersCourse = $this->UsersCourses->patchEntity($usersCourse, $this->request->getData());
-            if ($this->UsersCourses->save($usersCourse)) {
-                $this->Flash->success(__('The users course has been saved.'));
+		// 全体のお知らせもお知らせも存在しない場合
+		if(($info=="") && count($infos)==0)
+			$no_info = __('お知らせはありません');
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The users course could not be saved. Please, try again.'));
-        }
-        $users = $this->UsersCourses->Users->find('list', ['limit' => 200]);
-        $courses = $this->UsersCourses->Courses->find('list', ['limit' => 200]);
-        $this->set(compact('usersCourse', 'users', 'courses'));
-    }
+		// 受講コース情報の取得
+		$courses = $this->UsersCourses->getCourseRecord($user_id);
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Users Course id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $usersCourse = $this->UsersCourses->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $usersCourse = $this->UsersCourses->patchEntity($usersCourse, $this->request->getData());
-            if ($this->UsersCourses->save($usersCourse)) {
-                $this->Flash->success(__('The users course has been saved.'));
+		//debug($this->getRequest()->getSession()->read('Auth.id'));
+		//debug($courses);
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The users course could not be saved. Please, try again.'));
-        }
-        $users = $this->UsersCourses->Users->find('list', ['limit' => 200]);
-        $courses = $this->UsersCourses->Courses->find('list', ['limit' => 200]);
-        $this->set(compact('usersCourse', 'users', 'courses'));
-    }
+		$no_record = "";
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Users Course id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $usersCourse = $this->UsersCourses->get($id);
-        if ($this->UsersCourses->delete($usersCourse)) {
-            $this->Flash->success(__('The users course has been deleted.'));
-        } else {
-            $this->Flash->error(__('The users course could not be deleted. Please, try again.'));
-        }
+		if(count($courses)==0)
+			$no_record = __('受講可能なコースはありません');
 
-        return $this->redirect(['action' => 'index']);
+		$this->set(compact('courses', 'no_record', 'info', 'infos', 'no_info'));
     }
 }

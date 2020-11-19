@@ -7,51 +7,79 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright	  Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link		  https://cakephp.org CakePHP(tm) Project
+ * @since		  0.10.0
+ * @license 	  https://opensource.org/licenses/mit-license.php MIT License
  * @var \App\View\AppView $this
  */
-
-$cakeDescription = 'CakePHP: the rapid development php framework';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <?= $this->Html->charset() ?>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title') ?>
-    </title>
-    <?= $this->Html->meta('icon') ?>
+	<?= $this->Html->charset() ?>
+	<title><?= $this->fetch('title') ?></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="application-name" content="iroha Board">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<?= $this->Html->meta('icon') ?>
 
-    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+	<?= $this->Html->css('cake.css?20200702') ?>
+	
+	<!--custom 2020.10.08-->
+	<?= $this->Html->css('jquery-ui') ?>
+	<?= $this->Html->css('bootstrap.min') ?>
+	<?= $this->Html->css('common.css?20200701') ?>
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
+	<?= $this->Html->script('jquery-1.9.1.min') ?>
+	<?= $this->Html->script('jquery-ui-1.9.2.min.js') ?>
+	<?= $this->Html->script('bootstrap.min.js') ?>
+	<?= $this->Html->script('moment.js') ?>
+	<?= $this->Html->script('common.js?20200701') ?>
 
-    <?= $this->fetch('meta') ?>
-    <?= $this->fetch('css') ?>
-    <?= $this->fetch('script') ?>
+	<?= $this->fetch('meta') ?>
+	<?= $this->fetch('css') ?>
+	<?= $this->fetch('script') ?>
+	<?php
+	$logoutURL	= 'users/logout';
+	$color		= $this->getRequest()->getSession()->read('Setting.color');
+	$title		= $this->getRequest()->getSession()->read('Setting.title');
+	?>
+	<style>
+		.ib-theme-color
+		{
+			background-color	: <?php echo h($color); ?>;
+			color				: white;
+		}
+		
+		.ib-logo a
+		{
+			color				: white;
+			text-decoration		: none;
+		}
+	</style>
 </head>
 <body>
-    <nav class="top-nav">
-        <div class="top-nav-title">
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
-        </div>
-        <div class="top-nav-links">
-            <a target="_blank" rel="noopener" href="https://book.cakephp.org/4/">Documentation</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/4/">API</a>
-        </div>
-    </nav>
-    <main class="main">
-        <div class="container">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
-        </div>
-    </main>
-    <footer>
-    </footer>
+	<div class="header ib-theme-color">
+		<div class="ib-logo ib-left">
+			<?php echo $this->Html->link($title, '/')?>
+		</div>
+		<?php if(isset($loginedUser)) {?>
+		<div class="ib-navi-item ib-right"><?php echo $this->Html->link(__('ログアウト'), ['controller' => 'users', 'action' => 'logout']); ?></div>
+		<div class="ib-navi-sepa ib-right"></div>
+		<div class="ib-navi-item ib-right"><?php echo $this->Html->link(__('設定'), ['controller' => 'users', 'action' => 'setting']); ?></div>
+		<div class="ib-navi-sepa ib-right"></div>
+		<div class="ib-navi-item ib-right"><?php echo __('ようこそ').' '.h($loginedUser["name"]).' '.__('さん'); ?></div>
+		<?php }?>
+	</div>
+
+	<main class="main">
+		<div class="container">
+			<?= $this->Flash->render() ?>
+			<?= $this->fetch('content') ?>
+		</div>
+	</main>
+	<footer>
+	</footer>
 </body>
 </html>
