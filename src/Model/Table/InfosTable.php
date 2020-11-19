@@ -7,11 +7,15 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Datasource\ConnectionManager;
+
 
 /**
  * Infos Model
  *
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ * @property \App\Model\Table\GroupsTable&\Cake\ORM\Association\BelongsTo $Groups
+ * @property \App\Model\Table\GroupsTable&\Cake\ORM\Association\BelongsToMany $Groups
  *
  * @method \App\Model\Entity\Info newEmptyEntity()
  * @method \App\Model\Entity\Info newEntity(array $data, array $options = [])
@@ -49,8 +53,17 @@ class InfosTable extends Table
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
+			'joinType' => 'LEFT OUTER',
+		]);
+		$this->belongsTo('Groups', [
+			'foreignKey' => 'group_id',
             'joinType' => 'INNER',
         ]);
+		$this->belongsToMany('Groups', [
+			'foreignKey' => 'info_id',
+			'targetForeignKey' => 'group_id',
+			'joinTable' => 'infos_groups',
+		]);
     }
 
     /**
@@ -96,7 +109,64 @@ class InfosTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
+        $rules->add($rules->existsIn(['group_id'], 'Groups'), ['errorField' => 'user_id']);
 
         return $rules;
     }
+
+	/**
+	 * お知らせ一覧を取得（エイリアス）
+	 * 
+	 * @param int $user_id ユーザID
+	 * @param int $limit 取得件数
+	 * @return array お知らせ一覧
+	 */
+	public function getInfos($user_id, $limit = null)
+	{
+		$infos = $this->getInfoOption($user_id, $limit);
+		return $infos;
+	}
+	
+	/**
+	 * お知らせ一覧を取得
+	 * 
+	 * @param int $user_id ユーザID
+	 * @param int $limit 取得件数
+	 * @return array お知らせ一覧
+	 */
+	public function getInfoOption($user_id, $limit = null)
+	{
+		$sql = <<<EOF
+	SELECT
+		Info.id,
+		Info.title,
+		Info.created 
+	FROM
+		irohaboard.ib_infos AS Info
+		LEFT OUTER JOIN irohaboard.ib_infos_groups AS InfoGroup ON ( Info.id = InfoGroup.info_id ) 
+	WHERE
+		InfoGroup.group_id IS NULL 
+		OR InfoGroup.group_id IN ( SELECT group_id FROM ib_users_groups WHERE user_id = :user_id ) 
+	GROUP BY
+		Info.id,
+		Info.title,
+		Info.created 
+	ORDER BY
+		Info.created DESC 
+EOF;
+		if($limit)
+			$sql .= ' LIMIT '.intval($limit);
+		
+		//debug($sql);
+		
+		$params = [
+			'user_id' => $user_id,
+		];
+		
+		$connection = ConnectionManager::get('default');
+		$data = $connection->execute($sql, $params)->fetchAll('assoc');
+
+		//debug($data);
+		return $data;
+	}
 }

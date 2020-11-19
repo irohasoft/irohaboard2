@@ -36,7 +36,7 @@ class InfosController extends AppController
     public function view($id = null)
     {
         $info = $this->Infos->get($id, [
-            'contain' => ['Users'],
+            'contain' => ['Users', 'Groups'],
         ]);
 
         $this->set(compact('info'));
@@ -59,8 +59,9 @@ class InfosController extends AppController
             }
             $this->Flash->error(__('The info could not be saved. Please, try again.'));
         }
-        $users = $this->Infos->Users->find('list', ['limit' => 200]);
-        $this->set(compact('info', 'users'));
+        $users = $this->Infos->Users->find('list');
+        $groups = $this->Infos->Groups->find('list');
+        $this->set(compact('info', 'users', 'groups'));
     }
 
     /**
@@ -73,7 +74,7 @@ class InfosController extends AppController
     public function edit($id = null)
     {
         $info = $this->Infos->get($id, [
-            'contain' => [],
+            'contain' => ['Groups'],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $info = $this->Infos->patchEntity($info, $this->request->getData());
@@ -84,8 +85,9 @@ class InfosController extends AppController
             }
             $this->Flash->error(__('The info could not be saved. Please, try again.'));
         }
-        $users = $this->Infos->Users->find('list', ['limit' => 200]);
-        $this->set(compact('info', 'users'));
+        $users = $this->Infos->Users->find('list');
+        $groups = $this->Infos->Groups->find('list');
+        $this->set(compact('info', 'users', 'groups'));
     }
 
     /**
