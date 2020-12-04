@@ -22,6 +22,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="application-name" content="iroha Board">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<?php
+		// 管理画面フラグ（ログイン画面は例外とする）
+		$is_admin_page = (($this->request->getParam('prefix')=='Admin')&&($this->request->getParam('action')!='login'));
+		
+		// 受講者向け画面及び、管理システムのログイン画面のみ viewport を設定（スマートフォン対応）
+		if(!$is_admin_page)
+			echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
+	?>
+	
 	<?= $this->Html->meta('icon') ?>
 
 	<?= $this->Html->css('cake.css?20200702') ?>
@@ -30,6 +39,12 @@
 	<?= $this->Html->css('jquery-ui') ?>
 	<?= $this->Html->css('bootstrap.min') ?>
 	<?= $this->Html->css('common.css?20200701') ?>
+	
+	<?php
+		// 管理画面用CSS
+		if($is_admin_page)
+			echo $this->Html->css('admin.css?20200701');
+	?>
 
 	<?= $this->Html->script('jquery-1.9.1.min') ?>
 	<?= $this->Html->script('jquery-ui-1.9.2.min.js') ?>
@@ -75,8 +90,10 @@
 
 	<main class="main">
 		<div class="container">
+			<div id="content">
 			<?= $this->Flash->render() ?>
 			<?= $this->fetch('content') ?>
+			</div>
 		</div>
 	</main>
 	<footer>
