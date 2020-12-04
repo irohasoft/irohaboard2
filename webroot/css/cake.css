@@ -240,10 +240,10 @@ th a {
 	text-decoration: none;
 }
 th a.asc:after {
-	content: ' Å•';
+	content: ' ‚ñº';
 }
 th a.desc:after {
-	content: ' Å£';
+	content: ' ‚ñ≤';
 }
 table tr td {
 	padding: 5px;
