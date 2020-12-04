@@ -33,7 +33,7 @@
 					echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
 					echo $this->Form->control('email',			['label' => __('メールアドレス'), 'required' => false]);
 					echo $this->Form->control('groups._ids',	['options' => $groups, 'label' => __('対象グループ')]);
-					echo $this->Form->control('courses._ids',	['options' => $groups, 'label' => __('受講コース')]);
+					echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
 				?>
 			<?= $this->Form->button(__('保存'), Configure::read('form_submit_defaults')) ?>
 			<?= $this->Form->end() ?>

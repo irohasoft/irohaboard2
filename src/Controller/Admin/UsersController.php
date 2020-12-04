@@ -55,7 +55,30 @@ class UsersController extends AdminController
 	 */
 	public function index()
 	{
+		//debug($this->Users);
+		
+		$this->paginate = [
+			'fields' => [
+				'Users.id',
+				'Users.username',
+				'Users.name',
+				'Users.role',
+				'Users.last_logined',
+				'Users.created',
+				// 所属グループ一覧
+				'group_title'	=> '(SELECT group_concat(g.title order by g.id SEPARATOR \', \') as group_title  FROM ib_users_groups  ug INNER JOIN ib_groups  g ON g.id = ug.group_id  WHERE ug.user_id = Users.id)',
+				// 受講コース一覧
+				'course_title'	=> '(SELECT group_concat(c.title order by c.id SEPARATOR \', \') as course_title FROM ib_users_courses uc INNER JOIN ib_courses c ON c.id = uc.course_id WHERE uc.user_id = Users.id)',
+			
+			],
+			'limit' => 20,
+			'order' => [
+				'Users.created' => 'desc'
+			]
+		];
 		$users = $this->paginate($this->Users);
+		
+		//debug($users);
 
 		$this->set(compact('users'));
 	}
