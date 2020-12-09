@@ -32,7 +32,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class CoursesTable extends Table
+class CoursesTable extends AppTable
 {
     /**
      * Initialize method
@@ -116,4 +116,46 @@ class CoursesTable extends Table
 
         return $rules;
     }
+
+
+	/**
+	 * コースへのアクセス権限チェック
+	 * 
+	 * @param int $user_id   アクセス者のユーザID
+	 * @param int $course_id アクセス先のコースのID
+	 * @return bool          true: アクセス可能, false : アクセス不可
+	 */
+	public function hasRight($user_id, $course_id)
+	{
+		$has_right = false;
+		
+		$params = array(
+			'user_id'   => $user_id,
+			'course_id' => $course_id
+		);
+		
+		$sql = <<<EOF
+SELECT count(*) as cnt
+  FROM ib_users_courses
+ WHERE course_id = :course_id
+   AND user_id   = :user_id
+EOF;
+		$data = $this->my_query($sql, $params);
+		
+		if($data[0]["cnt"] > 0)
+			$has_right = true;
+		
+		$sql = <<<EOF
+SELECT count(*) as cnt
+  FROM ib_groups_courses gc
+ INNER JOIN ib_users_groups ug ON gc.group_id = ug.group_id AND ug.user_id   = :user_id
+ WHERE gc.course_id = :course_id
+EOF;
+		$data = $this->my_query($sql, $params);
+		
+		if($data[0]["cnt"] > 0)
+			$has_right = true;
+		
+		return $has_right;
+	}
 }

@@ -16,14 +16,39 @@ class ContentsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index($course_id)
     {
-        $this->paginate = [
-            'contain' => ['Courses', 'Users'],
-        ];
-        $contents = $this->paginate($this->Contents);
-
-        $this->set(compact('contents'));
+		$course_id = intval($course_id);
+		
+		// コースの情報を取得
+		$this->loadModel('Courses');
+		
+		$course = $this->Courses->get($course_id);
+		
+		// ロールを取得
+		$role = $this->readAuthUser('role');
+		
+		// 管理者かつ、学習履歴表示モードの場合、
+		if($this->request->getParam('action') == 'admin_record')
+		{
+			$contents = $this->Contents->getContentRecord($user_id, $course_id, $role);
+		}
+		else
+		{
+			// コースの閲覧権限の確認
+			if(! $this->Courses->hasRight($this->readAuthUser('id'), $course_id))
+			{
+				throw new NotFoundException(__('Invalid access'));
+			}
+			
+			$contents = $this->Contents->getContentRecord($this->readAuthUser('id'), $course_id, $role);
+		}
+		
+		//debug($contents);
+		/*
+		exit;
+		*/
+		$this->set(compact('course', 'contents'));
     }
 
     /**
