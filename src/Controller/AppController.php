@@ -104,6 +104,11 @@ class AppController extends Controller
 		return $this->getRequest()->getSession()->write($key, $value);
 	}
 
+	protected function readAuthUser($key)
+	{
+		return $this->getRequest()->getSession()->read('Auth.'.$key);
+	}
+
 	protected function writeLog($log_type, $log_content)
 	{
 		$data = array(
