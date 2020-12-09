@@ -101,7 +101,7 @@ class AppController extends Controller
 
 	protected function writeSession($key, $value)
 	{
-		return $this->getRequest()->getSession()->check($key, $value);
+		return $this->getRequest()->getSession()->write($key, $value);
 	}
 
 	protected function writeLog($log_type, $log_content)

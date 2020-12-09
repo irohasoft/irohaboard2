@@ -59,6 +59,7 @@
 	$logoutURL	= 'users/logout';
 	$color		= $this->getRequest()->getSession()->read('Setting.color');
 	$title		= $this->getRequest()->getSession()->read('Setting.title');
+	$copyright	= $this->getRequest()->getSession()->read('Setting.copyright');
 	?>
 	<style>
 		.ib-theme-color
@@ -96,7 +97,13 @@
 			</div>
 		</div>
 	</main>
-	<footer>
-	</footer>
+
+	<div class="ib-theme-color text-center">
+		<?php echo h($copyright); ?>
+	</div>
+	
+	<div class="irohasoft">
+		Powered by <a href="http://irohaboard.irohasoft.jp/">iroha Board</a>
+	</div>
 </body>
 </html>
