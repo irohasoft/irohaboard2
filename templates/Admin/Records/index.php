@@ -4,55 +4,124 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Record[]|\Cake\Collection\CollectionInterface $records
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
 ?>
-<div class="records index content">
-    <?= $this->Html->link(__('New Record'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Records') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('course_id') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th><?= $this->Paginator->sort('content_id') ?></th>
-                    <th><?= $this->Paginator->sort('full_score') ?></th>
-                    <th><?= $this->Paginator->sort('pass_score') ?></th>
-                    <th><?= $this->Paginator->sort('score') ?></th>
-                    <th><?= $this->Paginator->sort('is_passed') ?></th>
-                    <th><?= $this->Paginator->sort('is_complete') ?></th>
-                    <th><?= $this->Paginator->sort('progress') ?></th>
-                    <th><?= $this->Paginator->sort('understanding') ?></th>
-                    <th><?= $this->Paginator->sort('study_sec') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($records as $record): ?>
-                <tr>
-                    <td><?= $this->Number->format($record->id) ?></td>
-                    <td><?= $record->has('course') ? $this->Html->link($record->course->title, ['controller' => 'Courses', 'action' => 'view', $record->course->id]) : '' ?></td>
-                    <td><?= $record->has('user') ? $this->Html->link($record->user->name, ['controller' => 'Users', 'action' => 'view', $record->user->id]) : '' ?></td>
-                    <td><?= $record->has('content') ? $this->Html->link($record->content->title, ['controller' => 'Contents', 'action' => 'view', $record->content->id]) : '' ?></td>
-                    <td><?= $this->Number->format($record->full_score) ?></td>
-                    <td><?= $this->Number->format($record->pass_score) ?></td>
-                    <td><?= $this->Number->format($record->score) ?></td>
-                    <td><?= $this->Number->format($record->is_passed) ?></td>
-                    <td><?= $this->Number->format($record->is_complete) ?></td>
-                    <td><?= $this->Number->format($record->progress) ?></td>
-                    <td><?= $this->Number->format($record->understanding) ?></td>
-                    <td><?= $this->Number->format($record->study_sec) ?></td>
-                    <td><?= h($record->created) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $record->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $record->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $record->id], ['confirm' => __('Are you sure you want to delete # {0}?', $record->id)]) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-	<?php echo $this->element('paging');?>
+<?php $this->start('script-embedded'); ?>
+<script>
+	function openRecord(course_id, user_id)
+	{
+		window.open(
+			'<?php echo Router::url(array('controller' => 'contents', 'action' => 'record')) ?>/'+course_id+'/'+user_id,
+			'irohaboard_record',
+			'width=1100, height=700, menubar=no, toolbar=no, scrollbars=yes'
+		);
+	}
+	
+	function openTestRecord(content_id, record_id)
+	{
+		window.open(
+			'<?= Router::url(array('controller' => 'contents_questions', 'action' => 'record')) ?>/'+content_id+'/'+record_id,
+			'irohaboard_record',
+			'width=1100, height=700, menubar=no, toolbar=no, scrollbars=yes'
+		);
+	}
+	
+	function downloadCSV()
+	{
+		var url = '<?= Router::url(array('action' => 'csv')) ?>/' + $('#MembersEventEventId').val() + '/' + $('#MembersEventStatus').val() + '/' + $('#MembersEventUsername').val();
+		$("#RecordCmd").val("csv");
+		$("#RecordAdminIndexForm").submit();
+		$("#RecordCmd").val("");
+	}
+</script>
+<?php $this->end(); ?>
+<div class="admin-records-index">
+	<div class="ib-page-title"><?= __('学習履歴一覧'); ?></div>
+	<div class="ib-horizontal">
+		<?php
+			echo $this->Form->create();
+			echo '<div class="ib-search-buttons">';
+			echo $this->Form->submit(__('検索'),	array('class' => 'btn btn-info', 'div' => false));
+			echo $this->Form->hidden('cmd');
+			echo '<button type="button" class="btn btn-default" onclick="downloadCSV()">'.__('CSV出力').'</button>';
+			echo '</div>';
+			
+			echo '<div class="ib-row">';
+			echo $this->Form->control('course_id',		array('label' => __('コース :'), 'options'=>$courses, 'selected'=>$course_id, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
+			echo $this->Form->control('content_category',	array('label' => __('コンテンツ種別 :'), 'options'=>Configure::read('content_category'), 'selected'=>$content_category, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
+			echo $this->Form->control('contenttitle',		array('label' => __('コンテンツ名 :'), 'value'=>$contenttitle, 'class'=>'form-control'));
+			echo '</div>';
+			
+			echo '<div class="ib-row">';
+			echo $this->Form->control('group_id',		array('label' => __('グループ :'), 'options'=>$groups, 'selected'=>$group_id, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
+			echo $this->Form->control('username',		array('label' => __('ログインID :'), 'value'=>$username, 'class'=>'form-control'));
+			echo $this->Form->control('name',			array('label' => __('氏名 :'), 'value'=>$name, 'class'=>'form-control'));
+			echo '</div>';
+			
+			echo '<div class="ib-search-date-container">';
+			echo $this->Form->control('from_date', array(
+				'type' => 'date',
+				'dateFormat' => 'YMD',
+				'monthNames' => false,
+				'timeFormat' => '24',
+				'minYear' => date('Y') - 5,
+				'maxYear' => date('Y'),
+				'separator' => ' / ',
+				'label'=> __('対象日時 : '),
+				'class'=>'form-control',
+				'style' => 'display: inline;',
+				'value' => $from_date
+			));
+			echo $this->Form->control('to_date', array(
+				'type' => 'date',
+				'dateFormat' => 'YMD',
+				'monthNames' => false,
+				'timeFormat' => '24',
+				'minYear' => date('Y') - 5,
+				'maxYear' => date('Y'),
+				'separator' => ' / ',
+				'label'=> '～',
+				'class'=>'form-control',
+				'style' => 'display: inline;',
+				'value' => $to_date
+			));
+			echo '</div>';
+			echo $this->Form->end();
+		?>
+	</div>
+	<table cellpadding="0" cellspacing="0">
+	<thead>
+	<tr>
+		<th nowrap><?= $this->Paginator->sort('User.username', __('ログインID')); ?></th>
+		<th nowrap><?= $this->Paginator->sort('User.name', __('氏名')); ?></th>
+		<th nowrap><?= $this->Paginator->sort('course_id', __('コース')); ?></th>
+		<th nowrap><?= $this->Paginator->sort('content_id', __('コンテンツ')); ?></th>
+		<th nowrap class="ib-col-center"><?= $this->Paginator->sort('score', __('得点')); ?></th>
+		<th class="ib-col-center" nowrap><?= $this->Paginator->sort('pass_score', __('合格点')); ?></th>
+		<th nowrap class="ib-col-center"><?= $this->Paginator->sort('is_passed', __('結果')); ?></th>
+		<th class="ib-col-center" nowrap><?= $this->Paginator->sort('understanding', __('理解度')); ?></th>
+		<th class="ib-col-center"><?= $this->Paginator->sort('study_sec', __('学習時間')); ?></th>
+		<th class="ib-col-datetime"><?= $this->Paginator->sort('created', __('学習日時')); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($records as $record): ?>
+	<tr>
+		<td><?= h($record->user->username); ?>&nbsp;</td>
+		<td><?= h($record->user->name); ?>&nbsp;</td>
+		<td><a href="javascript:openRecord(<?= h($record->course->id); ?>, <?= h($record->user->id); ?>);"><?= h($record->course->title); ?></a></td>
+		<td><?= h($record->content->title); ?>&nbsp;</td>
+		<td class="ib-col-center"><?= h($record->score); ?>&nbsp;</td>
+		<td class="ib-col-center"><?= h($record->pass_score); ?>&nbsp;</td>
+		<td nowrap class="ib-col-center"><a href="javascript:openTestRecord(<?= h($record->content->id); ?>, <?= h($record->id); ?>);"><?= Configure::read('record_result.'.$record->is_passed); ?></a></td>
+		<td nowrap class="ib-col-center"><?= h(Configure::read('record_understanding.'.$record->understanding)); ?>&nbsp;</td>
+		<td class="ib-col-center"><?= h(Utils::getHNSBySec($record->study_sec)); ?>&nbsp;</td>
+		<td class="ib-col-date"><?= h(Utils::getYMDHN($record->created)); ?>&nbsp;</td>
+	</tr>
+	<?php endforeach; ?>
+	</tbody>
+	</table>
+	<?= $this->element('paging');?>
 </div>

@@ -1,4 +1,4 @@
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
@@ -32,5 +32,5 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-	<?php echo $this->element('paging');?>
+	<?= $this->element('paging');?>
 </div>

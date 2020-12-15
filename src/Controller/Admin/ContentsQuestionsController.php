@@ -16,14 +16,22 @@ class ContentsQuestionsController extends AdminController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index($content_id)
     {
+		$content_id = intval($content_id);
+		
+		// コンテンツ情報を取得
+		$this->loadModel('Contents');
+		$content = $this->Contents->get($content_id, [
+			'contain' => ['Courses'],
+		]);
+		
         $this->paginate = [
             'contain' => ['Contents'],
         ];
-        $contentsQuestions = $this->paginate($this->ContentsQuestions);
+        $contentsQuestions = $this->paginate($this->ContentsQuestions->find('all')->where(['content_id' => $content_id]));
 
-        $this->set(compact('contentsQuestions'));
+        $this->set(compact('contentsQuestions', 'content'));
     }
 
     /**

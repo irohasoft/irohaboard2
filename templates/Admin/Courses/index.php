@@ -1,48 +1,100 @@
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Course[]|\Cake\Collection\CollectionInterface $courses
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
 ?>
+<?php $this->start('script-embedded'); ?>
+<script>
+	$(function(){
+		$('#sortable-table tbody').sortable(
+		{
+			helper: function(event, ui)
+			{
+				var children = ui.children();
+				var clone = ui.clone();
+
+				clone.children().each(function(index)
+				{
+					$(this).width(children.eq(index).width());
+				});
+				return clone;
+			},
+			update: function(event, ui)
+			{
+				var id_list = new Array();
+
+				$('.course_id').each(function(index)
+				{
+					id_list[id_list.length] = $(this).val();
+				});
+
+				$.ajax({
+					url: "<?= Router::url(array('action' => 'order')) ?>",
+					type: "POST",
+					data: { id_list : id_list },
+					dataType: "text",
+					success : function(response){
+						//通信成功時の処理
+						//alert(response);
+					},
+					error: function(){
+						//通信失敗時の処理
+						//alert('通信失敗');
+					}
+				});
+			},
+			cursor: "move",
+			opacity: 0.5
+		});
+	});
+</script>
+<?php $this->end(); ?>
 <div class="courses index content">
-    <?= $this->Html->link(__('New Course'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Courses') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
-                    <th><?= $this->Paginator->sort('opened') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th><?= $this->Paginator->sort('deleted') ?></th>
-                    <th><?= $this->Paginator->sort('sort_no') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($courses as $course): ?>
-                <tr>
-                    <td><?= $this->Number->format($course->id) ?></td>
-                    <td><?= h($course->title) ?></td>
-                    <td><?= h($course->opened) ?></td>
-                    <td><?= h($course->created) ?></td>
-                    <td><?= h($course->modified) ?></td>
-                    <td><?= h($course->deleted) ?></td>
-                    <td><?= $this->Number->format($course->sort_no) ?></td>
-                    <td><?= $this->Number->format($course->user_id) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $course->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $course->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $course->id], ['confirm' => __('Are you sure you want to delete # {0}?', $course->id)]) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-	<?php echo $this->element('paging');?>
+	<div class="ib-page-title"><?= __('コース一覧'); ?></div>
+	<div class="buttons_container">
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add')) ?>'">+ 追加</button>
+	</div>
+
+	<div class="alert alert-warning"><?= __('ドラッグアンドドロップでコースの並び順が変更できます。'); ?></div>
+	<table id='sortable-table'>
+	<thead>
+	<tr>
+		<th><?= __('コース名'); ?></th>
+		<th class="ib-col-datetime"><?= __('作成日時'); ?></th>
+		<th class="ib-col-datetime"><?= __('更新日時'); ?></th>
+		<th class="ib-col-action"><?= __('Actions'); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($courses as $course): ?>
+	<tr>
+		<td>
+			<?php 
+				echo $this->Html->link($course->title, array('controller' => 'contents', 'action' => 'index', $course->id));
+				echo $this->Form->hidden('id', array('id'=>'', 'class'=>'course_id', 'value'=>$course->id));
+			?>
+		</td>
+		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->created)); ?>&nbsp;</td>
+		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->modified)); ?>&nbsp;</td>
+		<td class="ib-col-action">
+			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id)) ?>'"><?= __('編集')?></button>
+			<?php
+			if($loginedUser['role']=='admin')
+			{
+				echo $this->Form->postLink(__('削除'),
+					array('action' => 'delete', $course->id),
+					array('class'=>'btn btn-danger'),
+					__('[%s] を削除してもよろしいですか?', $course->title)
+				);
+			}?>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+	</tbody>
+	</table>
 </div>

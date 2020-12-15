@@ -1,58 +1,120 @@
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Content[]|\Cake\Collection\CollectionInterface $contents
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
 ?>
-<div class="contents index content">
-    <?= $this->Html->link(__('New Content'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Contents') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('course_id') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
-                    <th><?= $this->Paginator->sort('url') ?></th>
-                    <th><?= $this->Paginator->sort('kind') ?></th>
-                    <th><?= $this->Paginator->sort('timelimit') ?></th>
-                    <th><?= $this->Paginator->sort('pass_rate') ?></th>
-                    <th><?= $this->Paginator->sort('opened') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th><?= $this->Paginator->sort('deleted') ?></th>
-                    <th><?= $this->Paginator->sort('sort_no') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($contents as $content): ?>
-                <tr>
-                    <td><?= $this->Number->format($content->id) ?></td>
-                    <td><?= $content->has('course') ? $this->Html->link($content->course->title, ['controller' => 'Courses', 'action' => 'view', $content->course->id]) : '' ?></td>
-                    <td><?= $content->has('user') ? $this->Html->link($content->user->name, ['controller' => 'Users', 'action' => 'view', $content->user->id]) : '' ?></td>
-                    <td><?= h($content->title) ?></td>
-                    <td><?= h($content->url) ?></td>
-                    <td><?= h($content->kind) ?></td>
-                    <td><?= $this->Number->format($content->timelimit) ?></td>
-                    <td><?= $this->Number->format($content->pass_rate) ?></td>
-                    <td><?= h($content->opened) ?></td>
-                    <td><?= h($content->created) ?></td>
-                    <td><?= h($content->modified) ?></td>
-                    <td><?= h($content->deleted) ?></td>
-                    <td><?= $this->Number->format($content->sort_no) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $content->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $content->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $content->id], ['confirm' => __('Are you sure you want to delete # {0}?', $content->id)]) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-	<?php echo $this->element('paging');?>
+<?php $this->start('script-embedded'); ?>
+<script>
+	$(function(){
+		$('#sortable-table tbody').sortable(
+		{
+			helper: function(event, ui)
+			{
+				var children = ui.children();
+				var clone = ui.clone();
+
+				clone.children().each(function(index)
+				{
+					$(this).width(children.eq(index).width());
+				});
+				return clone;
+			},
+			update: function(event, ui)
+			{
+				var id_list = new Array();
+
+				$('.content_id').each(function(index)
+				{
+					id_list[id_list.length] = $(this).val();
+				});
+
+				$.ajax({
+					url: "<?= Router::url(array('action' => 'order')) ?>",
+					type: "POST",
+					data: { id_list : id_list },
+					dataType: "text",
+					success : function(response){
+						//通信成功時の処理
+						//alert(response);
+					},
+					error: function(){
+						//通信失敗時の処理
+						//alert('通信失敗');
+					}
+				});
+			},
+			cursor: "move",
+			opacity: 0.5
+		});
+	});
+</script>
+<?php $this->end(); ?>
+<div class="admin-contents-index">
+	<div class="ib-breadcrumb">
+	<?php
+		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
+		$this->Breadcrumbs->add(h($course->title));
+
+		echo $this->Breadcrumbs->render([], [' / ']);
+	?>
+	</div>
+	<div class="ib-page-title"><?= __('コンテンツ一覧'); ?></div>
+	<div class="buttons_container">
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add', $course->id)) ?>'">+ 追加</button>
+	</div>
+	<div class="alert alert-warning"><?= __('ドラッグアンドドロップでコンテンツの並び順が変更できます。'); ?></div>
+	<table id='sortable-table'>
+	<thead>
+	<tr>
+		<th><?= __('コンテンツ名'); ?></th>
+		<th nowrap><?= __('コンテンツ種別'); ?></th>
+		<th class="text-center"><?= __('ステータス'); ?></th>
+		<th class="ib-col-date"><?= __('作成日時'); ?></th>
+		<th class="ib-col-date"><?= __('更新日時'); ?></th>
+		<th class="ib-col-action"><?= __('Actions'); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($contents as $content): ?>
+	<?php
+		switch($content->kind)
+		{
+			case 'test':
+				$title = $this->Html->link($content->title, array('controller' => 'contents_questions', 'action' => 'index', $content->id));
+				break;
+			default :
+				$title = h($content->title);
+				break;
+		}
+	?>
+	<tr>
+		<td><?= $title; ?></td>
+		<td><?= h(Configure::read('content_kind.'.$content->kind)); ?>&nbsp;</td>
+		<td class="text-center"><?= h(Configure::read('content_status.'.$content->status)); ?>&nbsp;</td>
+		<td class="ib-col-date"><?= Utils::getYMDHN($content->created); ?>&nbsp;</td>
+		<td class="ib-col-date"><?= Utils::getYMDHN($content->modified); ?>&nbsp;</td>
+		<td class="ib-col-action">
+			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id, $content->id)) ?>'"><?= __('編集')?></button>
+			<button type="button" class="btn btn-info" onclick="location.href='<?= Router::url(array('action' => 'copy', $course->id, $content->id)) ?>'"><?= __('複製')?></button>
+			<?php
+			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'content_id', 'value'=>$content->id));
+			
+			if($loginedUser['role']=='admin')
+			{
+				echo $this->Form->postLink(__('削除'),
+					array('action' => 'delete', $content->id),
+					array('class'=>'btn btn-danger'),
+					__('[%s] を削除してもよろしいですか?', $content->title)
+				);
+			}?>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+	</tbody>
+	</table>
 </div>

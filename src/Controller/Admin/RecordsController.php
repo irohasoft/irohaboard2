@@ -18,12 +18,37 @@ class RecordsController extends AdminController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Courses', 'Users', 'Contents'],
-        ];
-        $records = $this->paginate($this->Records);
+		$group_id			= (isset($this->request->query['group_id'])) ? $this->request->query['group_id'] : "";
+		$course_id			= (isset($this->request->query['course_id'])) ? $this->request->query['course_id'] : "";
+		$username			= (isset($this->request->query['username'])) ? $this->request->query['username'] : "";
+		$name				= (isset($this->request->query['name'])) ? $this->request->query['name'] : "";
+		$content_category	= (isset($this->request->query['content_category'])) ? $this->request->query['content_category'] : "";
+		$contenttitle		= (isset($this->request->query['contenttitle'])) ? $this->request->query['contenttitle'] : "";
+		
+		$from_date	= (isset($this->request->query['from_date'])) ? 
+			$this->request->query['from_date'] : 
+				array(
+					'year' => date('Y', strtotime("-1 month")),
+					'month' => date('m', strtotime("-1 month")), 
+					'day' => date('d', strtotime("-1 month"))
+				);
+		
+		$to_date	= (isset($this->request->query['to_date'])) ? 
+			$this->request->query['to_date'] : 
+				array('year' => date('Y'), 'month' => date('m'), 'day' => date('d'));
+		
+		$this->paginate = [
+			'contain' => ['Courses', 'Users', 'Contents'],
+		];
+		
+		$records = $this->paginate($this->Records->find('all'));
 
-        $this->set(compact('records'));
+		$this->loadModel('Groups');
+		$this->loadModel('Courses');
+		$groups = $this->Groups->find('list');
+		$courses = $this->Courses->find('list');
+		
+        $this->set(compact('records', 'groups', 'courses', 'group_id', 'course_id', 'username', 'name', 'content_category', 'contenttitle', 'from_date', 'to_date'));
     }
 
     /**
