@@ -21,6 +21,16 @@ class UsersController extends AdminController
 		$this->Authentication->addUnauthenticatedActions(['login']);
 	}
 
+	public function initialize(): void
+	{
+		parent::initialize();
+		
+		// 検索処理のロードの追加
+		$this->loadComponent('Search.Search', [
+			'actions' => ['index'],	  // ここで検索するアクションを配列で指定
+		]);
+	}
+	
 	// custom 2020.06.07
 	public function login()
 	{
@@ -56,6 +66,33 @@ class UsersController extends AdminController
 	public function index()
 	{
 		//debug($this->Users);
+		// 選択中のグループをセッションから取得
+		if($this->getQuery('mode'))
+			$this->writeSession('Iroha.group_id', intval($this->getQuery('group_id')));
+		
+		// GETパラメータから検索条件を抽出
+		$group_id	= ($this->getQuery('group_id')) ? $this->getQuery('group_id') : $this->readSession('Iroha.group_id');
+		
+		$conditions = [];
+		/*
+		debug($this->getRequest());
+		debug($this->getRequest()->getQuery('group_id'));
+		debug($this->readSession('Iroha.group_id'));
+		debug($this->getQuery('group_id'));
+		debug(intval($this->getQuery('group_id')));
+		debug($group_id);
+		*/
+		// 独自の検索条件を追加（指定したグループに所属するユーザを検索）
+		if($group_id)
+			$conditions['Users.id IN'] = $this->Users->Groups->getUserIdByGroupID($group_id);
+		
+		if($this->getQuery('username'))
+			$conditions['Users.username LIKE'] = '%'.$this->getQuery('username').'%';
+		
+		if($this->getQuery('name'))
+			$conditions['Users.name LIKE'] = '%'.$this->getQuery('name').'%';
+		
+		//debug($conditions);
 		
 		$this->paginate = [
 			'fields' => [
@@ -76,11 +113,13 @@ class UsersController extends AdminController
 				'Users.created' => 'desc'
 			]
 		];
-		$users = $this->paginate($this->Users);
+		$users = $this->paginate($this->Users->find('all')->where($conditions));
 		
 		//debug($users);
-
-		$this->set(compact('users'));
+		// グループ一覧を取得
+		$groups = $this->Users->Groups->find('list');
+		
+		$this->set(compact('users', 'groups', 'group_id'));
 	}
 
 	/**

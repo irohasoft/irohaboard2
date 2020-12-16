@@ -18,6 +18,7 @@ namespace App\Controller\Admin;
 
 use Cake\Controller\Controller;
 use App\Controller\AppController;
+use App\Vendor\Utils;
 
 /**
  * Application Controller

@@ -1,15 +1,45 @@
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User[]|\Cake\Collection\CollectionInterface $users
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
+$this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 ?>
 <div class="admin-users-index">
-	<div class="ib-page-title"><?php echo __('ユーザ一覧'); ?></div>
+	<div class="ib-page-title"><?= __('ユーザ一覧'); ?></div>
 	<div class="buttons_container">
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?php echo $this->Url->build(['action' => 'add']) ?>'">+ 追加</button>
+		<?php if($loginedUser['role']=='admin'){ ?>
+		<button type="button" class="btn btn-primary btn-export" onclick="location.href='<?= Router::url(array('action' => 'export')) ?>'">エクスポート</button>
+		<button type="button" class="btn btn-primary btn-import" onclick="location.href='<?= Router::url(array('action' => 'import')) ?>'">インポート</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add')) ?>'">+ 追加</button>
+		<?php }?>
 	</div>
+	<div class="ib-horizontal">
+		<?php
+			$data = ['username' => 'test'];
+			
+			echo $this->Form->create(null, ['valueSources' => 'query']);
+			echo $this->Form->control('group_id',	[
+				'label'		=> 'グループ : ', 
+				'options'	=>$groups, 
+//				'value'		=>$group_id, 
+				'empty'		=> '全て', 
+				'class'		=> 'form-control',
+				'onchange'	=> 'submit(this.form);'
+			]);
+			echo $this->Form->control('username',	['label' => __('ログインID : ')]);
+			echo $this->Form->control('name',		['label' => __('氏名 : ')]);
+			echo $this->Form->hidden('mode',		['value' => 'search']); // グループ選択の解除用
+			echo $this->Form->submit(__('検索'),	['class' => 'btn btn-info btn-add']);
+			echo $this->Form->end();
+		?>
+	</div>
+
 	<table cellpadding="0" cellspacing="0">
 		<thead>
 			<tr>
@@ -41,5 +71,5 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-	<?php echo $this->element('paging');?>
+	<?= $this->element('paging');?>
 </div>

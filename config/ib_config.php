@@ -181,4 +181,14 @@ $config['bootstrap_form_template'] = [
 //	'nestingLabel' => '2{{hidden}}{{input}}{{text}}1'
 ];
 
+$config['bootstrap_search_template'] = [
+	'input' => '<div class="input {{type}}{{required}}"><input type="{{type}}" name="{{name}}"{{attrs}} class="form-control"/></div>',
+	'inputContainer' => '{{content}}',
+	'label' => '<label{{attrs}}>{{text}}</label>',
+	'inputSubmit' => '<input type="{{type}}"{{attrs}}/>',
+	'submitContainer' => '{{content}}',
+	'select' => '<div class="input {{type}}{{required}}"><select name="{{name}}"{{attrs}} class="form-control">{{content}}</select></div>',
+	'selectMultiple' => '<div><select name="{{name}}[]" multiple="multiple"{{attrs}} class="form-control">{{content}}</select></div>',
+];
+
 return $config;

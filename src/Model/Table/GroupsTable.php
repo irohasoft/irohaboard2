@@ -29,7 +29,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class GroupsTable extends Table
+class GroupsTable extends AppTable
 {
     /**
      * Initialize method
@@ -85,4 +85,27 @@ class GroupsTable extends Table
 
         return $validator;
     }
+
+	/**
+	 * 指定したグループに所属するユーザIDリストを取得
+	 * 
+	 * @param int $group_id グループID
+	 * @return array ユーザIDリスト
+	 */
+	public function getUserIdByGroupID($group_id)
+	{
+		$sql = "SELECT user_id FROM ib_users_groups WHERE group_id = :group_id";
+		
+		$params = array('group_id' => $group_id);
+		
+		$list = $this->db_query_value($sql, $params, 'user_id');
+		/*
+		
+		debug($list);
+		exit;
+		*/
+		$list[] = -1;
+		
+		return $list;
+	}
 }

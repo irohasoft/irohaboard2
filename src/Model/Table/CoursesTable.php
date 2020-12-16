@@ -140,7 +140,7 @@ SELECT count(*) as cnt
  WHERE course_id = :course_id
    AND user_id   = :user_id
 EOF;
-		$data = $this->my_query($sql, $params);
+		$data = $this->db_query($sql, $params);
 		
 		if($data[0]["cnt"] > 0)
 			$has_right = true;
@@ -151,7 +151,7 @@ SELECT count(*) as cnt
  INNER JOIN ib_users_groups ug ON gc.group_id = ug.group_id AND ug.user_id   = :user_id
  WHERE gc.course_id = :course_id
 EOF;
-		$data = $this->my_query($sql, $params);
+		$data = $this->db_query($sql, $params);
 		
 		if($data[0]["cnt"] > 0)
 			$has_right = true;

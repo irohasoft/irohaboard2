@@ -58,6 +58,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         // edit 2020.10.6
         $this->addPlugin('Authentication');
+        
+        // 讀懃ｴ｢繝励Λ繧ｰ繧､繝ｳ
+        $this->addPlugin("Search");
 
         if (PHP_SAPI === 'cli') {
             $this->bootstrapCli();
@@ -140,9 +143,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     {
         $service = new AuthenticationService();
 
+        $login_url = ($request->getParam('prefix')=='Admin') ? Router::url('/admin/users/login') : Router::url('/users/login');
+        
         // Define where users should be redirected to when they are not authenticated
         $service->setConfig([
-            'unauthenticatedRedirect' => Router::url('/users/login'),
+            'unauthenticatedRedirect' => $login_url,
             'queryParam' => 'redirect',
         ]);
 
@@ -151,19 +156,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             IdentifierInterface::CREDENTIAL_PASSWORD => 'password'
         ];
         
-        $login_url = ($request->getParam('prefix')=='Admin') ? '/admin/users/login' : '/users/login';
-        
         // Load the authenticators. Session should be first.
         $service->loadAuthenticator('Authentication.Session');
         $service->loadAuthenticator('Authentication.Form', [
             'fields' => $fields,
-            'loginUrl' => Router::url($login_url)
+            'loginUrl' => $login_url
         ]);
 
         // Load identifiers
         //$service->loadIdentifier('Authentication.Password', compact('fields'));
 		// custom 2020.06.07
-		// CakePHP2 からの移行の為、SHA-1にてパスワード認証を行う
+		// CakePHP2 縺九ｉ縺ｮ遘ｻ陦後�ｮ轤ｺ縲ヾHA-1縺ｫ縺ｦ繝代せ繝ｯ繝ｼ繝芽ｪ崎ｨｼ繧定｡後≧
 		$service->loadIdentifier('Authentication.Password', [
 		    // Other config options
 		    'passwordHasher' => [

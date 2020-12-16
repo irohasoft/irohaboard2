@@ -18,6 +18,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Routing\Router;
+use App\Vendor\Utils;
 
 /**
  * Application Controller
@@ -107,6 +108,35 @@ class AppController extends Controller
 	protected function readAuthUser($key)
 	{
 		return $this->getRequest()->getSession()->read('Auth.'.$key);
+	}
+
+	protected function getQuery($key)
+	{
+		$val = $this->getRequest()->getQuery($key);
+		
+		if($val=='')
+			return null;
+		
+		return $val;
+	}
+
+	protected function addCondition($where, $key, $field)
+	{
+		$val = $this->getQuery($key);
+		
+		if(!$val)
+			return $where;
+		
+		if(strpos(strtolower($field), 'like') > 0)
+		{
+			$where[$field] = '%'.$val.'%';
+		}
+		else
+		{
+			$where[$field] = $val;
+		}
+		
+		return $where;
 	}
 
 	protected function writeLog($log_type, $log_content)

@@ -186,9 +186,8 @@ EOF;
 				'role' => $role
 		);
 
-		$data = $this->my_query($sql, $params);
+		$data = $this->db_query($sql, $params);
 
 		return $data;
 	}
-
 }

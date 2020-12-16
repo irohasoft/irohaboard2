@@ -11,6 +11,16 @@ namespace App\Controller\Admin;
  */
 class RecordsController extends AdminController
 {
+	public function initialize(): void
+	{
+		parent::initialize();
+		
+		// 検索処理のロードの追加
+		$this->loadComponent('Search.Search', [
+			'actions' => ['index'],	  // ここで検索するアクションを配列で指定
+		]);
+	}
+	
     /**
      * Index method
      *
@@ -18,37 +28,46 @@ class RecordsController extends AdminController
      */
     public function index()
     {
-		$group_id			= (isset($this->request->query['group_id'])) ? $this->request->query['group_id'] : "";
-		$course_id			= (isset($this->request->query['course_id'])) ? $this->request->query['course_id'] : "";
-		$username			= (isset($this->request->query['username'])) ? $this->request->query['username'] : "";
-		$name				= (isset($this->request->query['name'])) ? $this->request->query['name'] : "";
-		$content_category	= (isset($this->request->query['content_category'])) ? $this->request->query['content_category'] : "";
-		$contenttitle		= (isset($this->request->query['contenttitle'])) ? $this->request->query['contenttitle'] : "";
-		
-		$from_date	= (isset($this->request->query['from_date'])) ? 
-			$this->request->query['from_date'] : 
-				array(
-					'year' => date('Y', strtotime("-1 month")),
-					'month' => date('m', strtotime("-1 month")), 
-					'day' => date('d', strtotime("-1 month"))
-				);
-		
-		$to_date	= (isset($this->request->query['to_date'])) ? 
-			$this->request->query['to_date'] : 
-				array('year' => date('Y'), 'month' => date('m'), 'day' => date('d'));
-		
 		$this->paginate = [
 			'contain' => ['Courses', 'Users', 'Contents'],
 		];
 		
-		$records = $this->paginate($this->Records->find('all'));
-
+		$conditions = [];
+		
+		$conditions = $this->addCondition($conditions, 'course_id',		'Courses.id');
+		$conditions = $this->addCondition($conditions, 'contenttitle',	'Contents.title LIKE');
+		$conditions = $this->addCondition($conditions, 'username',		'Users.username LIKE');
+		$conditions = $this->addCondition($conditions, 'name', 			'Users.name LIKE');
+		
 		$this->loadModel('Groups');
 		$this->loadModel('Courses');
+		
+		// グループ
+		if($this->getQuery('group_id'))
+			$conditions['Users.id IN'] = $this->Groups->getUserIdByGroupID($this->getQuery('group_id'));
+		
+		// コンテンツ種別：学習の場合
+		if($this->getQuery('content_category')=='study')
+			$conditions['Contents.kind IN'] = ['text', 'html', 'movie', 'url'];
+		
+		// コンテンツ種別：テストの場合
+		if($this->getQuery('content_category')=='test')
+			$conditions['Contents.kind IN'] = ['test'];
+		
+		$from_date	= ($this->getQuery('from_date')) ? $this->getQuery('from_date') : date('Y-m-d', strtotime('-10 month'));
+		$to_date	= ($this->getQuery('to_date')) ? $this->getQuery('to_date') : date('Y-m-d');
+		
+		$records = $this->paginate(
+			$this->Records->find('all')->where($conditions)
+			->where(['Records.created BETWEEN :from_date AND :to_date'])
+			->bind(':from_date', $from_date, 'date')
+			->bind(':to_date',   $to_date, 'date')
+		);
+		
 		$groups = $this->Groups->find('list');
 		$courses = $this->Courses->find('list');
 		
-        $this->set(compact('records', 'groups', 'courses', 'group_id', 'course_id', 'username', 'name', 'content_category', 'contenttitle', 'from_date', 'to_date'));
+        $this->set(compact('records', 'groups', 'courses', 'from_date', 'to_date'));
     }
 
     /**
@@ -136,4 +155,19 @@ class RecordsController extends AdminController
 
         return $this->redirect(['action' => 'index']);
     }
+    
+    private function getParam($target, $key)
+    {
+		if($target->data[$key])
+			return $target->data[$key];
+		debug($t->request);
+		
+		/*
+		if($target->request->query[$key])
+			return $target->request->query[$key];
+		
+		*/
+		
+		return null;
+	}
 }

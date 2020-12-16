@@ -15,11 +15,25 @@ use Cake\Datasource\ConnectionManager;
  */
 class AppTable extends Table
 {
-	public function my_query($sql, $params)
+	public function db_query($sql, $params)
 	{
 		$connection = ConnectionManager::get('default');
 		$data = $connection->execute($sql, $params)->fetchAll('assoc');
 
 		return $data;
+	}
+	
+	public function db_query_value($sql, $params, $field_name)
+	{
+		$data = $this->db_query($sql, $params, $field_name);
+		
+		$list = array();
+		
+		for($i=0; $i< count($data); $i++)
+		{
+			$list[$i] = $data[$i]['user_id'];
+		}
+		
+		return $list;
 	}
 }

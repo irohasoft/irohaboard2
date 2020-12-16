@@ -7,6 +7,8 @@
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
+
+$this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 ?>
 <?php $this->start('script-embedded'); ?>
 <script>
@@ -41,52 +43,59 @@ use App\Vendor\Utils;
 	<div class="ib-page-title"><?= __('学習履歴一覧'); ?></div>
 	<div class="ib-horizontal">
 		<?php
-			echo $this->Form->create();
+			echo $this->Form->create(null, ['valueSources' => 'query']);
+
 			echo '<div class="ib-search-buttons">';
-			echo $this->Form->submit(__('検索'),	array('class' => 'btn btn-info', 'div' => false));
+			echo $this->Form->submit(__('検索'),	['class' => 'btn btn-info btn-add']);
+			echo $this->Form->button(__('CSV出力'),	['class' => 'btn btn-default', 'onclick' => 'downloadCSV();']);
 			echo $this->Form->hidden('cmd');
-			echo '<button type="button" class="btn btn-default" onclick="downloadCSV()">'.__('CSV出力').'</button>';
 			echo '</div>';
 			
 			echo '<div class="ib-row">';
-			echo $this->Form->control('course_id',		array('label' => __('コース :'), 'options'=>$courses, 'selected'=>$course_id, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
-			echo $this->Form->control('content_category',	array('label' => __('コンテンツ種別 :'), 'options'=>Configure::read('content_category'), 'selected'=>$content_category, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
-			echo $this->Form->control('contenttitle',		array('label' => __('コンテンツ名 :'), 'value'=>$contenttitle, 'class'=>'form-control'));
+			echo $this->Form->control('course_id',			['label' => __('コース :'), 'options'=>$courses, 'empty' => '全て']);
+			echo $this->Form->control('content_category',	['label' => __('コンテンツ種別 :'), 'options'=>Configure::read('content_category'), 'empty' => '全て']);
+			echo $this->Form->control('contenttitle',		['label' => __('コンテンツ名 :')]);
 			echo '</div>';
 			
 			echo '<div class="ib-row">';
-			echo $this->Form->control('group_id',		array('label' => __('グループ :'), 'options'=>$groups, 'selected'=>$group_id, 'empty' => '全て', 'required'=>false, 'class'=>'form-control'));
-			echo $this->Form->control('username',		array('label' => __('ログインID :'), 'value'=>$username, 'class'=>'form-control'));
-			echo $this->Form->control('name',			array('label' => __('氏名 :'), 'value'=>$name, 'class'=>'form-control'));
+			echo $this->Form->control('group_id',		['label' => __('グループ :'), 'options'=>$groups, 'empty' => '全て']);
+			echo $this->Form->control('username',		['label' => __('ログインID :')]);
+			echo $this->Form->control('name',			['label' => __('氏名 :')]);
 			echo '</div>';
 			
 			echo '<div class="ib-search-date-container">';
-			echo $this->Form->control('from_date', array(
-				'type' => 'date',
+			echo $this->Form->control('from_date', [
+				'label'		=> __('対象日時 : '),
+				'type'		=> 'date',
+				'value'		=> $from_date,
+//				'default'	=> date('Y-m-d'),
+/*
+				'minYear'	=> date('Y') - 5,
+				'maxYear'	=> date('Y'),
+				'dateFormat' => 'YMD',
+				'monthNames' => false,
+				'timeFormat' => '24',
+*/
+//				'separator' => ' / ',
+//				'class'=>'form-control',
+//				'style' => 'display: inline;',
+			]);
+			echo $this->Form->control('to_date', [
+				'label'		=> '～',
+				'type'		=> 'date',
+				'value'		=> $to_date,
+//				'default'	=> date('Y-m-d')
+/*
 				'dateFormat' => 'YMD',
 				'monthNames' => false,
 				'timeFormat' => '24',
 				'minYear' => date('Y') - 5,
 				'maxYear' => date('Y'),
 				'separator' => ' / ',
-				'label'=> __('対象日時 : '),
 				'class'=>'form-control',
 				'style' => 'display: inline;',
-				'value' => $from_date
-			));
-			echo $this->Form->control('to_date', array(
-				'type' => 'date',
-				'dateFormat' => 'YMD',
-				'monthNames' => false,
-				'timeFormat' => '24',
-				'minYear' => date('Y') - 5,
-				'maxYear' => date('Y'),
-				'separator' => ' / ',
-				'label'=> '～',
-				'class'=>'form-control',
-				'style' => 'display: inline;',
-				'value' => $to_date
-			));
+*/
+			]);
 			echo '</div>';
 			echo $this->Form->end();
 		?>
@@ -109,6 +118,7 @@ use App\Vendor\Utils;
 	<tbody>
 	<?php foreach ($records as $record): ?>
 	<tr>
+		<?php //debug($record);?>
 		<td><?= h($record->user->username); ?>&nbsp;</td>
 		<td><?= h($record->user->name); ?>&nbsp;</td>
 		<td><a href="javascript:openRecord(<?= h($record->course->id); ?>, <?= h($record->user->id); ?>);"><?= h($record->course->title); ?></a></td>

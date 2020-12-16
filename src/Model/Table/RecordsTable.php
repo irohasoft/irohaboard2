@@ -50,6 +50,9 @@ class RecordsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+		// ビヘイビア（friendsofcake/search）の追加
+        $this->addBehavior("Search.Search");
+
         $this->belongsTo('Courses', [
             'foreignKey' => 'course_id',
             'joinType' => 'INNER',

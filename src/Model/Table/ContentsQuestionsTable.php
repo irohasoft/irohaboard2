@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * ContentsQuestions Model
  *
+ * @property \App\Model\Table\GroupsTable&\Cake\ORM\Association\BelongsTo $Groups
  * @property \App\Model\Table\ContentsTable&\Cake\ORM\Association\BelongsTo $Contents
  *
  * @method \App\Model\Entity\ContentsQuestion newEmptyEntity()
@@ -47,6 +48,10 @@ class ContentsQuestionsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->belongsTo('Groups', [
+            'foreignKey' => 'group_id',
+            'joinType' => 'INNER',
+        ]);
         $this->belongsTo('Contents', [
             'foreignKey' => 'content_id',
             'joinType' => 'INNER',

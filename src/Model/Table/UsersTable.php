@@ -52,7 +52,33 @@ class UsersTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-
+		
+		// ビヘイビア（friendsofcake/search）の追加
+        $this->addBehavior("Search.Search");
+        
+        // Setup search filter using search manager
+        /*
+        $this->searchManager()
+            ->value('group_id', ['filterEmpty' => false,])
+            // Here we will alias the 'q' query param to search the `Articles.title`
+            // field and the `Articles.content` field, using a LIKE match, with `%`
+            // both before and after.
+            ->add('q', 'Search.Like', [
+                'before' => true,
+                'after' => true,
+                'fieldMode' => 'OR',
+                'comparison' => 'LIKE',
+                'wildcardAny' => '*',
+                'wildcardOne' => '?',
+                'fields' => ['group_id', 'username'],
+            ])
+            ->add('foo', 'Search.Callback', [
+                'callback' => function (\Cake\ORM\Query $query, array $args, \Search\Model\Filter\Base $filter) {
+                    // Modify $query as required
+                }
+        ]);
+        */
+        
         $this->hasMany('Contents', [
             'foreignKey' => 'user_id',
         ]);
