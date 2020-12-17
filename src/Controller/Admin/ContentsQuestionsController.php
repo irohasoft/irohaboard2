@@ -33,22 +33,6 @@ class ContentsQuestionsController extends AdminController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Contents Question id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $contentsQuestion = $this->ContentsQuestions->get($id, [
-            'contain' => ['Contents'],
-        ]);
-
-        $this->set(compact('contentsQuestion'));
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.

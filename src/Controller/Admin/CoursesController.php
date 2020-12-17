@@ -38,22 +38,6 @@ class CoursesController extends AdminController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Course id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $course = $this->Courses->get($id, [
-            'contain' => ['Users', 'Contents', 'Records'],
-        ]);
-
-        $this->set(compact('course'));
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.

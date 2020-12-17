@@ -30,22 +30,6 @@ class ContentsController extends AdminController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Content id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $content = $this->Contents->get($id, [
-            'contain' => ['Courses', 'Users', 'ContentsQuestions', 'Records'],
-        ]);
-
-        $this->set(compact('content'));
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
