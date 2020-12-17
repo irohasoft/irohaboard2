@@ -23,10 +23,8 @@ class ContentsController extends AdminController
 		// コースの情報を取得
 		$course = $this->Contents->Courses->get($course_id);
 		
-        $this->paginate = [
-            'contain' => ['Courses', 'Users'],
-        ];
-        $contents = $this->paginate($this->Contents->find('all')->where(['course_id' => $course_id]));
+		// コンテンツ一覧を取得
+        $contents = $this->Contents->find('all')->where(['course_id' => $course_id])->order('Contents.sort_no');
 
         $this->set(compact('contents', 'course'));
     }
@@ -114,4 +112,22 @@ class ContentsController extends AdminController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+	/**
+	 * Ajax によるコースの並び替え
+	 *
+	 * @return string 実行結果
+	 */
+	public function order()
+	{
+		$this->autoRender = FALSE;
+		
+		if($this->request->is('ajax'))
+		{
+			//debug($this->getData('id_list'));
+			$this->Contents->setOrder($this->getData('id_list'));
+			echo "OK";
+		}
+	}
 }

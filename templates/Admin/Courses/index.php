@@ -8,8 +8,7 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 ?>
-<?php $this->start('script-embedded'); ?>
-<script>
+<?php $this->Html->scriptStart(['block' => true]); ?>
 	$(function(){
 		$('#sortable-table tbody').sortable(
 		{
@@ -28,16 +27,21 @@ use App\Vendor\Utils;
 			{
 				var id_list = new Array();
 
-				$('.course_id').each(function(index)
+				$('.target_id').each(function(index)
 				{
 					id_list[id_list.length] = $(this).val();
 				});
+				
+				var csrf = $('input[name=_csrfToken]').val();
 
 				$.ajax({
 					url: "<?= Router::url(array('action' => 'order')) ?>",
 					type: "POST",
 					data: { id_list : id_list },
 					dataType: "text",
+					beforeSend: function(xhr){
+						xhr.setRequestHeader("X-CSRF-Token",csrf);
+					},
 					success : function(response){
 						//通信成功時の処理
 						//alert(response);
@@ -52,8 +56,7 @@ use App\Vendor\Utils;
 			opacity: 0.5
 		});
 	});
-</script>
-<?php $this->end(); ?>
+<?php $this->Html->scriptEnd(); ?>
 <div class="courses index content">
 	<div class="ib-page-title"><?= __('コース一覧'); ?></div>
 	<div class="buttons_container">
@@ -76,7 +79,6 @@ use App\Vendor\Utils;
 		<td>
 			<?php 
 				echo $this->Html->link($course->title, array('controller' => 'contents', 'action' => 'index', $course->id));
-				echo $this->Form->hidden('id', array('id'=>'', 'class'=>'course_id', 'value'=>$course->id));
 			?>
 		</td>
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->created)); ?>&nbsp;</td>
@@ -84,6 +86,9 @@ use App\Vendor\Utils;
 		<td class="ib-col-action">
 			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id)) ?>'"><?= __('編集')?></button>
 			<?php
+			// 並べ替え用
+			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$course->id));
+			
 			if($loginedUser['role']=='admin')
 			{
 				echo $this->Form->postLink(__('削除'),

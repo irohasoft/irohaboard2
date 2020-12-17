@@ -117,6 +117,25 @@ class CoursesTable extends AppTable
         return $rules;
     }
 
+	/**
+	 * コースの並べ替え
+	 * 
+	 * @param array $id_list コースのIDリスト（並び順）
+	 */
+	public function setOrder($id_list)
+	{
+		for($i=0; $i< count($id_list); $i++)
+		{
+			$sql = "UPDATE ib_courses SET sort_no = :sort_no WHERE id= :id";
+
+			$params = array(
+				'sort_no' => ($i+1),
+				'id' => $id_list[$i]
+			);
+
+			$this->db_execute($sql, $params);
+		}
+	}
 
 	/**
 	 * コースへのアクセス権限チェック
@@ -157,5 +176,25 @@ EOF;
 			$has_right = true;
 		
 		return $has_right;
+	}
+	
+	// コースの削除
+	public function deleteCourse($course_id)
+	{
+		$params = array(
+			'course_id' => $course_id
+		);
+		
+		// テスト問題の削除
+		$sql = "DELETE FROM ib_contents_questions WHERE content_id IN (SELECT id FROM  ib_contents WHERE course_id = :course_id);";
+		$this->query($sql, $params);
+		
+		// コンテンツの削除
+		$sql = "DELETE FROM ib_contents WHERE course_id = :course_id;";
+		$this->query($sql, $params);
+		
+		// コースの削除
+		$sql = "DELETE FROM ib_courses WHERE id = :course_id;";
+		$this->query($sql, $params);
 	}
 }

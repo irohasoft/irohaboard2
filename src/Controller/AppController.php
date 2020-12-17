@@ -120,12 +120,15 @@ class AppController extends Controller
 		return $val;
 	}
 
-	protected function getData()
+	protected function getData($key = null)
 	{
 		$val = $this->getRequest()->getData();
 		
-		if($val=='')
+		if(!$val)
 			return null;
+		
+		if($key)
+			$val = $val[$key];
 		
 		return $val;
 	}

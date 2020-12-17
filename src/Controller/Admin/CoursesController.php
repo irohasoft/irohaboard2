@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Event\EventInterface;
+
 /**
  * Courses Controller
  *
@@ -11,6 +13,18 @@ namespace App\Controller\Admin;
  */
 class CoursesController extends AdminController
 {
+    public function initialize():void
+    {
+        parent::initialize();
+        $this->loadComponent('Security');
+    }
+
+	public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        $this->Security->setConfig('unlockedActions', ['order']);
+    }
+
     /**
      * Index method
      *
@@ -18,7 +32,7 @@ class CoursesController extends AdminController
      */
     public function index()
     {
-        $courses = $this->paginate($this->Courses);
+        $courses = $this->Courses->find('all')->order('Courses.sort_no');
 
         $this->set(compact('courses'));
     }
@@ -104,4 +118,22 @@ class CoursesController extends AdminController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+	/**
+	 * Ajax によるコースの並び替え
+	 *
+	 * @return string 実行結果
+	 */
+	public function order()
+	{
+		$this->autoRender = FALSE;
+		
+		if($this->request->is('ajax'))
+		{
+			debug($this->getData('id_list'));
+			$this->Courses->setOrder($this->getData('id_list'));
+			echo "OK";
+		}
+	}
 }

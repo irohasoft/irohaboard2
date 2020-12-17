@@ -30,7 +30,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class ContentsQuestionsTable extends Table
+class ContentsQuestionsTable extends AppTable
 {
     /**
      * Initialize method
@@ -132,4 +132,25 @@ class ContentsQuestionsTable extends Table
 
         return $rules;
     }
+
+
+	/**
+	 * 問題の並べ替え
+	 * 
+	 * @param array $id_list 問題のIDリスト（並び順）
+	 */
+	public function setOrder($id_list)
+	{
+		for($i=0; $i< count($id_list); $i++)
+		{
+			$sql = "UPDATE ib_contents_questions SET sort_no = :sort_no WHERE id= :id";
+
+			$params = array(
+				'sort_no' => ($i+1),
+				'id' => $id_list[$i]
+			);
+
+			$this->db_execute($sql, $params);
+		}
+	}
 }

@@ -8,52 +8,55 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 ?>
-<?php $this->start('script-embedded'); ?>
-	<script>
-		$(function(){
-			$('#sortable-table tbody').sortable(
+<?php $this->Html->scriptStart(['block' => true]); ?>
+	$(function(){
+		$('#sortable-table tbody').sortable(
+		{
+			helper: function(event, ui)
 			{
-				helper: function(event, ui)
+				var children = ui.children();
+				var clone = ui.clone();
+
+				clone.children().each(function(index)
 				{
-					var children = ui.children();
-					var clone = ui.clone();
+					$(this).width(children.eq(index).width());
+				});
+				return clone;
+			},
+			update: function(event, ui)
+			{
+				var id_list = new Array();
 
-					clone.children().each(function(index)
-					{
-						$(this).width(children.eq(index).width());
-					});
-					return clone;
-				},
-				update: function(event, ui)
+				$('.target_id').each(function(index)
 				{
-					var id_list = new Array();
+					id_list[id_list.length] = $(this).val();
+				});
+				
+				var csrf = $('input[name=_csrfToken]').val();
 
-					$('.target_id').each(function(index)
-					{
-						id_list[id_list.length] = $(this).val();
-					});
-
-					$.ajax({
-						url: "<?= Router::url(array('action' => 'order')) ?>",
-						type: "POST",
-						data: { id_list : id_list },
-						dataType: "text",
-						success : function(response){
-							//通信成功時の処理
-							//alert(response);
-						},
-						error: function(){
-							//通信失敗時の処理
-							//alert('通信失敗');
-						}
-					});
-				},
-				cursor: "move",
-				opacity: 0.5
-			});
+				$.ajax({
+					url: "<?= Router::url(array('action' => 'order')) ?>",
+					type: "POST",
+					data: { id_list : id_list },
+					dataType: "text",
+					beforeSend: function(xhr){
+						xhr.setRequestHeader("X-CSRF-Token",csrf);
+					},
+					success : function(response){
+						//通信成功時の処理
+						//alert(response);
+					},
+					error: function(){
+						//通信失敗時の処理
+						//alert('通信失敗');
+					}
+				});
+			},
+			cursor: "move",
+			opacity: 0.5
 		});
-	</script>
-<?php $this->end(); ?>
+	});
+<?php $this->Html->scriptEnd(); ?>
 
 <div class="admin-contents-questions-index">
 	<div class="ib-breadcrumb">
@@ -98,6 +101,9 @@ use App\Vendor\Utils;
 		<td class="actions text-center">
 			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $content->id, $contentsQuestion->id)) ?>'">編集</button>
 			<?php
+			// 並べ替え用
+			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$contentsQuestion->id));
+			
 			if($loginedUser['role']=='admin')
 			{
 				echo $this->Form->postLink(__('削除'), 
@@ -105,9 +111,7 @@ use App\Vendor\Utils;
 						array('class'=>'btn btn-danger'), 
 						__('[%s] を削除してもよろしいですか?', $contentsQuestion->title)
 				); 
-				echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$contentsQuestion->id));
-			}
-			?>
+			}?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

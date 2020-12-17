@@ -8,8 +8,7 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 ?>
-<?php $this->start('script-embedded'); ?>
-<script>
+<?php $this->Html->scriptStart(['block' => true]); ?>
 	$(function(){
 		$('#sortable-table tbody').sortable(
 		{
@@ -28,16 +27,21 @@ use App\Vendor\Utils;
 			{
 				var id_list = new Array();
 
-				$('.content_id').each(function(index)
+				$('.target_id').each(function(index)
 				{
 					id_list[id_list.length] = $(this).val();
 				});
+				
+				var csrf = $('input[name=_csrfToken]').val();
 
 				$.ajax({
 					url: "<?= Router::url(array('action' => 'order')) ?>",
 					type: "POST",
 					data: { id_list : id_list },
 					dataType: "text",
+					beforeSend: function(xhr){
+						xhr.setRequestHeader("X-CSRF-Token",csrf);
+					},
 					success : function(response){
 						//通信成功時の処理
 						//alert(response);
@@ -52,8 +56,7 @@ use App\Vendor\Utils;
 			opacity: 0.5
 		});
 	});
-</script>
-<?php $this->end(); ?>
+<?php $this->Html->scriptEnd(); ?>
 <div class="admin-contents-index">
 	<div class="ib-breadcrumb">
 	<?php
@@ -102,7 +105,8 @@ use App\Vendor\Utils;
 			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id, $content->id)) ?>'"><?= __('編集')?></button>
 			<button type="button" class="btn btn-info" onclick="location.href='<?= Router::url(array('action' => 'copy', $course->id, $content->id)) ?>'"><?= __('複製')?></button>
 			<?php
-			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'content_id', 'value'=>$content->id));
+			// 並べ替え用
+			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$content->id));
 			
 			if($loginedUser['role']=='admin')
 			{

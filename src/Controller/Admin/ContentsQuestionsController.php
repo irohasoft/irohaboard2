@@ -26,10 +26,8 @@ class ContentsQuestionsController extends AdminController
 			'contain' => ['Courses'],
 		]);
 		
-        $this->paginate = [
-            'contain' => ['Contents'],
-        ];
-        $contentsQuestions = $this->paginate($this->ContentsQuestions->find('all')->where(['content_id' => $content_id]));
+		// 問題一覧を取得
+        $contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order('ContentsQuestions.sort_no');
 
         $this->set(compact('contentsQuestions', 'content'));
     }
@@ -115,4 +113,22 @@ class ContentsQuestionsController extends AdminController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+	/**
+	 * Ajax によるコースの並び替え
+	 *
+	 * @return string 実行結果
+	 */
+	public function order()
+	{
+		$this->autoRender = FALSE;
+		
+		if($this->request->is('ajax'))
+		{
+			debug($this->getData('id_list'));
+			$this->ContentsQuestions->setOrder($this->getData('id_list'));
+			echo "OK";
+		}
+	}
 }

@@ -190,4 +190,47 @@ EOF;
 
 		return $data;
 	}
+
+	/**
+	 * コンテンツの並べ替え
+	 * 
+	 * @param array $id_list コンテンツのIDリスト（並び順）
+	 */
+	public function setOrder($id_list)
+	{
+		for($i=0; $i< count($id_list); $i++)
+		{
+			$sql = "UPDATE ib_contents SET sort_no = :sort_no WHERE id= :id";
+
+			$params = array(
+				'sort_no' => ($i+1),
+				'id' => $id_list[$i]
+			);
+
+			$this->db_execute($sql, $params);
+		}
+	}
+
+	/**
+	 * 新規追加時のコンテンツのソート番号を取得
+	 * 
+	 * @param array $course_id コースID
+	 * @return int ソート番号
+	 */
+	public function getNextSortNo($course_id)
+	{
+		$options = array(
+			'fields' => 'MAX(Content.sort_no) as sort_no',
+			'conditions' => array(
+				'Content.course_id' => $course_id
+			)
+		);
+		
+		$data = $this->find('first', $options);
+		
+		$sort_no = $data[0]['sort_no'] + 1;
+		
+		return $sort_no;
+	}
+
 }
