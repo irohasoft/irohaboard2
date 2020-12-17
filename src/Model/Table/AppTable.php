@@ -23,6 +23,12 @@ class AppTable extends Table
 		return $data;
 	}
 	
+	public function db_execute($sql, $params)
+	{
+		$connection = ConnectionManager::get('default');
+		$connection->execute($sql, $params);
+	}
+	
 	public function db_query_value($sql, $params, $field_name)
 	{
 		$data = $this->db_query($sql, $params, $field_name);
