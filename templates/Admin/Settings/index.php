@@ -1,40 +1,30 @@
-<?php echo $this->element('admin_menu');?>
+<?php echo $this->element('admin_menu'); ?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Setting[]|\Cake\Collection\CollectionInterface $settings
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
+$this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 ?>
-<div class="settings index content">
-    <?= $this->Html->link(__('New Setting'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Settings') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('setting_key') ?></th>
-                    <th><?= $this->Paginator->sort('setting_name') ?></th>
-                    <th><?= $this->Paginator->sort('setting_value') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($settings as $setting): ?>
-                <tr>
-                    <td><?= $this->Number->format($setting->id) ?></td>
-                    <td><?= h($setting->setting_key) ?></td>
-                    <td><?= h($setting->setting_name) ?></td>
-                    <td><?= h($setting->setting_value) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $setting->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $setting->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $setting->id], ['confirm' => __('Are you sure you want to delete # {0}?', $setting->id)]) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+<div class="admin-settings-index">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <?php echo __('システム設定'); ?>
+        </div>
+        <div class="panel-body">
+            <?php
+            echo $this->Form->create(null, ['class' => 'form-horizontal']);
+            echo $this->Form->control('title',        ['label' => __('システム名'),        'value' => $settings['title']]);
+            echo $this->Form->control('copyright',    ['label' => __('コピーライト'),    'value' => $settings['copyright']]);
+            echo $this->Form->control('color',        ['label' => __('テーマカラー'),    'options' => $colors, 'selected' => $settings['color']]);
+            echo $this->Form->control('information',    ['label' => __('全体のお知らせ'),    'value' => $settings['information'], 'type' => 'textarea']);
+			echo $this->Form->button(__('保存'), Configure::read('form_submit_defaults'));
+			echo $this->Form->end();
+			?>
+        </div>
     </div>
-	<?php echo $this->element('paging');?>
 </div>

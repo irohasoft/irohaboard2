@@ -25,7 +25,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Setting[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Setting[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  */
-class SettingsTable extends Table
+class SettingsTable extends AppTable
 {
     /**
      * Initialize method
@@ -130,7 +130,7 @@ EOF;
 				'setting_value' => $value
 			);
 			
-			$this->query("UPDATE ib_settings SET setting_value = :setting_value WHERE setting_key = :setting_key", $params);
+			$this->db_execute("UPDATE ib_settings SET setting_value = :setting_value WHERE setting_key = :setting_key", $params);
 		}
 	}
 }
