@@ -120,6 +120,16 @@ class AppController extends Controller
 		return $val;
 	}
 
+	protected function getData()
+	{
+		$val = $this->getRequest()->getData();
+		
+		if($val=='')
+			return null;
+		
+		return $val;
+	}
+
 	protected function addCondition($where, $key, $field)
 	{
 		$val = $this->getQuery($key);
