@@ -30,6 +30,9 @@ use App\Vendor\Utils;
  */
 class AppController extends Controller
 {
+    public $action; //CakePHP2の仕様の引継ぎ
+    public $webroot; //CakePHP2の仕様の引継ぎ
+    
 	/**
 	 * Initialization hook method.
 	 *
@@ -88,6 +91,9 @@ class AppController extends Controller
 		 * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
 		 */
 		//$this->loadComponent('FormProtection');
+		
+		$this->action = $this->request->getParam('action');
+		$this->webroot = Router::url('/', true);
 	}
 
 	protected function readSession($key)
