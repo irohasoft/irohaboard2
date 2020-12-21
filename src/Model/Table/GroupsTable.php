@@ -47,10 +47,17 @@ class GroupsTable extends AppTable
 
         $this->addBehavior('Timestamp');
 
+/*
         $this->belongsToMany('Users', [
             'foreignKey' => 'group_id',
             'targetForeignKey' => 'user_id',
             'joinTable' => 'users_groups',
+        ]);
+*/
+        $this->belongsToMany('Courses', [
+            'foreignKey' => 'group_id',
+            'targetForeignKey' => 'course_id',
+            'joinTable' => 'groups_courses',
         ]);
     }
 

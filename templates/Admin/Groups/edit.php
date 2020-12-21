@@ -1,37 +1,37 @@
-<?php echo $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Group $group
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
+$this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $group->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $group->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Groups'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column-responsive column-80">
-        <div class="groups form content">
-            <?= $this->Form->create($group) ?>
-            <fieldset>
-                <legend><?= __('Edit Group') ?></legend>
-                <?php
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('comment');
-                    echo $this->Form->control('deleted', ['empty' => true]);
-                    echo $this->Form->control('status');
-                    echo $this->Form->control('users._ids', ['options' => $users]);
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
+<?= $this->element('admin_menu');?>
+<?= $this->Html->css( 'select2.min.css');?>
+<?= $this->Html->script( 'select2.min.js');?>
+<?php $this->Html->scriptStart(['block' => true]); ?>
+	$(function (e) {
+		$('#courses-ids').select2({placeholder:   "<?= __('受講するコースを選択して下さい。(複数選択可)')?>", closeOnSelect: <?= (Configure::read('close_on_select') ? 'true' : 'false'); ?>,});
+	});
+<?php $this->Html->scriptEnd(); ?>
+<div class="admin-groups-edit">
+<?= $this->Html->link(__('<< 戻る'), array('action' => 'index'))?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<?= ($this->action == 'edit') ? __('編集') :  __('新規グループ'); ?>
+		</div>
+		<div class="panel-body">
+		<?php
+			echo $this->Form->create($group, ['class' => 'form-horizontal']);
+			echo $this->Form->control('title',	array('label' => __('グループ名')));
+			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
+			echo $this->Form->control('comment',	array('label' => __('備考')));
+			echo $this->Form->submit(__('保存'), Configure::read('form_submit_defaults'));
+			echo $this->Form->end();
+		?>
+		</div>
+	</div>
 </div>

@@ -37,5 +37,6 @@ class Group extends Entity
         'deleted' => true,
         'status' => true,
         'users' => true,
+        'courses' => true,
     ];
 }

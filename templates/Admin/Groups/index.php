@@ -32,12 +32,8 @@ use App\Vendor\Utils;
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($group->created)); ?>&nbsp;</td>
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($group->modified)); ?>&nbsp;</td>
 		<td class="ib-col-action">
-			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $group->id)) ?>'"><?= __('編集')?></button>
-			<?= $this->Form->postLink(__('削除'), 
-					array('action' => 'delete', $group->id), 
-					array('class'=>'btn btn-danger'), 
-					__('[%s] を削除してもよろしいですか?', $group->title)
-			); ?>
+			<?= $this->Html->link(__('編集'), ['action' => 'edit', $group->id], ['class' => 'btn btn-success']) ?>
+			<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $group->id], ['confirm' => __('{0} を削除してもよろしいですか?', $group->title), 'class'=>'btn btn-danger']) ?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

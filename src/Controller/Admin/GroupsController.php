@@ -11,81 +11,74 @@ namespace App\Controller\Admin;
  */
 class GroupsController extends AdminController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $groups = $this->paginate($this->Groups);
+	/**
+	 * グループ一覧を表示
+	 */
+	public function index()
+	{
+		$groups = $this->paginate($this->Groups);
 
-        $this->set(compact('groups'));
-    }
+		$this->set(compact('groups'));
+	}
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $group = $this->Groups->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $group = $this->Groups->patchEntity($group, $this->request->getData());
-            if ($this->Groups->save($group)) {
-                $this->Flash->success(__('The group has been saved.'));
+	/**
+	 * グループの追加
+	 */
+	public function add()
+	{
+		$this->edit();
+		$this->render('edit');
+	}
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The group could not be saved. Please, try again.'));
-        }
-        $users = $this->Groups->Users->find('list', ['limit' => 200]);
-        $this->set(compact('group', 'users'));
-    }
+	/**
+	 * グループの編集
+	 * @param int $group_id 編集するグループのID
+	 */
+	public function edit($group_id = null)
+	{
+		if ($group_id) // 編集の場合
+		{
+			$group = $this->Groups->get($group_id, [
+				'contain' => ['Courses'],
+			]);
+		}
+		else
+		{
+			$group = $this->Groups->newEmptyEntity();
+		}
+		
+		if ($this->request->is(['patch', 'post', 'put']))
+		{
+			$group = $this->Groups->patchEntity($group, $this->request->getData());
+			
+			if ($this->Groups->save($group))
+			{
+				$this->Flash->success(__('グループ情報を保存しました'));
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Group id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $group = $this->Groups->get($id, [
-            'contain' => ['Users'],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $group = $this->Groups->patchEntity($group, $this->request->getData());
-            if ($this->Groups->save($group)) {
-                $this->Flash->success(__('The group has been saved.'));
+				return $this->redirect(['action' => 'index']);
+			}
+			
+			$this->Flash->error(__('The group could not be saved. Please, try again.'));
+		}
+		
+		$courses = $this->Groups->Courses->find('list');
+		$this->set(compact('group', 'courses'));
+	}
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The group could not be saved. Please, try again.'));
-        }
-        $users = $this->Groups->Users->find('list', ['limit' => 200]);
-        $this->set(compact('group', 'users'));
-    }
+	/**
+	 * グループの削除
+	 * @param int $group_id 削除するグループのID
+	 */
+	public function delete($id = null)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+		$group = $this->Groups->get($id);
+		if ($this->Groups->delete($group)) {
+			$this->Flash->success(__('The group has been deleted.'));
+		} else {
+			$this->Flash->error(__('The group could not be deleted. Please, try again.'));
+		}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Group id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $group = $this->Groups->get($id);
-        if ($this->Groups->delete($group)) {
-            $this->Flash->success(__('The group has been deleted.'));
-        } else {
-            $this->Flash->error(__('The group could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
+		return $this->redirect(['action' => 'index']);
+	}
 }
