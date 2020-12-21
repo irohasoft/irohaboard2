@@ -11,39 +11,36 @@ namespace App\Controller\Admin;
  */
 class InfosController extends AdminController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Users'],
-        ];
-        $infos = $this->paginate($this->Infos);
+	/**
+	 * Index method
+	 *
+	 * @return \Cake\Http\Response|null|void Renders view
+	 */
+	public function index()
+	{
+		$this->paginate = [
+			'contain' => ['Users'],
+		];
+		$infos = $this->paginate($this->Infos);
 
-        $this->set(compact('infos'));
-    }
+		$this->set(compact('infos'));
+	}
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
+	/**
+	 * Add method
+	 *
+	 * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+	 */
+	public function add()
+	{
 		$this->edit();
 		$this->render('edit');
-    }
+	}
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Info id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
+	/**
+	 * お知らせの編集
+	 * @param int $info_id 編集するお知らせのID
+	 */
 	public function edit($info_id = null)
 	{
 		if ($this->request->getParam('action') == 'edit' && !$this->Infos->exists(['id' => $info_id]))
@@ -85,23 +82,24 @@ class InfosController extends AdminController
 		$this->set(compact('info', 'groups'));
 	}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Info id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $info = $this->Infos->get($id);
-        if ($this->Infos->delete($info)) {
-            $this->Flash->success(__('The info has been deleted.'));
-        } else {
-            $this->Flash->error(__('The info could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
+	/**
+	 * お知らせを削除
+	 * @param int $info_id 削除するお知らせのID
+	 */
+	public function delete($info_id = null)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+		$info = $this->Infos->get($info_id);
+		
+		if ($this->Infos->delete($info))
+		{
+			$this->Flash->success(__('The info has been deleted.'));
+		}
+		else
+		{
+			$this->Flash->error(__('The info could not be deleted. Please, try again.'));
+		}
+		
+		return $this->redirect(['action' => 'index']);
+	}
 }

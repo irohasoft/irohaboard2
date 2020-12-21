@@ -39,5 +39,6 @@ class Info extends Entity
         'modified' => true,
         'user_id' => true,
         'user' => true,
+        'groups' => true,
     ];
 }
