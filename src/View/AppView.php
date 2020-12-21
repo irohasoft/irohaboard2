@@ -16,6 +16,8 @@ declare(strict_types=1);
 namespace App\View;
 
 use Cake\View\View;
+use App\Vendor\Utils;
+use Cake\Routing\Router;
 
 /**
  * Application View
@@ -35,7 +37,22 @@ class AppView extends View
      *
      * @return void
      */
+    public $action; //CakePHP2の仕様の引継ぎ
+    public $webroot; //CakePHP2の仕様の引継ぎ
+    
     public function initialize(): void
     {
+		$this->action = $this->request->getParam('action');
+		$this->webroot = Router::url('/', true);
     }
+
+	public function getAction()
+	{
+		return $this->request->getParam('action');
+	}
+
+	public function test()
+	{
+		debug('test');
+	}
 }
