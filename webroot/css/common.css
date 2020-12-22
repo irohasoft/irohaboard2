@@ -183,6 +183,11 @@ form .required .control-label:after
 	width				: 160px;
 }
 
+.input-after
+{
+	font-weight			: normal;
+}
+
 .ib-search-date-container
 {
 	width				: 800px;

@@ -168,16 +168,17 @@ $config['import_group_count']  = 10;
 $config['import_course_count'] = 20;
 
 $config['bootstrap_form_template'] = [
-	'inputContainer' => '<div class="input {{type}}{{required}} form-group">{{content}}</div>',
-	'inputContainerError' => '<div class="input {{type}}{{required}} error form-group">{{content}}{{error}}</div>',
+	'inputContainer' => '<div class="form-group {{required}}">{{content}}</div>',
+	'inputContainerError' => '<div class="form-group {{required}} error">{{content}}{{error}}</div>',
 	'label' => '<label{{attrs}} class="col col-sm-3 control-label">{{text}}</label>',
-	'input' => '<div class="col col-sm-9"><input type="{{type}}" name="{{name}}"{{attrs}} class="form-control"/></div>',
+	'input' => '<div class="col col-sm-9"><input type="{{type}}" name="{{name}}"{{attrs}} class="form-control"/> <span class="input-after">{{after}}</span></div>',
 	'textarea' => '<div class="col col-sm-9"><textarea name="{{name}}"{{attrs}} class="form-control">{{value}}</textarea></div>',
-	'select' => '<div class="col col-sm-9"><select name="{{name}}"{{attrs}} class="form-control">{{content}}</select></div>',
+	'select' => '<div class="col col-sm-9"><select name="{{name}}"{{attrs}} class="form-control">{{content}}</select><span class="input-after">{{after}}</span></div>',
 	'selectMultiple' => '<div class="col col-sm-9"><select name="{{name}}[]" multiple="multiple"{{attrs}} class="form-control">{{content}}</select></div>',
 	'button' => '<div class="col col-sm-9 col-sm-offset-3"><button{{attrs}}>{{text}}</button></div>',
 //	'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-//	'radioWrapper' => '{{label}}',
+	'radioWrapper' => '{{label}}　',
+	'radioFormGroup' => '{{label}}<div class="col col-sm-9">{{input}}</div><span class="input-after">{{after}}</span>'
 //	'nestingLabel' => '2{{hidden}}{{input}}{{text}}1'
 ];
 
