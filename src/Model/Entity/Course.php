@@ -40,10 +40,12 @@ class Course extends Entity
         'modified' => true,
         'deleted' => true,
         'sort_no' => true,
+        'introduction' => true,
         'comment' => true,
         'user_id' => true,
         'users' => true,
         'contents' => true,
         'records' => true,
+        'groups' => true,
     ];
 }

@@ -84,19 +84,9 @@ use App\Vendor\Utils;
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->created)); ?>&nbsp;</td>
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->modified)); ?>&nbsp;</td>
 		<td class="ib-col-action">
-			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id)) ?>'"><?= __('編集')?></button>
-			<?php
-			// 並べ替え用
-			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$course->id));
-			
-			if($loginedUser['role']=='admin')
-			{
-				echo $this->Form->postLink(__('削除'),
-					array('action' => 'delete', $course->id),
-					array('class'=>'btn btn-danger'),
-					__('[%s] を削除してもよろしいですか?', $course->title)
-				);
-			}?>
+			<?= $this->Html->link(__('編集'), ['action' => 'edit', $course->id], ['class' => 'btn btn-success']) ?>
+			<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $course->id], ['confirm' => __('{0} を削除してもよろしいですか?', $course->title), 'class'=>'btn btn-danger']) ?>
+			<?= $this->Form->hidden('id', ['id'=>'', 'class'=>'target_id', 'value'=>$course->id]); ?>
 		</td>
 	</tr>
 	<?php endforeach; ?>
