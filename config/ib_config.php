@@ -192,4 +192,10 @@ $config['bootstrap_search_template'] = [
 	'selectMultiple' => '<div><select name="{{name}}[]" multiple="multiple"{{attrs}} class="form-control">{{content}}</select></div>',
 ];
 
+$config['bootstrap_login_template'] = [
+	'inputContainer' => '<div class="form-group"><div class="required">{{content}}</div></div>',
+	'input' => '<div class="input text required"><input type="{{type}}" name="{{name}}"{{attrs}} class="form-control"/></div>',
+	'label' => '<label{{attrs}}>{{text}}</label>',
+];
+
 return $config;
