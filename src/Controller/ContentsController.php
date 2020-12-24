@@ -11,13 +11,13 @@ namespace App\Controller;
  */
 class ContentsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index($course_id)
-    {
+	/**
+	 * 学習コンテンツ一覧を表示
+	 * @param int $course_id コースID
+	 * @param int $user_id 学習履歴を表示するユーザのID
+	 */
+	public function index($course_id)
+	{
 		$course_id = intval($course_id);
 		
 		// コースの情報を取得
@@ -49,21 +49,21 @@ class ContentsController extends AppController
 		exit;
 		*/
 		$this->set(compact('course', 'contents'));
-    }
+	}
 
-    /**
-     * View method
-     *
-     * @param string|null $id Content id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $content = $this->Contents->get($id, [
-            'contain' => ['Courses', 'Users', 'ContentsQuestions', 'Records'],
-        ]);
+	/**
+	 * コンテンツの表示
+	 * @param int $content_id 表示するコンテンツのID
+	 */
+	public function view($content_id = null)
+	{
+		// ヘッダー、フッターを非表示
+		$this->viewBuilder()->disableAutoLayout();
+		
+		$content = $this->Contents->get($content_id, [
+			'contain' => ['Courses'],
+		]);
 
-        $this->set(compact('content'));
-    }
+		$this->set(compact('content'));
+	}
 }
