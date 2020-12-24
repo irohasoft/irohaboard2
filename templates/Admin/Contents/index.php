@@ -63,7 +63,8 @@ use App\Vendor\Utils;
 		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
 		$this->Breadcrumbs->add(h($course->title));
 
-		echo $this->Breadcrumbs->render([], [' / ']);
+		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
+
 	?>
 	</div>
 	<div class="ib-page-title"><?= __('コンテンツ一覧'); ?></div>

@@ -236,6 +236,11 @@ form .required .control-label:after
 	padding				: 5px;
 }
 
+.ib-breadcrumbs li
+{
+	display				: inline;
+}
+
 /* start メニューの自動ボタン化を抑止 */
 .nav>li
 {
