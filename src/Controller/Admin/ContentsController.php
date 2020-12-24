@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
 /**
  * Contents Controller
  *
@@ -11,91 +15,112 @@ namespace App\Controller\Admin;
  */
 class ContentsController extends AdminController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index($course_id)
-    {
+	/**
+	 * コンテンツ一覧の表示
+	 *
+	 * @param int $course_id コースID
+	 */
+	public function index($course_id)
+	{
 		$course_id = intval($course_id);
 		
 		// コースの情報を取得
 		$course = $this->Contents->Courses->get($course_id);
 		
 		// コンテンツ一覧を取得
-        $contents = $this->Contents->find('all')->where(['course_id' => $course_id])->order('Contents.sort_no');
+		$contents = $this->Contents->find('all')->where(['course_id' => $course_id])->order('Contents.sort_no');
 
-        $this->set(compact('contents', 'course'));
-    }
+		$this->set(compact('contents', 'course'));
+	}
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $content = $this->Contents->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $content = $this->Contents->patchEntity($content, $this->request->getData());
-            if ($this->Contents->save($content)) {
-                $this->Flash->success(__('The content has been saved.'));
+	/**
+	 * コンテンツの追加
+	 *
+	 * @param int $course_id コースID
+	 */
+	public function add($course_id)
+	{
+		$this->edit($course_id);
+		$this->render('edit');
+	}
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The content could not be saved. Please, try again.'));
-        }
-        $courses = $this->Contents->Courses->find('list', ['limit' => 200]);
-        $users = $this->Contents->Users->find('list', ['limit' => 200]);
-        $this->set(compact('content', 'courses', 'users'));
-    }
+	/**
+	 * コンテンツの編集
+	 *
+	 * @param int $course_id 所属するコースのID
+	 * @param int $content_id 編集するコンテンツのID (指定しない場合、追加)
+	 */
+	public function edit($course_id, $content_id = null)
+	{
+		// コースの情報を取得
+		$course = $this->Contents->Courses->get($course_id);
+		
+		if($this->action == 'add')
+		{
+			$content = $this->Contents->newEmptyEntity();
+		}
+		else
+		{
+			$content = $this->Contents->get($content_id, [
+				'contain' => [],
+			]);
+		}
+		
+		if ($this->request->is(['patch', 'post', 'put']))
+		{
+			$content = $this->Contents->patchEntity($content, $this->request->getData());
+			
+			// 新規追加の場合、コンテンツの作成者と所属コースを指定
+			if($this->action == 'add')
+			{
+				$content->user_id	= $this->readAuthUser('id');
+				$content->course_id = $course_id;
+				$content->sort_no	= $this->Contents->getNextSortNo($course_id);
+			}
+			
+			if ($this->Contents->save($content))
+			{
+				$this->Flash->success(__('The content has been saved.'));
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Content id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $content = $this->Contents->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $content = $this->Contents->patchEntity($content, $this->request->getData());
-            if ($this->Contents->save($content)) {
-                $this->Flash->success(__('The content has been saved.'));
+				return $this->redirect(['action' => 'index', $course_id]);
+			}
+			
+			$this->Flash->error(__('The content could not be saved. Please, try again.'));
+		}
+		
+		$courses = $this->Contents->Courses->find('list');
+		
+		$this->set(compact('course', 'content', 'courses'));
+	}
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The content could not be saved. Please, try again.'));
-        }
-        $courses = $this->Contents->Courses->find('list', ['limit' => 200]);
-        $users = $this->Contents->Users->find('list', ['limit' => 200]);
-        $this->set(compact('content', 'courses', 'users'));
-    }
+	/**
+	 * コンテンツの削除
+	 *
+	 * @param int $content_id 削除するコンテンツのID
+	 */
+	public function delete($content_id = null)
+	{
+		if(Configure::read('demo_mode'))
+			return;
+		
+		$this->request->allowMethod(['post', 'delete']);
+		
+		$content = $this->Contents->get($content_id);
+		
+		if ($this->Contents->delete($content))
+		{
+			// コンテンツに紐づくテスト問題も削除
+			$this->LoadModel('ContentsQuestions');
+			$this->ContentsQuestions->deleteAll(array('ContentsQuestions.content_id' => $content_id), false);
+			$this->Flash->success(__('コンテンツが削除されました'));
+		}
+		else
+		{
+			$this->Flash->error(__('The content could not be deleted. Please, try again.'));
+		}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Content id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $content = $this->Contents->get($id);
-        if ($this->Contents->delete($content)) {
-            $this->Flash->success(__('The content has been deleted.'));
-        } else {
-            $this->Flash->error(__('The content could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
+		return $this->redirect(['action' => 'index', $content->course_id]);
+	}
 
 
 	/**

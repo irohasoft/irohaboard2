@@ -219,18 +219,16 @@ EOF;
 	 */
 	public function getNextSortNo($course_id)
 	{
-		$options = array(
-			'fields' => 'MAX(Content.sort_no) as sort_no',
-			'conditions' => array(
-				'Content.course_id' => $course_id
-			)
-		);
+		$row = $this->find()
+			->where(['Contents.course_id' => $course_id])
+			->order(['Contents.sort_no' => 'DESC'])
+			->limit(1)
+			->first();
 		
-		$data = $this->find('first', $options);
+		if(!$row)
+			return 1;
 		
-		$sort_no = $data[0]['sort_no'] + 1;
-		
-		return $sort_no;
+		return ($row->sort_no + 1);
 	}
 
 }

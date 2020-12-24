@@ -102,20 +102,10 @@ use App\Vendor\Utils;
 		<td class="ib-col-date"><?= Utils::getYMDHN($content->created); ?>&nbsp;</td>
 		<td class="ib-col-date"><?= Utils::getYMDHN($content->modified); ?>&nbsp;</td>
 		<td class="ib-col-action">
-			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $course->id, $content->id)) ?>'"><?= __('編集')?></button>
-			<button type="button" class="btn btn-info" onclick="location.href='<?= Router::url(array('action' => 'copy', $course->id, $content->id)) ?>'"><?= __('複製')?></button>
-			<?php
-			// 並べ替え用
-			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$content->id));
-			
-			if($loginedUser['role']=='admin')
-			{
-				echo $this->Form->postLink(__('削除'),
-					array('action' => 'delete', $content->id),
-					array('class'=>'btn btn-danger'),
-					__('[%s] を削除してもよろしいですか?', $content->title)
-				);
-			}?>
+			<?= $this->Html->link(__('編集'), ['action' => 'edit', $course->id, $content->id], ['class' => 'btn btn-success']) ?>
+			<?= $this->Html->link(__('複製'), ['action' => 'copy', $course->id, $content->id], ['class' => 'btn btn-info']) ?>
+			<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $content->id], ['confirm' => __('{0} を削除してもよろしいですか?', $content->title), 'class'=>'btn btn-danger']) ?>
+			<?= $this->Form->hidden('id', ['id'=>'', 'class'=>'target_id', 'value'=>$content->id]); ?>
 		</td>
 	</tr>
 	<?php endforeach; ?>

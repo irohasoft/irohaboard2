@@ -1,44 +1,261 @@
-<?php echo $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Content $content
  */
+use Cake\Core\Configure;
+use Cake\Routing\Router;
+use App\Vendor\Utils;
+
+$this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $content->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $content->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Contents'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column-responsive column-80">
-        <div class="contents form content">
-            <?= $this->Form->create($content) ?>
-            <fieldset>
-                <legend><?= __('Edit Content') ?></legend>
-                <?php
-                    echo $this->Form->control('course_id', ['options' => $courses]);
-                    echo $this->Form->control('user_id', ['options' => $users]);
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('url');
-                    echo $this->Form->control('kind');
-                    echo $this->Form->control('body');
-                    echo $this->Form->control('timelimit');
-                    echo $this->Form->control('pass_rate');
-                    echo $this->Form->control('opened', ['empty' => true]);
-                    echo $this->Form->control('deleted', ['empty' => true]);
-                    echo $this->Form->control('sort_no');
-                    echo $this->Form->control('comment');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
+<?= $this->element('admin_menu');?>
+<?php $this->start('css-embedded'); ?>
+<?= $this->Html->css('summernote.css');?>
+<?php $this->end(); ?>
+<?php $this->start('script-embedded'); ?>
+<?= $this->Html->script('summernote.min.js');?>
+<?= $this->Html->script('lang/summernote-ja-JP.js');?>
+<script>
+	$(document).ready(function()
+	{
+		$url = $('.form-control-upload');
+
+		$url.after('<input id="btnUpload" type="button" value="ファイルを指定">');
+
+		$("#btnUpload").click(function(){
+			var val = $('input[name="kind"]:checked').val();
+			
+			if(!val)
+				return false;
+			
+			if(
+				(val=='text')||
+				(val=='test')
+			)
+				return false;
+			
+			if(val=='url')
+				val = 'file';
+			
+			//window.open('<?= Router::url(array('controller' => 'contents', 'action' => 'upload'))?>/'+val, '_upload', 'width=650,height=500,resizable=no');
+			$('#uploadDialog').modal('show');
+
+			//モーダル画面にiframeを追加する
+			$("#uploadFrame").attr("src", "<?= Router::url(array('controller' => 'contents', 'action' => 'upload'))?>/" + val);
+			return false;
+		});
+
+		$('input[name="kind"]:radio').change( function() {
+			render();
+		});
+
+		// 保存時、コード表示モードの場合、解除する（編集中の内容を反映するため）
+		$("form").submit( function() {
+			var val = $('input[name="kind"]:checked').val();
+			
+			if(val=='html')
+			{
+				if ($('#body').summernote('codeview.isActivated')) {
+					$('#body').summernote('codeview.deactivate')
+				}
+			}
+		});
+
+		render();
+	});
+	
+	function render()
+	{
+		var content_kind = $('input[name="kind"]:checked').val();
+		
+		$(".kind").hide();
+		$(".kind-"+content_kind).show();
+		$("#btnPreview").hide();
+		
+		switch(content_kind)
+		{
+			case 'text': // テキスト
+				$("#body").summernote('destroy');
+				// テキストが存在しない場合、空文字にする。
+				if($('<span>').html($("#body").val()).text()=="")
+					$("#body").val("");
+				$("#btnPreview").show();
+				break;
+			case 'html': // リッチテキスト
+				// リッチテキストエディタを起動
+				CommonUtil.setRichTextEditor('#body', <?= Configure::read('upload_image_maxsize') ?>, '<?= $this->webroot ?>');
+				$("#btnPreview").show();
+				break;
+			case 'movie': // 動画
+				$(".form-control-upload").css('width', '80%');
+				$("#btnUpload").show();
+				$("#btnPreview").show();
+				break;
+			case 'url':
+				$(".form-control-upload").css('width', '100%');
+				$("#btnUpload").hide();
+				$("#btnPreview").show();
+				break;
+			case 'file':
+				$(".form-control-upload").css('width', '80%');
+				$("#btnUpload").show();
+				break;
+			case 'test':
+				break;
+		}
+	}
+	
+	function preview()
+	{
+		var content_kind = $('input[name="kind"]:checked').val();
+		
+		$.ajax({
+			url: "<?= Router::url(array('action' => 'preview')) ?>",
+			type: "POST",
+			data: {
+				content_title : $("#title").val(),
+				content_kind  : $('input[name="kind"]:checked').val(),
+				content_url   : $("#url").val(),
+				content_body  : $("#body").val(),
+			},
+			dataType: "text",
+			success : function(response){
+				//通信成功時の処理
+				//alert(response);
+				var url = '<?= Router::url(array('controller' => 'contents', 'action' => 'preview'))?>'.replace('admin/', '');
+				
+				window.open(url, '_preview', 'width=1000,height=700,resizable=no');
+			},
+			error: function(){
+				//通信失敗時の処理
+				//alert('通信失敗');
+			}
+		});
+	}
+	
+	function setURL(url, file_name)
+	{
+		$('.form-control-upload').val(url);
+		
+		if(file_name)
+			$('.form-control-filename').val(file_name);
+
+		$('#uploadDialog').modal('hide');
+	}
+	
+	function closeDialog(url, file_name)
+	{
+		$('#uploadDialog').modal('hide');
+	}
+</script>
+<?php $this->end(); ?>
+
+<div class="admin-contents-edit">
+	<?php
+		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
+		$this->Breadcrumbs->add($course['Course']['title'],  array('controller' => 'contents', 'action' => 'index', $course['Course']['id']));
+
+		echo $this->Breadcrumbs->render([], [' / ']);
+	?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<?= ($this->action == 'admin_edit') ? __('編集') :  __('新規コンテンツ'); ?>
+		</div>
+		<div class="panel-body">
+			<?php
+			echo $this->Form->create($content, ['class' => 'form-horizontal']);
+			echo $this->Form->control('title',	array('label' => __('コンテンツ名')));
+			echo $this->Form->control('kind',	array(
+				'type' => 'radio',
+				'label' => __('コンテンツ種別'),
+				'separator'=>"<br>",
+				'escape' => false,
+				'disabled'=>false,
+				'legend' => false,
+				'class' => false,
+				'options' => Configure::read('content_kind_comment')
+				)
+			);
+
+			echo "<div class='kind kind-movie kind-url kind-file'>";
+			echo $this->Form->control('url',		array('label' => __('URL'), 'class' => 'form-control form-control-upload'));
+			echo "</div>";
+			
+			// 配布資料
+			echo "<div class='kind kind-file'>";
+			echo $this->Form->control('file_name', array('label' => __('ファイル名'), 'class' => 'form-control-filename', 'readonly' => 'readonly'));
+			echo "</div>";
+
+			// テキスト・リッチテキスト
+			echo "<div class='kind kind-text kind-html'>";
+			echo $this->Form->control('body',		array('label' => __('内容')));
+			echo "</div>";
+
+			// テスト
+			echo "<span class='kind kind-test'>";
+			echo $this->Form->control('timelimit', array(
+				'label' => __('制限時間 (1-100分)'),
+				'templateVars' => ['after' => __('指定した場合、制限時間を過ぎると自動的に採点されます。')],
+			));
+			
+			echo $this->Form->control('pass_rate', array(
+				'label' => __('合格とする得点率 (1-100%)'),
+			));
+			
+			// ランダム出題用
+			echo $this->Form->control('question_count', array(
+				'label' => __('出題数 (1-100問)'),
+				'templateVars' => ['after' => __('指定した場合、登録した問題の中からランダムに出題されます。')],
+			));
+			echo "</span>";
+
+			// ステータス
+			echo $this->Form->control('status',	array(
+				'type' => 'radio',
+				'label' => __('ステータス'),
+				'templateVars' => ['after' => __('　非公開と設定した場合、管理者権限でログインした場合のみ表示されます。')],
+				'default' => 1,
+				'options' => Configure::read('content_status'),
+				'hiddenField' => false,
+				'required' => true
+				)
+			);
+			
+			// コンテンツ移動用
+			if(($this->action == 'edit'))
+			{
+				echo $this->Form->control('course_id', array(
+					'label' => __('所属コース'),
+					'value'=>$course->id,
+					'templateVars' => ['after' => __('変更することで他のコースにコンテンツを移動できます。')],
+				));
+			}
+
+			echo "<span class='kind kind-text kind-html kind-movie kind-url kind-file kind-test'>";
+			echo $this->Form->control('comment', array('label' => __('備考')));
+			echo "</span>";
+			?>
+			<div class="form-group">
+				<div class="col col-sm-9 col-sm-offset-3">
+					<button id="btnPreview" class="btn btn-default" value="プレビュー" onclick="preview(); return false;" type="submit">プレビュー</button>
+					<input type="submit" class="btn btn-primary" value="<?= __('保存') ?>">
+				</div>
+			</div>
+			<?= $this->Form->end(); ?>
+		</div>
+	</div>
+</div>
+
+<!--ファイルアップロードダイアログ-->
+<div class="modal fade" id="uploadDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-id='1'>
+	<div class="modal-dialog">
+		<div class="modal-content" style="width:660px;">
+			<div class="modal-body" id='modal-body_1'>
+				<iframe id="uploadFrame" width="100%" style="height: 440px;" scrolling="no" frameborder="no"></iframe>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
 </div>
