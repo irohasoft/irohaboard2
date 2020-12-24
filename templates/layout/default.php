@@ -18,7 +18,7 @@
 <html>
 <head>
 	<?= $this->Html->charset() ?>
-	<title><?= $this->fetch('title') ?></title>
+	<title><?= h($this->getRequest()->getSession()->read('Setting.title')); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="application-name" content="iroha Board">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -38,7 +38,7 @@
 	<!--custom 2020.10.08-->
 	<?= $this->Html->css('jquery-ui') ?>
 	<?= $this->Html->css('bootstrap.min') ?>
-	<?= $this->Html->css('common.css?20200701') ?>
+	<?= $this->Html->css('common.css?20201209') ?>
 	
 	<?php
 		// 管理画面用CSS
@@ -55,6 +55,8 @@
 	<?= $this->fetch('meta') ?>
 	<?= $this->fetch('css') ?>
 	<?= $this->fetch('script') ?>
+	<?= $this->fetch('css-embedded') ?>
+	<?= $this->fetch('script-embedded') ?>
 	<?php
 	$logoutURL	= 'users/logout';
 	$color		= $this->getRequest()->getSession()->read('Setting.color');
