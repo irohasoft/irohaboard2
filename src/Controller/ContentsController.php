@@ -29,7 +29,7 @@ class ContentsController extends AppController
 		$role = $this->readAuthUser('role');
 		
 		// 管理者かつ、学習履歴表示モードの場合、
-		if($this->request->getParam('action') == 'admin_record')
+		if($this->action == 'admin_record')
 		{
 			$contents = $this->Contents->getContentRecord($user_id, $course_id, $role);
 		}

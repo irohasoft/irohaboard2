@@ -1,4 +1,3 @@
-<?php echo $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
@@ -10,6 +9,7 @@ use App\Vendor\Utils;
 
 $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 ?>
+<?php echo $this->element('admin_menu');?>
 <?php $this->start('script-embedded'); ?>
 <script>
 	function openRecord(course_id, user_id)
@@ -32,7 +32,6 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	
 	function downloadCSV()
 	{
-		var url = '<?= Router::url(array('action' => 'csv')) ?>/' + $('#MembersEventEventId').val() + '/' + $('#MembersEventStatus').val() + '/' + $('#MembersEventUsername').val();
 		$("#RecordCmd").val("csv");
 		$("#RecordAdminIndexForm").submit();
 		$("#RecordCmd").val("");

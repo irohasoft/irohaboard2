@@ -43,13 +43,13 @@ class InfosController extends AdminController
 	 */
 	public function edit($info_id = null)
 	{
-		if ($this->request->getParam('action') == 'edit' && !$this->Infos->exists(['id' => $info_id]))
+		if ($this->action == 'edit' && !$this->Infos->exists(['id' => $info_id]))
 		{
 			throw new NotFoundException(__('Invalid info'));
 		}
 		
 		// データの取得
-		if($this->request->getParam('action') == 'edit')
+		if($this->action == 'edit')
 		{
 			$info = $this->Infos->get($info_id, [
 				'contain' => ['Groups'],

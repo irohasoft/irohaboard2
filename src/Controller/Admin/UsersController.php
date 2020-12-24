@@ -11,16 +11,6 @@ namespace App\Controller\Admin;
  */
 class UsersController extends AdminController
 {
-	// custom 2020.06.07
-	public function beforeFilter(\Cake\Event\EventInterface $event)
-	{
-		parent::beforeFilter($event);
-		// custom 2020.10.6
-		// ログインアクションを認証を必要としないように設定することで、
-		// 無限リダイレクトループの問題を防ぐことができます
-		$this->Authentication->addUnauthenticatedActions(['login']);
-	}
-
 	public function initialize(): void
 	{
 		parent::initialize();
@@ -31,6 +21,16 @@ class UsersController extends AdminController
 		]);
 	}
 	
+	// custom 2020.06.07
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+		parent::beforeFilter($event);
+		// custom 2020.10.6
+		// ログインアクションを認証を必要としないように設定することで、
+		// 無限リダイレクトループの問題を防ぐことができます
+		$this->Authentication->addUnauthenticatedActions(['login']);
+	}
+
 	// custom 2020.06.07
 	public function login()
 	{
@@ -142,13 +142,13 @@ class UsersController extends AdminController
 	 */
 	public function edit($user_id = null)
 	{
-		if ($this->request->getParam('action') == 'edit' && !$this->Users->exists(['id' => $user_id]))
+		if ($this->action == 'edit' && !$this->Users->exists(['id' => $user_id]))
 		{
 			throw new NotFoundException(__('Invalid user'));
 		}
 		
 		// データの取得
-		if($this->request->getParam('action') == 'edit')
+		if($user_id)
 		{
 			$user = $this->Users->get($user_id, [
 				'contain' => ['Courses', 'Groups'],
@@ -165,6 +165,9 @@ class UsersController extends AdminController
 			$user = $this->Users->patchEntity($user, $this->request->getData());
 			
 			$user->user_id = $this->getRequest()->getSession()->read('Auth.id');
+			
+			if ($this->request->getData('new_password') !== '')
+				$user->password = $this->request->getData('new_password');
 			
 			if ($this->Users->save($user))
 			{
