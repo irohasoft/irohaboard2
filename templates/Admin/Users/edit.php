@@ -8,6 +8,7 @@ use Cake\Routing\Router;
 use App\Vendor\Utils;
 
 $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
+$this->Form->setConfig('errorClass', 'form-control form-error');
 ?>
 <?= $this->element('admin_menu');?>
 <?= $this->Html->css( 'select2.min.css');?>
@@ -22,13 +23,15 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 <?= $this->Html->link(__('<< 戻る'), ['action' => 'index'])?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<?= ($this->request->getParam('action') == 'edit') ? __('編集') :  __('新規お知らせ'); ?>
+			<?= ($this->action == 'edit')  ? __('編集') :  __('新規お知らせ'); ?>
 		</div>
 		<div class="panel-body">
 			<?php
+			$password_label = ($this->action == 'edit') ? __('新しいパスワード') : __('パスワード');
+			
 			echo $this->Form->create($user, ['class' => 'form-horizontal']);
 			echo $this->Form->control('username',		['label' => __('ログインID'), 'required' => true]);
-			echo $this->Form->control('password',		['label' => __('新しいパスワード'), 'required' => true]);
+			echo $this->Form->control('new_password',	array('label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password'));
 			echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
 			echo $this->Form->control('role',			['label' => __('権限'), 'required' => true, 
 				'options' => Configure::read('user_role'), 'type' => 'radio', 'hiddenField' => false]);
