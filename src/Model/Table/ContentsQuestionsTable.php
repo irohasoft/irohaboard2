@@ -153,4 +153,24 @@ class ContentsQuestionsTable extends AppTable
 			$this->db_execute($sql, $params);
 		}
 	}
+
+	/**
+	 * 新規追加時の問題のソート番号を取得
+	 * 
+	 * @param array $content_id コンテンツ(テスト)のID
+	 * @return int ソート番号
+	 */
+	public function getNextSortNo($content_id)
+	{
+		$row = $this->find()
+			->where(['ContentsQuestions.content_id' => $content_id])
+			->order(['ContentsQuestions.sort_no' => 'DESC'])
+			->limit(1)
+			->first();
+		
+		if(!$row)
+			return 1;
+		
+		return ($row->sort_no + 1);
+	}
 }

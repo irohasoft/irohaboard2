@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace App\Controller\Admin;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * ContentsQuestions Controller
@@ -11,13 +12,12 @@ namespace App\Controller\Admin;
  */
 class ContentsQuestionsController extends AdminController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index($content_id)
-    {
+	/**
+	 * 問題一覧を表示
+	 * @param int $content_id 表示するコンテンツ(テスト)のID
+	 */
+	public function index($content_id)
+	{
 		$content_id = intval($content_id);
 		
 		// コンテンツ情報を取得
@@ -27,77 +27,91 @@ class ContentsQuestionsController extends AdminController
 		]);
 		
 		// 問題一覧を取得
-        $contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order('ContentsQuestions.sort_no');
+		$contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order('ContentsQuestions.sort_no');
 
-        $this->set(compact('contentsQuestions', 'content'));
-    }
+		$this->set(compact('contentsQuestions', 'content'));
+	}
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $contentsQuestion = $this->ContentsQuestions->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->request->getData());
-            if ($this->ContentsQuestions->save($contentsQuestion)) {
-                $this->Flash->success(__('The contents question has been saved.'));
+	/**
+	 * 問題を追加
+	 * @param int $content_id 追加対象のコンテンツ(テスト)のID
+	 */
+	public function add($content_id)
+	{
+		$this->edit($content_id);
+		$this->render('edit');
+	}
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The contents question could not be saved. Please, try again.'));
-        }
-        $contents = $this->ContentsQuestions->Contents->find('list', ['limit' => 200]);
-        $this->set(compact('contentsQuestion', 'contents'));
-    }
+	/**
+	 * 問題を編集
+	 * @param int $content_id 追加対象のコンテンツ(テスト)のID
+	 * @param int $question_id 編集対象の問題のID
+	 */
+	public function edit($content_id, $question_id = null)
+	{
+		// コンテンツ情報を取得
+		$content = $this->ContentsQuestions->Contents->get($content_id, [
+			'contain' => ['Courses'],
+		]);
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Contents Question id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $contentsQuestion = $this->ContentsQuestions->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->request->getData());
-            if ($this->ContentsQuestions->save($contentsQuestion)) {
-                $this->Flash->success(__('The contents question has been saved.'));
+		if($this->action == 'add')
+		{
+			$contentsQuestion = $this->ContentsQuestions->newEmptyEntity();
+		}
+		else
+		{
+			$contentsQuestion = $this->ContentsQuestions->get($question_id, [
+				'contain' => [],
+			]);
+		}
+		
+		if ($this->request->is(['patch', 'post', 'put']))
+		{
+			$contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->request->getData());
+			
+			$conn = ConnectionManager::get('default');
+			$conn->getDriver()->enableAutoQuoting();
+			
+			// 新規追加の場合、コンテンツの作成者と所属コースを指定
+			if($this->action == 'add')
+			{
+				$contentsQuestion->user_id	= $this->readAuthUser('id');
+				$contentsQuestion->content_id = $content_id;
+				$contentsQuestion->sort_no	= $this->ContentsQuestions->getNextSortNo($content_id);
+			}
+			
+			if ($this->ContentsQuestions->save($contentsQuestion)) {
+				$this->Flash->success(__('The contents question has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The contents question could not be saved. Please, try again.'));
-        }
-        $contents = $this->ContentsQuestions->Contents->find('list', ['limit' => 200]);
-        $this->set(compact('contentsQuestion', 'contents'));
-    }
+				return $this->redirect(['action' => 'index', $content_id]);
+			}
+			
+			$this->Flash->error(__('The contents question could not be saved. Please, try again.'));
+		}
+		
+		$this->set(compact('content', 'contentsQuestion'));
+	}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Contents Question id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $contentsQuestion = $this->ContentsQuestions->get($id);
-        if ($this->ContentsQuestions->delete($contentsQuestion)) {
-            $this->Flash->success(__('The contents question has been deleted.'));
-        } else {
-            $this->Flash->error(__('The contents question could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
-
+	/**
+	 * 問題を削除
+	 * @param int $question_id 削除対象の問題のID
+	 */
+	public function delete($question_id)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+		$contentsQuestion = $this->ContentsQuestions->get($question_id);
+		
+		if ($this->ContentsQuestions->delete($contentsQuestion))
+		{
+			$this->Flash->success(__('問題が削除されました'));
+		}
+		else
+		{
+			$this->Flash->error(__('The contents question could not be deleted. Please, try again.'));
+		}
+		
+		return $this->redirect(['action' => 'index', $contentsQuestion->content_id]);
+	}
 
 	/**
 	 * Ajax によるコースの並び替え

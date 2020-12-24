@@ -1,4 +1,3 @@
-<?= $this->element('admin_menu');?>
 <?php
 /**
  * @var \App\View\AppView $this
@@ -8,7 +7,8 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 ?>
-<?php $this->Html->scriptStart(['block' => true]); ?>
+<?php $this->start('script-embedded'); ?>
+<script>
 	$(function(){
 		$('#sortable-table tbody').sortable(
 		{
@@ -56,8 +56,9 @@ use App\Vendor\Utils;
 			opacity: 0.5
 		});
 	});
-<?php $this->Html->scriptEnd(); ?>
-
+</script>
+<?php $this->end(); ?>
+<?= $this->element('admin_menu');?>
 <div class="admin-contents-questions-index">
 	<div class="ib-breadcrumb">
 	<?php 
@@ -65,7 +66,7 @@ use App\Vendor\Utils;
 		$this->Breadcrumbs->add($content->course->title, array('controller' => 'contents', 'action' => 'index', $content->course->id));
 		$this->Breadcrumbs->add(h($content->title));
 		
-		echo $this->Breadcrumbs->render([], [' / ']);
+		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	?>
 	</div>
 	<div class="ib-page-title"><?= __('テスト問題一覧'); ?></div>
@@ -98,20 +99,10 @@ use App\Vendor\Utils;
 		<td><?= h($contentsQuestion->score); ?>&nbsp;</td>
 		<td class="ib-col-date"><?= Utils::getYMDHN($contentsQuestion->created); ?>&nbsp;</td>
 		<td class="ib-col-date"><?= Utils::getYMDHN($contentsQuestion->modified); ?>&nbsp;</td>
-		<td class="actions text-center">
-			<button type="button" class="btn btn-success" onclick="location.href='<?= Router::url(array('action' => 'edit', $content->id, $contentsQuestion->id)) ?>'">編集</button>
-			<?php
-			// 並べ替え用
-			echo $this->Form->hidden('id', array('id'=>'', 'class'=>'target_id', 'value'=>$contentsQuestion->id));
-			
-			if($loginedUser['role']=='admin')
-			{
-				echo $this->Form->postLink(__('削除'), 
-						array('action' => 'delete', $contentsQuestion->id), 
-						array('class'=>'btn btn-danger'), 
-						__('[%s] を削除してもよろしいですか?', $contentsQuestion->title)
-				); 
-			}?>
+		<td class="ib-col-action">
+			<?= $this->Html->link(__('編集'), ['action' => 'edit', $content->id, $contentsQuestion->id], ['class' => 'btn btn-success']) ?>
+			<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $contentsQuestion->id], ['confirm' => __('{0} を削除してもよろしいですか?', $contentsQuestion->title), 'class'=>'btn btn-danger']) ?>
+			<?= $this->Form->hidden('id', ['id'=>'', 'class'=>'target_id', 'value'=>$contentsQuestion->id]); ?>
 		</td>
 	</tr>
 	<?php endforeach; ?>
