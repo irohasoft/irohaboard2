@@ -60,4 +60,29 @@ class AdminController extends AppController
         $this->set('loginedUser', $this->getRequest()->getSession()->read('Auth'));
     }
     */
+
+
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+		parent::beforeFilter($event);
+		
+		// role が admin, manager, editor, teacher以外の場合、強制ログアウトする
+		if($this->readSession('Auth'))
+		{
+			if(
+				($this->readAuthUser('role')!='admin')&&
+				($this->readAuthUser('role')!='manager')&&
+				($this->readAuthUser('role')!='editor')&&
+				($this->readAuthUser('role')!='teacher')
+			)
+			{
+				if($this->readCookie('Auth'))
+					$this->deleteCookie('Auth');
+				
+				$this->Flash->error(__('管理画面へのアクセス権限がありません'));
+				$this->Authentication->logout();
+				return;
+			}
+		}
+	}
 }
