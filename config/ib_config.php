@@ -169,7 +169,7 @@ $config['import_course_count'] = 20;
 
 $config['bootstrap_form_template'] = [
 	'inputContainer' => '<div class="form-group {{required}}">{{content}}</div>',
-	'inputContainerError' => '<div class="form-group {{required}} error">{{content}}{{error}}</div>',
+	'inputContainerError' => '<div class="form-group {{required}} error">{{content}}<div class="col col-sm-3"></div><div class="col col-sm-9">{{error}}</div></div>',
 	'label' => '<label{{attrs}} class="col col-sm-3 control-label">{{text}}</label>',
 	'input' => '<div class="col col-sm-9"><input type="{{type}}" name="{{name}}"{{attrs}} class="form-control"/> <span class="input-after">{{after}}</span></div>',
 	'textarea' => '<div class="col col-sm-9"><textarea name="{{name}}"{{attrs}} class="form-control">{{value}}</textarea></div>',
