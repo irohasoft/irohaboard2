@@ -18,6 +18,9 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Routing\Router;
+use Cake\Event\Event;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use App\Vendor\Utils;
 
 /**
@@ -52,6 +55,18 @@ class AppController extends Controller
 		// add 2020.10.6
 		$this->loadComponent('Authentication.Authentication');
 
+		/*
+		 * Enable the following component for recommended CakePHP form protection settings.
+		 * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
+		 */
+		//$this->loadComponent('FormProtection');
+		
+		$this->action = $this->request->getParam('action');
+		$this->webroot = Router::url('/', true);
+	}
+
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
 		$this->set('loginedUser', $this->readSession('Auth'));
 		
 		// 他のサイトの設定が存在する場合、設定情報及びログイン情報をクリア
@@ -63,7 +78,7 @@ class AppController extends Controller
 				$this->deleteSession('Setting');
 				
 				// 他のサイトとのログイン情報の混合を避けるため、強制ログアウト
-				if($this->Auth->user())
+				if($this->readAuthUser())
 				{
 					//$this->Cookie->delete('Auth');
 					$this->redirect($this->Auth->logout());
@@ -85,17 +100,8 @@ class AppController extends Controller
 				$this->writeSession('Setting.'.$key, $value);
 			}
 		}
-
-		/*
-		 * Enable the following component for recommended CakePHP form protection settings.
-		 * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
-		 */
-		//$this->loadComponent('FormProtection');
-		
-		$this->action = $this->request->getParam('action');
-		$this->webroot = Router::url('/', true);
 	}
-
+	
 	protected function readSession($key)
 	{
 		return $this->getRequest()->getSession()->read($key);
@@ -103,7 +109,7 @@ class AppController extends Controller
 
 	protected function deleteSession($key)
 	{
-		return $this->getRequest()->getSession()->check($key);
+		return $this->getRequest()->getSession()->delete($key);
 	}
 
 	protected function writeSession($key, $value)
@@ -114,6 +120,22 @@ class AppController extends Controller
 	protected function readAuthUser($key)
 	{
 		return $this->getRequest()->getSession()->read('Auth.'.$key);
+	}
+
+	protected function readCookie($key)
+	{
+		return $this->getRequest()->getCookie($key);
+	}
+
+	protected function deleteCookie($key)
+	{
+		$cookie = new Cookie($key);
+		$this->response = $this->response->withExpiredCookie($cookie);
+	}
+
+	protected function writeCookie($key, $value)
+	{
+		$this->Cookie->write($key, $value);
 	}
 
 	protected function getQuery($key)
@@ -163,7 +185,7 @@ class AppController extends Controller
 		$data = array(
 			'log_type'    => $log_type,
 			'log_content' => $log_content,
-			'user_id'     => $this->Auth->user('id'),
+			'user_id'     => $this->readAuthUser('id'),
 			'user_ip'     => $_SERVER['REMOTE_ADDR'],
 			'user_agent'  => $_SERVER['HTTP_USER_AGENT']
 		);
