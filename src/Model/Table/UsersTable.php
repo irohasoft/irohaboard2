@@ -37,147 +37,149 @@ use Cake\Validation\Validator;
  */
 class UsersTable extends Table
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config): void
+	{
+		parent::initialize($config);
 
-        $this->setTable('ib_users');
-        $this->setDisplayField('name');
-        $this->setPrimaryKey('id');
+		$this->setTable('ib_users');
+		$this->setDisplayField('name');
+		$this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 		
 		// ビヘイビア（friendsofcake/search）の追加
-        $this->addBehavior("Search.Search");
-        
-        // Setup search filter using search manager
-        /*
-        $this->searchManager()
-            ->value('group_id', ['filterEmpty' => false,])
-            // Here we will alias the 'q' query param to search the `Articles.title`
-            // field and the `Articles.content` field, using a LIKE match, with `%`
-            // both before and after.
-            ->add('q', 'Search.Like', [
-                'before' => true,
-                'after' => true,
-                'fieldMode' => 'OR',
-                'comparison' => 'LIKE',
-                'wildcardAny' => '*',
-                'wildcardOne' => '?',
-                'fields' => ['group_id', 'username'],
-            ])
-            ->add('foo', 'Search.Callback', [
-                'callback' => function (\Cake\ORM\Query $query, array $args, \Search\Model\Filter\Base $filter) {
-                    // Modify $query as required
-                }
-        ]);
-        */
-        
-        $this->hasMany('Contents', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasMany('Courses', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasMany('Infos', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasMany('Logs', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasMany('Records', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->belongsToMany('Courses', [
-            'foreignKey' => 'user_id',
-            'targetForeignKey' => 'course_id',
-            'joinTable' => 'users_courses',
-        ]);
-        $this->belongsToMany('Groups', [
-            'foreignKey' => 'user_id',
-            'targetForeignKey' => 'group_id',
-            'joinTable' => 'users_groups',
-        ]);
-    }
+		$this->addBehavior("Search.Search");
+		
+		// Setup search filter using search manager
+		/*
+		$this->searchManager()
+			->value('group_id', ['filterEmpty' => false,])
+			// Here we will alias the 'q' query param to search the `Articles.title`
+			// field and the `Articles.content` field, using a LIKE match, with `%`
+			// both before and after.
+			->add('q', 'Search.Like', [
+				'before' => true,
+				'after' => true,
+				'fieldMode' => 'OR',
+				'comparison' => 'LIKE',
+				'wildcardAny' => '*',
+				'wildcardOne' => '?',
+				'fields' => ['group_id', 'username'],
+			])
+			->add('foo', 'Search.Callback', [
+				'callback' => function (\Cake\ORM\Query $query, array $args, \Search\Model\Filter\Base $filter) {
+					// Modify $query as required
+				}
+		]);
+		*/
+		
+		$this->hasMany('Contents', [
+			'foreignKey' => 'user_id',
+		]);
+		$this->hasMany('Courses', [
+			'foreignKey' => 'user_id',
+		]);
+		$this->hasMany('Infos', [
+			'foreignKey' => 'user_id',
+		]);
+		$this->hasMany('Logs', [
+			'foreignKey' => 'user_id',
+		]);
+		$this->hasMany('Records', [
+			'foreignKey' => 'user_id',
+		]);
+		$this->belongsToMany('Courses', [
+			'foreignKey' => 'user_id',
+			'targetForeignKey' => 'course_id',
+			'joinTable' => 'users_courses',
+		]);
+		$this->belongsToMany('Groups', [
+			'foreignKey' => 'user_id',
+			'targetForeignKey' => 'group_id',
+			'joinTable' => 'users_groups',
+		]);
+	}
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator): Validator
-    {
-        $validator
-            ->integer('id')
-            ->allowEmptyString('id', null, 'create');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator): Validator
+	{
+		$validator
+			->integer('id')
+			->allowEmptyString('id', null, 'create');
 
-        $validator
-            ->scalar('username')
-            ->maxLength('username', 50)
-            ->notEmptyString('username')
-            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+		$validator
+			->scalar('username')
+			->minLength('username', 4)
+			->maxLength('username', 50)
+			->notEmptyString('username')
+			->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
-        $validator
-            ->scalar('password')
-            ->maxLength('password', 200)
-            ->notEmptyString('password');
+		$validator
+			->scalar('password')
+			->minLength('password', 4)
+			->maxLength('password', 200)
+			->notEmptyString('password');
 
-        $validator
-            ->scalar('name')
-            ->maxLength('name', 50)
-            ->notEmptyString('name');
+		$validator
+			->scalar('name')
+			->maxLength('name', 50)
+			->notEmptyString('name');
 
-        $validator
-            ->scalar('role')
-            ->maxLength('role', 20)
-            ->notEmptyString('role');
+		$validator
+			->scalar('role')
+			->maxLength('role', 20)
+			->notEmptyString('role');
 
-        $validator
-            ->email('email')
-            ->notEmptyString('email');
+		$validator
+			->email('email')
+			->notEmptyString('email');
 
-        $validator
-            ->scalar('comment')
-            ->allowEmptyString('comment');
+		$validator
+			->scalar('comment')
+			->allowEmptyString('comment');
 
-        $validator
-            ->dateTime('last_logined')
-            ->allowEmptyDateTime('last_logined');
+		$validator
+			->dateTime('last_logined')
+			->allowEmptyDateTime('last_logined');
 
-        $validator
-            ->dateTime('started')
-            ->allowEmptyDateTime('started');
+		$validator
+			->dateTime('started')
+			->allowEmptyDateTime('started');
 
-        $validator
-            ->dateTime('ended')
-            ->allowEmptyDateTime('ended');
+		$validator
+			->dateTime('ended')
+			->allowEmptyDateTime('ended');
 
-        $validator
-            ->dateTime('deleted')
-            ->allowEmptyDateTime('deleted');
+		$validator
+			->dateTime('deleted')
+			->allowEmptyDateTime('deleted');
 
-        return $validator;
-    }
+		return $validator;
+	}
 
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules): RulesChecker
-    {
-        $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
-        $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules): RulesChecker
+	{
+		$rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
+		$rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
 
-        return $rules;
-    }
+		return $rules;
+	}
 }

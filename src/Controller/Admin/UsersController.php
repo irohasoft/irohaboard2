@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Core\Configure;
+
 /**
  * Users Controller
  *
@@ -203,5 +205,50 @@ class UsersController extends AdminController
 		}
 
 		return $this->redirect(['action' => 'index']);
+	}
+
+	/**
+	 * パスワード変更
+	 */
+	public function setting()
+	{
+		if ($this->request->is(array(
+				'post',
+				'put'
+		)))
+		{
+			if(Configure::read('demo_mode'))
+				return;
+			$data = $this->getData();
+			
+			//debug($data);
+			
+			if($data['User']['new_password'] != $data['User']['new_password2'])
+			{
+				$this->Flash->error(__('入力された「パスワード」と「パスワード（確認用）」が一致しません'));
+				return;
+			}
+			
+			if($data['User']['new_password'] !== '')
+			{
+				$user = $this->Users->get($this->readAuthUser('id'));
+				
+				$user->password = $data['User']['new_password'];
+				
+				if ($this->Users->save($user))
+				{
+					$this->Flash->success(__('パスワードが保存されました'));
+					$data = null;
+				}
+				else
+				{
+					$this->Flash->error(__('The user could not be saved. Please, try again.'));
+				}
+			}
+			else
+			{
+				$this->Flash->error(__('パスワードを入力して下さい'));
+			}
+		}
 	}
 }
