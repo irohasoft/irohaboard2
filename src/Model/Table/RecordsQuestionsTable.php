@@ -52,10 +52,6 @@ class RecordsQuestionsTable extends Table
             'foreignKey' => 'record_id',
             'joinType' => 'INNER',
         ]);
-        $this->belongsTo('Questions', [
-            'foreignKey' => 'question_id',
-            'joinType' => 'INNER',
-        ]);
     }
 
     /**
@@ -100,7 +96,6 @@ class RecordsQuestionsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['record_id'], 'Records'), ['errorField' => 'record_id']);
-        $rules->add($rules->existsIn(['question_id'], 'Questions'), ['errorField' => 'question_id']);
 
         return $rules;
     }

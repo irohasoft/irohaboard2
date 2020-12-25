@@ -11,41 +11,47 @@ namespace App\Controller;
  */
 class RecordsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Courses', 'Users', 'Contents'],
-        ];
-        $records = $this->paginate($this->Records);
+	/**
+	 * 学習履歴を追加
+	 * 
+	 * @param int $content_id    コンテンツID
+	 * @param int $is_complete   完了フラグ
+	 * @param int $study_sec     学習時間
+	 * @param int $understanding 理解度
+	 */
+	public function add($content_id, $is_complete, $study_sec, $understanding)
+	{
+		$this->autoRender = FALSE;
+		
+		// コンテンツ情報を取得
+		$this->loadModel('Contents');
+		$content = $this->Contents->get($content_id, [
+			'contain' => ['Courses'],
+		]);
+		
+		$data = array(
+			'user_id'		=> $this->Auth->user('id'),
+			'course_id'		=> $content->course->id,
+			'content_id'	=> $content_id,
+			'study_sec'		=> $study_sec,
+			'understanding'	=> $understanding,
+			'is_passed'		=> -1,
+			'is_complete'	=> $is_complete
+		);
+		
+		$record = $this->Records->newEmptyEntity();
+		$record = $this->Records->patchEntity($record, $data);
+		
+		if ($this->Records->save($record))
+		{
+			$this->Flash->success(__('学習履歴を保存しました'));
 
-        $this->set(compact('records'));
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $record = $this->Records->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $record = $this->Records->patchEntity($record, $this->request->getData());
-            if ($this->Records->save($record)) {
-                $this->Flash->success(__('The record has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The record could not be saved. Please, try again.'));
-        }
-        $courses = $this->Records->Courses->find('list', ['limit' => 200]);
-        $users = $this->Records->Users->find('list', ['limit' => 200]);
-        $contents = $this->Records->Contents->find('list', ['limit' => 200]);
-        $this->set(compact('record', 'courses', 'users', 'contents'));
-    }
+			return $this->redirect(['action' => 'index']);
+			return $this->redirect(array(
+				'controller' => 'contents',
+				'action' => 'index',
+				$content->id
+			));
+		}
+	}
 }
