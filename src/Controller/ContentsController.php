@@ -16,7 +16,7 @@ class ContentsController extends AppController
 	 * @param int $course_id コースID
 	 * @param int $user_id 学習履歴を表示するユーザのID
 	 */
-	public function index($course_id)
+	public function index($course_id, $user_id = null)
 	{
 		$course_id = intval($course_id);
 		
@@ -28,8 +28,10 @@ class ContentsController extends AppController
 		// ロールを取得
 		$role = $this->readAuthUser('role');
 		
+		$is_admin_record = (($role=='admin') && ($this->action=='adminRecord'));
+		
 		// 管理者かつ、学習履歴表示モードの場合、
-		if($this->action == 'admin_record')
+		if($is_admin_record)
 		{
 			$contents = $this->Contents->getContentRecord($user_id, $course_id, $role);
 		}
@@ -48,7 +50,21 @@ class ContentsController extends AppController
 		/*
 		exit;
 		*/
-		$this->set(compact('course', 'contents'));
+		$this->set(compact('course', 'contents', 'is_admin_record'));
+	}
+
+	/**
+	 * テスト結果を表示（管理者用）
+	 * @param int $content_id 表示するコンテンツ(テスト)のID
+	 * @param int $record_id 履歴ID
+	 */
+	public function adminRecord($course_id, $user_id)
+	{
+		if($this->readAuthUser('role')!='admin')
+			return;
+		
+		$this->index($course_id, $user_id);
+		$this->render('index');
 	}
 
 	/**

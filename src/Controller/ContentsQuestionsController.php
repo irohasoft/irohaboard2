@@ -48,7 +48,7 @@ class ContentsQuestionsController extends AppController
 			// テスト結果情報を取得
 			$this->loadModel('Records');
 			$record = $this->Records->get($record_id, [
-				'contain' => ['RecordsQuestions'],
+				'contain' => ['Courses', 'RecordsQuestions'],
 			]);
 			
 			// テスト結果に紐づく問題ID一覧（出題順）を作成
@@ -208,8 +208,8 @@ class ContentsQuestionsController extends AppController
 			}
 		}
 		
-		$is_record = (($this->action == 'record') || ($this->action == 'admin_record'));	// テスト結果表示フラグ
-		$is_admin_record = ($this->action == 'admin_record');
+		$is_record = (($this->action == 'record') || ($this->action == 'adminRecord'));	// テスト結果表示フラグ
+		$is_admin_record = ($this->action == 'adminRecord');
 		
 		$this->set(compact('content', 'contentsQuestions', 'record', 'is_record', 'is_admin_record'));
 	}
@@ -221,6 +221,20 @@ class ContentsQuestionsController extends AppController
 	 */
 	public function record($content_id, $record_id)
 	{
+		$this->index($content_id, $record_id);
+		$this->render('index');
+	}
+
+	/**
+	 * テスト結果を表示（管理者用）
+	 * @param int $content_id 表示するコンテンツ(テスト)のID
+	 * @param int $record_id 履歴ID
+	 */
+	public function adminRecord($content_id, $record_id)
+	{
+		if($this->readAuthUser('role')!='admin')
+			return;
+		
 		$this->index($content_id, $record_id);
 		$this->render('index');
 	}

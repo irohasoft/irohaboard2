@@ -11,6 +11,13 @@ namespace App\Controller\Admin;
  */
 class RecordsController extends AdminController
 {
+	/*
+	public $paginate = [
+		'limit' => 25,
+		'order' => ['Records.created' => 'desc']
+	];
+	*/
+	
 	public function initialize(): void
 	{
 		parent::initialize();
@@ -30,6 +37,7 @@ class RecordsController extends AdminController
 	{
 		$this->paginate = [
 			'contain' => ['Courses', 'Users', 'Contents'],
+			'order' => ['Records.created' => 'desc'],
 		];
 		
 		$conditions = [];
@@ -61,7 +69,7 @@ class RecordsController extends AdminController
 			$this->Records->find('all')->where($conditions)
 			->where(['Records.created BETWEEN :from_date AND :to_date'])
 			->bind(':from_date', $from_date, 'date')
-			->bind(':to_date',	 $to_date, 'date')
+			->bind(':to_date',	 $to_date.' 23:59:50', 'datetime')
 		);
 		
 		$groups = $this->Groups->find('list');

@@ -15,7 +15,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	function openRecord(course_id, user_id)
 	{
 		window.open(
-			'<?php echo Router::url(array('controller' => 'contents', 'action' => 'record')) ?>/'+course_id+'/'+user_id,
+			'<?php echo Router::url(array('controller' => 'contents', 'action' => 'admin-record', 'prefix' => false)) ?>/'+course_id+'/'+user_id,
 			'irohaboard_record',
 			'width=1100, height=700, menubar=no, toolbar=no, scrollbars=yes'
 		);
@@ -24,7 +24,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	function openTestRecord(content_id, record_id)
 	{
 		window.open(
-			'<?= Router::url(array('controller' => 'contents_questions', 'action' => 'record')) ?>/'+content_id+'/'+record_id,
+			'<?= Router::url(array('controller' => 'contents_questions', 'action' => 'admin-record', 'prefix' => false)) ?>/'+content_id+'/'+record_id,
 			'irohaboard_record',
 			'width=1100, height=700, menubar=no, toolbar=no, scrollbars=yes'
 		);

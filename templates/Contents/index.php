@@ -18,7 +18,7 @@ use App\Vendor\Utils;
 	.responsive-table tbody td:nth-of-type(7):before { content: "<?php echo __('理解度').' : '?>"; }
 }
 
-<?php if($this->request->getParam('action')=='admin_record') { // 学習履歴表示モードの場合、メニューを表示しない ?>
+<?php if($this->action=='adminRecord') { // 学習履歴表示モードの場合、メニューを表示しない ?>
 .ib-navi-item
 {
 	display					: none;
@@ -34,9 +34,6 @@ use App\Vendor\Utils;
 <div class="contents-index">
 	<div class="ib-breadcrumb">
 	<?php
-	$is_admin_record = ($this->request->getParam('action')=='admin_record');
-	//$this->test();
-	
 	// 管理者による学習履歴表示の場合、パンくずリストを表示しない
 	if(!$is_admin_record)
 	{
