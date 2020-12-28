@@ -35,7 +35,7 @@ use App\Vendor\Utils;
 				var csrf = $('input[name=_csrfToken]').val();
 
 				$.ajax({
-					url: "<?= Router::url(array('action' => 'order')) ?>",
+					url: "<?= Router::url(['action' => 'order']) ?>",
 					type: "POST",
 					data: { id_list : id_list },
 					dataType: "text",
@@ -60,7 +60,7 @@ use App\Vendor\Utils;
 <div class="courses index content">
 	<div class="ib-page-title"><?= __('コース一覧'); ?></div>
 	<div class="buttons_container">
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add')) ?>'">+ 追加</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add']) ?>'">+ 追加</button>
 	</div>
 
 	<div class="alert alert-warning"><?= __('ドラッグアンドドロップでコースの並び順が変更できます。'); ?></div>
@@ -78,7 +78,7 @@ use App\Vendor\Utils;
 	<tr>
 		<td>
 			<?php 
-				echo $this->Html->link($course->title, array('controller' => 'contents', 'action' => 'index', $course->id));
+				echo $this->Html->link($course->title, ['controller' => 'contents', 'action' => 'index', $course->id]);
 			?>
 		</td>
 		<td class="ib-col-date"><?= h(Utils::getYMDHN($course->created)); ?>&nbsp;</td>

@@ -145,9 +145,9 @@ class UsersCoursesTable extends Table
   ORDER BY Course.sort_no asc
 EOF;
 
-		$params = array(
+		$params = [
 			'user_id' => $user_id
-		);
+		];
 		
 		$connection = ConnectionManager::get('default');
 		$data = $connection->execute($sql, $params)->fetchAll('assoc');

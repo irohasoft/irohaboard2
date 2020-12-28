@@ -53,7 +53,7 @@ use App\Vendor\Utils;
 	<?php if($course['introduction']!='') {?>
 	<div class="well">
 		<?php
-		$introduction = $this->Text->autoLinkUrls($course['introduction'], array( 'target' => '_blank'));
+		$introduction = $this->Text->autoLinkUrls($course['introduction'], [ 'target' => '_blank']);
 		$introduction = nl2br($introduction);
 		echo $introduction;
 	?>
@@ -86,11 +86,11 @@ use App\Vendor\Utils;
 			case 'test': // テスト
 				$icon  = 'glyphicon glyphicon-check text-danger';
 				$title_link = $this->Html->link(
-					$content['title'], array(
+					$content['title'], [
 					'controller' => 'contents_questions',
 					'action' => 'index',
 					$content['id']
-				));
+				]);
 				$kind  = Configure::read('content_kind.'.$content['kind']);
 
 				// テスト結果が存在する場合、テスト結果へのリンクを出力
@@ -99,12 +99,12 @@ use App\Vendor\Utils;
 					$result = Configure::read('record_result.'.$content['is_passed']);
 					
 					$understanding = $this->Html->link(
-						$result, array(
+						$result, [
 						'controller' => 'contents_questions',
 						'action' => $is_admin_record ? 'adminRecord' : 'record',
 						$content['id'],
 						$content['record_id']
-					));
+					]);
 				}
 				break;
 			case 'file': // 配布資料
@@ -119,20 +119,20 @@ use App\Vendor\Utils;
 				$title_link = $this->Html->link(
 					$content['title'], 
 					$url,
-					array(
+					[
 						'target'=>'_blank',
 						'download' => $content['file_name']
-					)
+					]
 				);
 				break;
 			default : // その他（学習）
 				$icon  = 'glyphicon glyphicon-play-circle text-info';
 				$title_link = $this->Html->link(
-					$content['title'], array(
+					$content['title'], [
 					'controller' => 'contents',
 					'action' => 'view',
 					$content['id']
-				));
+				]);
 				$kind  =  __('学習'); // 一律学習と表記
 				$understanding = h(Configure::read('record_understanding.'.$content['understanding']));
 				break;

@@ -35,7 +35,7 @@ use App\Vendor\Utils;
 				var csrf = $('input[name=_csrfToken]').val();
 
 				$.ajax({
-					url: "<?= Router::url(array('action' => 'order')) ?>",
+					url: "<?= Router::url(['action' => 'order']) ?>",
 					type: "POST",
 					data: { id_list : id_list },
 					dataType: "text",
@@ -62,8 +62,8 @@ use App\Vendor\Utils;
 <div class="admin-contents-questions-index">
 	<div class="ib-breadcrumb">
 	<?php 
-		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
-		$this->Breadcrumbs->add($content->course->title, array('controller' => 'contents', 'action' => 'index', $content->course->id));
+		$this->Breadcrumbs->add(__('コース一覧'), ['controller' => 'courses', 'action' => 'index']);
+		$this->Breadcrumbs->add($content->course->title, ['controller' => 'contents', 'action' => 'index', $content->course->id]);
 		$this->Breadcrumbs->add(h($content->title));
 		
 		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
@@ -72,7 +72,7 @@ use App\Vendor\Utils;
 	<div class="ib-page-title"><?= __('テスト問題一覧'); ?></div>
 	
 	<div class="buttons_container">
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add', $content->id)) ?>'">+ 追加</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add', $content->id]) ?>'">+ 追加</button>
 	</div>
 	
 	<div class="alert alert-warning"><?= __('ドラッグアンドドロップで出題順が変更できます。'); ?></div>

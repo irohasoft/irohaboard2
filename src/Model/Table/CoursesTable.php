@@ -128,10 +128,10 @@ class CoursesTable extends AppTable
 		{
 			$sql = "UPDATE ib_courses SET sort_no = :sort_no WHERE id= :id";
 
-			$params = array(
+			$params = [
 				'sort_no' => ($i+1),
 				'id' => $id_list[$i]
-			);
+			];
 
 			$this->db_execute($sql, $params);
 		}
@@ -148,10 +148,10 @@ class CoursesTable extends AppTable
 	{
 		$has_right = false;
 		
-		$params = array(
+		$params = [
 			'user_id'   => $user_id,
 			'course_id' => $course_id
-		);
+		];
 		
 		$sql = <<<EOF
 SELECT count(*) as cnt
@@ -181,9 +181,9 @@ EOF;
 	// コースの削除
 	public function deleteCourse($course_id)
 	{
-		$params = array(
+		$params = [
 			'course_id' => $course_id
-		);
+		];
 		
 		// テスト問題の削除
 		$sql = "DELETE FROM ib_contents_questions WHERE content_id IN (SELECT id FROM  ib_contents WHERE course_id = :course_id);";

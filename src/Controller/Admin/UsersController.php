@@ -46,7 +46,7 @@ class UsersController extends AdminController
 
 		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
 		if ($this->request->is('post') && !$result->isValid()) {
-			$this->Flash->error(__('Invalid username or password'));
+			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
 		}
 	}
 
@@ -212,10 +212,10 @@ class UsersController extends AdminController
 	 */
 	public function setting()
 	{
-		if ($this->request->is(array(
+		if ($this->request->is([
 				'post',
 				'put'
-		)))
+		]))
 		{
 			if(Configure::read('demo_mode'))
 				return;

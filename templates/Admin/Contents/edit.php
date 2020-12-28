@@ -38,11 +38,11 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			if(val=='url')
 				val = 'file';
 			
-			//window.open('<?= Router::url(array('controller' => 'contents', 'action' => 'upload'))?>/'+val, '_upload', 'width=650,height=500,resizable=no');
+			//window.open('<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/'+val, '_upload', 'width=650,height=500,resizable=no');
 			$('#uploadDialog').modal('show');
 
 			//モーダル画面にiframeを追加する
-			$("#uploadFrame").attr("src", "<?= Router::url(array('controller' => 'contents', 'action' => 'upload'))?>/" + val);
+			$("#uploadFrame").attr("src", "<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/" + val);
 			return false;
 		});
 
@@ -111,7 +111,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		var content_kind = $('input[name="kind"]:checked').val();
 		
 		$.ajax({
-			url: "<?= Router::url(array('action' => 'preview')) ?>",
+			url: "<?= Router::url(['action' => 'preview']) ?>",
 			type: "POST",
 			data: {
 				content_title : $("#title").val(),
@@ -123,7 +123,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			success : function(response){
 				//通信成功時の処理
 				//alert(response);
-				var url = '<?= Router::url(array('controller' => 'contents', 'action' => 'preview'))?>'.replace('admin/', '');
+				var url = '<?= Router::url(['controller' => 'contents', 'action' => 'preview'])?>'.replace('admin/', '');
 				
 				window.open(url, '_preview', 'width=1000,height=700,resizable=no');
 			},
@@ -153,8 +153,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 
 <div class="admin-contents-edit">
 	<?php
-		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
-		$this->Breadcrumbs->add($course['Course']['title'],  array('controller' => 'contents', 'action' => 'index', $course['Course']['id']));
+		$this->Breadcrumbs->add(__('コース一覧'), ['controller' => 'courses', 'action' => 'index']);
+		$this->Breadcrumbs->add($course['Course']['title'],  ['controller' => 'contents', 'action' => 'index', $course['Course']['id']]);
 
 		echo $this->Breadcrumbs->render([], [' / ']);
 	?>
@@ -165,8 +165,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		<div class="panel-body">
 			<?php
 			echo $this->Form->create($content, ['class' => 'form-horizontal']);
-			echo $this->Form->control('title',	array('label' => __('コンテンツ名')));
-			echo $this->Form->control('kind',	array(
+			echo $this->Form->control('title',	['label' => __('コンテンツ名')]);
+			echo $this->Form->control('kind',	[
 				'type' => 'radio',
 				'label' => __('コンテンツ種別'),
 				'separator'=>"<br>",
@@ -175,43 +175,43 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				'legend' => false,
 				'class' => false,
 				'options' => Configure::read('content_kind_comment')
-				)
+				]
 			);
 
 			echo "<div class='kind kind-movie kind-url kind-file'>";
-			echo $this->Form->control('url',		array('label' => __('URL'), 'class' => 'form-control form-control-upload'));
+			echo $this->Form->control('url',		['label' => __('URL'), 'class' => 'form-control form-control-upload']);
 			echo "</div>";
 			
 			// 配布資料
 			echo "<div class='kind kind-file'>";
-			echo $this->Form->control('file_name', array('label' => __('ファイル名'), 'class' => 'form-control-filename', 'readonly' => 'readonly'));
+			echo $this->Form->control('file_name', ['label' => __('ファイル名'), 'class' => 'form-control-filename', 'readonly' => 'readonly']);
 			echo "</div>";
 
 			// テキスト・リッチテキスト
 			echo "<div class='kind kind-text kind-html'>";
-			echo $this->Form->control('body',		array('label' => __('内容')));
+			echo $this->Form->control('body',		['label' => __('内容')]);
 			echo "</div>";
 
 			// テスト
 			echo "<span class='kind kind-test'>";
-			echo $this->Form->control('timelimit', array(
+			echo $this->Form->control('timelimit', [
 				'label' => __('制限時間 (1-100分)'),
 				'templateVars' => ['after' => __('指定した場合、制限時間を過ぎると自動的に採点されます。')],
-			));
+			]);
 			
-			echo $this->Form->control('pass_rate', array(
+			echo $this->Form->control('pass_rate', [
 				'label' => __('合格とする得点率 (1-100%)'),
-			));
+			]);
 			
 			// ランダム出題用
-			echo $this->Form->control('question_count', array(
+			echo $this->Form->control('question_count', [
 				'label' => __('出題数 (1-100問)'),
 				'templateVars' => ['after' => __('指定した場合、登録した問題の中からランダムに出題されます。')],
-			));
+			]);
 			echo "</span>";
 
 			// ステータス
-			echo $this->Form->control('status',	array(
+			echo $this->Form->control('status',	[
 				'type' => 'radio',
 				'label' => __('ステータス'),
 				'templateVars' => ['after' => __('　非公開と設定した場合、管理者権限でログインした場合のみ表示されます。')],
@@ -219,21 +219,21 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				'options' => Configure::read('content_status'),
 				'hiddenField' => false,
 				'required' => true
-				)
+				]
 			);
 			
 			// コンテンツ移動用
 			if(($this->action == 'edit'))
 			{
-				echo $this->Form->control('course_id', array(
+				echo $this->Form->control('course_id', [
 					'label' => __('所属コース'),
 					'value'=>$course->id,
 					'templateVars' => ['after' => __('変更することで他のコースにコンテンツを移動できます。')],
-				));
+				]);
 			}
 
 			echo "<span class='kind kind-text kind-html kind-movie kind-url kind-file kind-test'>";
-			echo $this->Form->control('comment', array('label' => __('備考')));
+			echo $this->Form->control('comment', ['label' => __('備考')]);
 			echo "</span>";
 			?>
 			<div class="form-group">

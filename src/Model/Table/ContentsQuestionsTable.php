@@ -145,10 +145,10 @@ class ContentsQuestionsTable extends AppTable
 		{
 			$sql = "UPDATE ib_contents_questions SET sort_no = :sort_no WHERE id= :id";
 
-			$params = array(
+			$params = [
 				'sort_no' => ($i+1),
 				'id' => $id_list[$i]
-			);
+			];
 
 			$this->db_execute($sql, $params);
 		}

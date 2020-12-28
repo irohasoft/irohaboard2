@@ -21,6 +21,7 @@ use Cake\Routing\Router;
 use Cake\Event\Event;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use DateTime;
 use App\Vendor\Utils;
 
 /**
@@ -60,7 +61,6 @@ class AppController extends Controller
 		 * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
 		 */
 		//$this->loadComponent('FormProtection');
-		
 		$this->action = $this->request->getParam('action');
 		$this->webroot = Router::url('/', true);
 	}
@@ -109,12 +109,12 @@ class AppController extends Controller
 
 	protected function deleteSession($key)
 	{
-		return $this->getRequest()->getSession()->delete($key);
+		$this->getRequest()->getSession()->delete($key);
 	}
 
 	protected function writeSession($key, $value)
 	{
-		return $this->getRequest()->getSession()->write($key, $value);
+		$this->getRequest()->getSession()->write($key, $value);
 	}
 
 	protected function readAuthUser($key)
@@ -135,7 +135,31 @@ class AppController extends Controller
 
 	protected function writeCookie($key, $value)
 	{
-		$this->Cookie->write($key, $value);
+		/*
+		$this->Cookie->configKey('User', [
+			'expires' => '+2 weeks',
+			'httpOnly' => true
+		]);
+		exit;
+		*/
+		
+		/*
+		//クッキーに書き込み設定を作る
+		//とりあえずデフォルト設定でキーと値だけ渡す
+		$this->response = $this->response->withCookie(new Cookie('key', 'value'));
+
+		//パラメータを渡す場合
+		$cookie = (new Cookie($key))
+			->withValue($value)  //value
+			->withExpiry(new Time('+2 weeks'))  //タイムアウト
+//			->withPath('/')
+//			->withDomain('example.com')  //ドメインを指定する場合
+			->withSecure(false);
+//			->withHttpOnly(true);  //HTTPSだけにする
+
+		//クッキーの書き込み
+		$this->response = $this->response->withCookie($cookie);
+		*/
 	}
 
 	protected function getQuery($key)
@@ -182,13 +206,13 @@ class AppController extends Controller
 
 	protected function writeLog($log_type, $log_content)
 	{
-		$data = array(
+		$data = [
 			'log_type'    => $log_type,
 			'log_content' => $log_content,
 			'user_id'     => $this->readAuthUser('id'),
 			'user_ip'     => $_SERVER['REMOTE_ADDR'],
 			'user_agent'  => $_SERVER['HTTP_USER_AGENT']
-		);
+		];
 		
 		
 		$this->loadModel('Log');

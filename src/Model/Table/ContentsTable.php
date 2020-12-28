@@ -180,11 +180,11 @@ class ContentsTable extends AppTable
   ORDER BY Content.sort_no
 EOF;
 
-		$params = array(
+		$params = [
 				'user_id' => $user_id,
 				'course_id' => $course_id,
 				'role' => $role
-		);
+		];
 
 		$data = $this->db_query($sql, $params);
 
@@ -202,10 +202,10 @@ EOF;
 		{
 			$sql = "UPDATE ib_contents SET sort_no = :sort_no WHERE id= :id";
 
-			$params = array(
+			$params = [
 				'sort_no' => ($i+1),
 				'id' => $id_list[$i]
-			);
+			];
 
 			$this->db_execute($sql, $params);
 		}

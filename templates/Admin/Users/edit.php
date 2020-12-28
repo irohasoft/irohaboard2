@@ -31,7 +31,7 @@ $this->Form->setConfig('errorClass', 'form-control form-error');
 			
 			echo $this->Form->create($user, ['class' => 'form-horizontal']);
 			echo $this->Form->control('username',		['label' => __('ログインID'), 'required' => true]);
-			echo $this->Form->control('new_password',	array('label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password'));
+			echo $this->Form->control('new_password',	['label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password']);
 			echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
 			echo $this->Form->control('role',			['label' => __('権限'), 'required' => true, 
 				'options' => Configure::read('user_role'), 'type' => 'radio', 'hiddenField' => false]);

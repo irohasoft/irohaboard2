@@ -11,7 +11,7 @@ use App\Vendor\Utils;
 <div class="admin-groups-index">
 	<div class="ib-page-title"><?= __('グループ一覧'); ?></div>
 	<div class="buttons_container">
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add')) ?>'">+ 追加</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add']) ?>'">+ 追加</button>
 	</div>
 	
 	<table>

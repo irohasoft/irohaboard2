@@ -35,7 +35,7 @@ use App\Vendor\Utils;
 				var csrf = $('input[name=_csrfToken]').val();
 
 				$.ajax({
-					url: "<?= Router::url(array('action' => 'order')) ?>",
+					url: "<?= Router::url(['action' => 'order']) ?>",
 					type: "POST",
 					data: { id_list : id_list },
 					dataType: "text",
@@ -60,7 +60,7 @@ use App\Vendor\Utils;
 <div class="admin-contents-index">
 	<div class="ib-breadcrumb">
 	<?php
-		$this->Breadcrumbs->add(__('コース一覧'), array('controller' => 'courses', 'action' => 'index'));
+		$this->Breadcrumbs->add(__('コース一覧'), ['controller' => 'courses', 'action' => 'index']);
 		$this->Breadcrumbs->add(h($course->title));
 
 		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
@@ -69,7 +69,7 @@ use App\Vendor\Utils;
 	</div>
 	<div class="ib-page-title"><?= __('コンテンツ一覧'); ?></div>
 	<div class="buttons_container">
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add', $course->id)) ?>'">+ 追加</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add', $course->id]) ?>'">+ 追加</button>
 	</div>
 	<div class="alert alert-warning"><?= __('ドラッグアンドドロップでコンテンツの並び順が変更できます。'); ?></div>
 	<table id='sortable-table'>
@@ -89,7 +89,7 @@ use App\Vendor\Utils;
 		switch($content->kind)
 		{
 			case 'test':
-				$title = $this->Html->link($content->title, array('controller' => 'contents_questions', 'action' => 'index', $content->id));
+				$title = $this->Html->link($content->title, ['controller' => 'contents_questions', 'action' => 'index', $content->id]);
 				break;
 			default :
 				$title = h($content->title);

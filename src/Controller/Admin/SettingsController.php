@@ -20,7 +20,7 @@ class SettingsController extends AdminController
      */
     public function index()
     {
-		if ($this->request->is(array('post', 'put')))
+		if ($this->request->is(['post', 'put']))
 		{
 			if(Configure::read('demo_mode'))
 				return;

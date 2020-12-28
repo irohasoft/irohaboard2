@@ -89,9 +89,9 @@ SELECT setting_value
   FROM ib_settings
  WHERE setting_key = :setting_key
 EOF;
-		$params = array(
+		$params = [
 				'setting_key' => $setting_key
-		);
+		];
 		
 		$data = $this->query($sql, $params);
 		
@@ -105,7 +105,7 @@ EOF;
 	 */
 	public function getSettings()
 	{
-		$result = array();
+		$result = [];
 		
 		$settings = $this->find('all')->toList();
 		
@@ -125,10 +125,10 @@ EOF;
 	{
 		foreach ($settings as $key => $value)
 		{
-			$params = array(
+			$params = [
 				'setting_key' => $key,
 				'setting_value' => $value
-			);
+			];
 			
 			$this->db_execute("UPDATE ib_settings SET setting_value = :setting_value WHERE setting_key = :setting_key", $params);
 		}

@@ -14,9 +14,9 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	<div class="ib-page-title"><?= __('ユーザ一覧'); ?></div>
 	<div class="buttons_container">
 		<?php if($loginedUser['role']=='admin'){ ?>
-		<button type="button" class="btn btn-primary btn-export" onclick="location.href='<?= Router::url(array('action' => 'export')) ?>'">エクスポート</button>
-		<button type="button" class="btn btn-primary btn-import" onclick="location.href='<?= Router::url(array('action' => 'import')) ?>'">インポート</button>
-		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(array('action' => 'add')) ?>'">+ 追加</button>
+		<button type="button" class="btn btn-primary btn-export" onclick="location.href='<?= Router::url(['action' => 'export']) ?>'">エクスポート</button>
+		<button type="button" class="btn btn-primary btn-import" onclick="location.href='<?= Router::url(['action' => 'import']) ?>'">インポート</button>
+		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add']) ?>'">+ 追加</button>
 		<?php }?>
 	</div>
 	<div class="ib-horizontal">

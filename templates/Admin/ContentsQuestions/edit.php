@@ -143,9 +143,9 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	<div class="ib-breadcrumb">
 	<?php 
 		//debug($content);
-		$this->Breadcrumbs->add('コース一覧',  array('controller' => 'courses', 'action' => 'index'));
-		$this->Breadcrumbs->add($content->course->title,  array('controller' => 'contents', 'action' => 'index', $content->course->id));
-		$this->Breadcrumbs->add($content->title, array('controller' => 'contents_questions', 'action' => 'index', $content->id));
+		$this->Breadcrumbs->add('コース一覧',  ['controller' => 'courses', 'action' => 'index']);
+		$this->Breadcrumbs->add($content->course->title,  ['controller' => 'contents', 'action' => 'index', $content->course->id]);
+		$this->Breadcrumbs->add($content->title, ['controller' => 'contents_questions', 'action' => 'index', $content->id]);
 		
 		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	?>
@@ -157,8 +157,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		<div class="panel-body">
 			<?php
 				echo $this->Form->create($contentsQuestion, ['class' => 'form-horizontal']);
-				echo $this->Form->control('title',	array('label' => __('タイトル')));
-				echo $this->Form->control('body',		array('label' => __('問題文')));
+				echo $this->Form->control('title',	['label' => __('タイトル')]);
+				echo $this->Form->control('body',		['label' => __('問題文')]);
 			?>
 			<div class="form-group required">
 				<label for="options" class="col col-sm-3 control-label">選択肢／正解</label>
@@ -169,24 +169,24 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				<button class="btn" onclick="add_option();return false;">＋</button>
 				<button class="btn" onclick="del_option();return false;">−</button><br>
 			<?php
-				echo $this->Form->control('option_list',	array('label' => __('選択肢／正解'), 
+				echo $this->Form->control('option_list',	['label' => __('選択肢／正解'), 
 					'type' => 'select',
 					'label' => false,
 					'multiple' => true,
 					'size' => 5,
 					'onchange' => 'update_correct()'
-				));
-				echo $this->Form->hidden('options',		array('label' => __('選択肢')));
+				]);
+				echo $this->Form->hidden('options',		['label' => __('選択肢')]);
 			?>
 				</div>
 			</div>
 			<?php
 				echo "<div class='' style='display:none;'>";
-				echo $this->Form->control('correct',	array('label' => __('正解')));
+				echo $this->Form->control('correct',	['label' => __('正解')]);
 				echo "</div>";
-				echo $this->Form->control('score',	array('label' => __('得点')));
-				echo $this->Form->control('explain',	array('label' => __('解説')));
-				echo $this->Form->control('comment',	array('label' => __('備考')));
+				echo $this->Form->control('score',	['label' => __('得点')]);
+				echo $this->Form->control('explain',	['label' => __('解説')]);
+				echo $this->Form->control('comment',	['label' => __('備考')]);
 				echo $this->Form->submit('保存', Configure::read('form_submit_defaults'));
 				$this->Form->end();
 			?>

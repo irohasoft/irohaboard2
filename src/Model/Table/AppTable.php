@@ -33,7 +33,7 @@ class AppTable extends Table
 	{
 		$data = $this->db_query($sql, $params, $field_name);
 		
-		$list = array();
+		$list = [];
 		
 		for($i=0; $i< count($data); $i++)
 		{

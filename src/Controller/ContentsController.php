@@ -37,6 +37,7 @@ class ContentsController extends AppController
 		}
 		else
 		{
+			//debug($this->readAuthUser('id'));
 			// コースの閲覧権限の確認
 			if(! $this->Courses->hasRight($this->readAuthUser('id'), $course_id))
 			{

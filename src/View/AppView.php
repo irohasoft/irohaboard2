@@ -44,7 +44,16 @@ class AppView extends View
     {
 		$this->action = $this->request->getParam('action');
 		$this->webroot = Router::url('/', true);
-    }
+		
+		/*
+		$this->Breadcrumbs->setTemplates([
+			'wrapper' => '{{content}}',
+			'item' => '<a href="{{url}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
+			'itemWithoutLink' => '<span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
+			'separator' => ' > '
+		]);
+		*/
+	}
 
 	public function getAction()
 	{

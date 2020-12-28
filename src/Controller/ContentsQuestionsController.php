@@ -91,7 +91,7 @@ class ContentsQuestionsController extends AppController
 				->order(['rand()']);// 乱数で並び替え
 			
 			// 問題IDの一覧を作成
-			$question_id_list = array();
+			$question_id_list = [];
 			
 			foreach ($contentsQuestions as $contentsQuestion)
 			{
@@ -114,7 +114,7 @@ class ContentsQuestionsController extends AppController
 		//------------------------------//
 		if ($this->request->is('post'))
 		{
-			$details	= array();								// 成績詳細情報
+			$details	= [];								// 成績詳細情報
 			$full_score	= 0;									// 最高点
 			$pass_score	= 0;									// 合格基準点
 			$my_score	= 0;									// 得点
@@ -155,13 +155,13 @@ class ContentsQuestionsController extends AppController
 					$my_score += $score;
 				
 				// 問題の正誤
-				$details[$i] = array(
+				$details[$i] = [
 					'question_id'	=> $question_id,	// 問題ID
 					'answer'		=> $answer,			// 解答
 					'correct'		=> $correct,		// 正解
 					'is_correct'	=> $is_correct,		// 正誤
 					'score'			=> $score,			// 配点
-				);
+				];
 				$i++;
 			}
 			
@@ -172,7 +172,7 @@ class ContentsQuestionsController extends AppController
 			$is_passed = ($my_score >= $pass_score) ? 1 : 0;
 			
 			// 追加する成績情報
-			$data = array(
+			$data = [
 				'user_id'		=> $this->readAuthUser('id'),						// ログインユーザのユーザID
 				'course_id'		=> $content->course->id,					// コースID
 				'content_id'	=> $content_id,									// コンテンツID
@@ -182,7 +182,7 @@ class ContentsQuestionsController extends AppController
 				'is_passed'		=> $is_passed,									// 合否判定
 				'study_sec'		=> $study_sec,									// テスト実施時間
 				'is_complete'	=> 1
-			);
+			];
 			
 			$this->loadModel('Records');
 			$record = $this->Records->newEmptyEntity();
@@ -209,11 +209,11 @@ class ContentsQuestionsController extends AppController
 				// ランダム出題用の問題IDリストを削除
 				$this->deleteSession('Iroha.RondomQuestions.'.$content_id.'.id_list');
 				
-				$this->redirect(array(
+				$this->redirect([
 					'action' => 'record',
 					$content_id,
 					$record->id
-				));
+				]);
 			}
 		}
 		

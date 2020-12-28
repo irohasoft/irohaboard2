@@ -40,8 +40,8 @@ use App\Vendor\Utils;
 		echo $this->fetch('script-embedded');
 	?>
 	<script>
-	var URL_RECORDS_ADD		= '<?php echo Router::url(array('controller' => 'records', 'action' => 'add', $content->id))?>'; // 学習履歴保存用URL
-	var URL_CONTNES_INDEX	= '<?php echo Router::url(array('action' => 'index', $content->course->id))?>'; // コンテンツ一覧画面
+	var URL_RECORDS_ADD		= '<?php echo Router::url(['controller' => 'records', 'action' => 'add', $content->id])?>'; // 学習履歴保存用URL
+	var URL_CONTNES_INDEX	= '<?php echo Router::url(['action' => 'index', $content->course->id])?>'; // コンテンツ一覧画面
 	var BUTTON_PC_LIST		= <?php echo json_encode(Configure::read('record_understanding_pc')) ?>;
 	var BUTTON_SPN_LIST		= <?php echo json_encode(Configure::read('record_understanding_spn')) ?>;
 	</script>

@@ -111,7 +111,7 @@ class ContentsController extends AdminController
 		{
 			// コンテンツに紐づくテスト問題も削除
 			$this->LoadModel('ContentsQuestions');
-			$this->ContentsQuestions->deleteAll(array('ContentsQuestions.content_id' => $content_id), false);
+			$this->ContentsQuestions->deleteAll(['ContentsQuestions.content_id' => $content_id], false);
 			$this->Flash->success(__('コンテンツが削除されました'));
 		}
 		else

@@ -29,7 +29,7 @@ class RecordsController extends AppController
 			'contain' => ['Courses'],
 		]);
 		
-		$data = array(
+		$data = [
 			'user_id'		=> $this->Auth->user('id'),
 			'course_id'		=> $content->course->id,
 			'content_id'	=> $content_id,
@@ -37,7 +37,7 @@ class RecordsController extends AppController
 			'understanding'	=> $understanding,
 			'is_passed'		=> -1,
 			'is_complete'	=> $is_complete
-		);
+		];
 		
 		$record = $this->Records->newEmptyEntity();
 		$record = $this->Records->patchEntity($record, $data);
@@ -47,11 +47,11 @@ class RecordsController extends AppController
 			$this->Flash->success(__('学習履歴を保存しました'));
 
 			return $this->redirect(['action' => 'index']);
-			return $this->redirect(array(
+			return $this->redirect([
 				'controller' => 'contents',
 				'action' => 'index',
 				$content->id
-			));
+			]);
 		}
 	}
 }

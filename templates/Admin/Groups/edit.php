@@ -18,7 +18,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	});
 <?php $this->Html->scriptEnd(); ?>
 <div class="admin-groups-edit">
-<?= $this->Html->link(__('<< 戻る'), array('action' => 'index'))?>
+<?= $this->Html->link(__('<< 戻る'), ['action' => 'index'])?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<?= ($this->action == 'edit') ? __('編集') :  __('新規グループ'); ?>
@@ -26,9 +26,9 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		<div class="panel-body">
 		<?php
 			echo $this->Form->create($group, ['class' => 'form-horizontal']);
-			echo $this->Form->control('title',	array('label' => __('グループ名')));
+			echo $this->Form->control('title',	['label' => __('グループ名')]);
 			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
-			echo $this->Form->control('comment',	array('label' => __('備考')));
+			echo $this->Form->control('comment',	['label' => __('備考')]);
 			echo $this->Form->submit(__('保存'), Configure::read('form_submit_defaults'));
 			echo $this->Form->end();
 		?>

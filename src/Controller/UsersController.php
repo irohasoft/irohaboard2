@@ -89,10 +89,10 @@ class UsersController extends AppController
 		$data = $this->request->getCookie('Auth');
 		debug($data);
 		*/
-		if ($this->request->is(array(
+		if ($this->request->is([
 				'post',
 				'put'
-		)))
+		]))
 		{
 			if(Configure::read('demo_mode'))
 				return;

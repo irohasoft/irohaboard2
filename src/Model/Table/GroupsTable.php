@@ -103,7 +103,7 @@ class GroupsTable extends AppTable
 	{
 		$sql = "SELECT user_id FROM ib_users_groups WHERE group_id = :group_id";
 		
-		$params = array('group_id' => $group_id);
+		$params = ['group_id' => $group_id];
 		
 		$list = $this->db_query_value($sql, $params, 'user_id');
 		/*
