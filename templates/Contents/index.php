@@ -101,7 +101,7 @@ use App\Vendor\Utils;
 					$understanding = $this->Html->link(
 						$result, array(
 						'controller' => 'contents_questions',
-						'action' => 'record',
+						'action' => $is_admin_record ? 'adminRecord' : 'record',
 						$content['id'],
 						$content['record_id']
 					));

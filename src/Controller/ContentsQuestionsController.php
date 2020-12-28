@@ -51,6 +51,15 @@ class ContentsQuestionsController extends AppController
 				'contain' => ['Courses', 'RecordsQuestions'],
 			]);
 			
+			// 受講者によるテスト結果表示の場合、自身のテスト結果か確認
+			if(
+				($this->action == 'record')&&
+				($record->user_id!=$this->readAuthUser('id'))
+			)
+			{
+				throw new NotFoundException(__('Invalid access'));
+			}
+			
 			// テスト結果に紐づく問題ID一覧（出題順）を作成
 			$question_id_list = [];
 			
