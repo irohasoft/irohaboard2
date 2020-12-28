@@ -5,6 +5,12 @@ namespace App\Controller;
 
 use Cake\Core\Configure;
 use Cake\Routing\Router;
+/*
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Middleware\EncryptedCookieMiddleware;
+use DateTime;
+*/
 
 /**
  * Users Controller
@@ -19,24 +25,47 @@ class UsersController extends AppController
 		parent::beforeFilter($event);
 		// custom 2020.10.6
 		// ログインアクションを認証を必要としないように設定することで、
-		// 無限リダイレクトループの問題を防ぐことができます
+		// 無限リダイレクトループの問題を防止
 		$this->Authentication->addUnauthenticatedActions(['login']);
 	}
 	
 	public function login()
 	{
+		//debug($this->request->getCookie('Auth'));
+		/*
+		$this->request = $this->request->withData('username', $this->request->getCookie('Auth.username'));
+		$this->request = $this->request->withData('password', $this->request->getCookie('Auth.password'));
+		$this->request = $this->request->withData('remember_me', $this->request->getCookie('Auth.remember_me'));
+		//debug($this->getData());
+		//exit;
+		*/
 		$this->request->allowMethod(['get', 'post']);
 		$result = $this->Authentication->getResult();
 		//debug($result);
 		// If the user is logged in send them away.
 		if ($result->isValid())
 		{
+			/*
+			if($this->getData('remember_me'))
+			{
+				$cookie = $this->getData();
+				$this->response = $this->response->withCookie(Cookie::create(
+					'Auth',
+					$cookie,
+					[
+						'expires' => new DateTime('+2 weeks'),
+//						'secure' => true,
+//						'http' => true,
+					]
+				));
+			}
+			*/
 			return $this->redirect(['controller' => 'UsersCourses', 'action' => 'index']);
 		}
 
-		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
+		// ユーザーが submit 後、認証失敗した場合は、エラーを表示
 		if ($this->request->is('post') && !$result->isValid()) {
-			$this->Flash->error(__('Invalid username or password'));
+			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
 		}
 	}
 
@@ -56,6 +85,10 @@ class UsersController extends AppController
 	 */
 	public function setting()
 	{
+		/*
+		$data = $this->request->getCookie('Auth');
+		debug($data);
+		*/
 		if ($this->request->is(array(
 				'post',
 				'put'

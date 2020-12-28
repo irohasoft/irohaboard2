@@ -10,9 +10,7 @@
 			<?= $this->Form->create(null) ?>
 			<?= $this->Form->control('username', ['label' => __('ログインID')]) ?>
 			<?= $this->Form->control('password', ['label' => __('パスワード')]) ?>
-			<div class="form-group">
-				<input type="checkbox" name="remember_me" checked="checked" value="1" id="remember_me"><?php echo __('ログイン状態を保持')?>
-			</div>
+			<?= $this->Form->control('remember_me', ['type' => 'checkbox', 'label'=> __('ログイン状態を保持'), 'default' => 1]);?>
 			<input class="btn btn-lg btn-primary btn-block" type="submit" value="ログイン">
 			<?= $this->Form->end() ?>
 		</div>
