@@ -66,7 +66,7 @@
 	<style>
 		.ib-theme-color
 		{
-			background-color	: <?php echo h($color); ?>;
+			background-color	: <?= h($color); ?>;
 			color				: white;
 		}
 		
@@ -80,14 +80,14 @@
 <body>
 	<div class="header ib-theme-color">
 		<div class="ib-logo ib-left">
-			<?php echo $this->Html->link($title, '/')?>
+			<?= $this->Html->link($title, '/')?>
 		</div>
 		<?php if(isset($loginedUser)) {?>
-		<div class="ib-navi-item ib-right"><?php echo $this->Html->link(__('ログアウト'), ['controller' => 'users', 'action' => 'logout']); ?></div>
+		<div class="ib-navi-item ib-right"><?= $this->Html->link(__('ログアウト'), ['controller' => 'users', 'action' => 'logout']); ?></div>
 		<div class="ib-navi-sepa ib-right"></div>
-		<div class="ib-navi-item ib-right"><?php echo $this->Html->link(__('設定'), ['controller' => 'users', 'action' => 'setting']); ?></div>
+		<div class="ib-navi-item ib-right"><?= $this->Html->link(__('設定'), ['controller' => 'users', 'action' => 'setting']); ?></div>
 		<div class="ib-navi-sepa ib-right"></div>
-		<div class="ib-navi-item ib-right"><?php echo __('ようこそ').' '.h($loginedUser["name"]).' '.__('さん'); ?></div>
+		<div class="ib-navi-item ib-right"><?= __('ようこそ').' '.h($loginedUser["name"]).' '.__('さん'); ?></div>
 		<?php }?>
 	</div>
 
@@ -101,7 +101,7 @@
 	</main>
 
 	<div class="ib-theme-color text-center">
-		<?php echo h($copyright); ?>
+		<?= h($copyright); ?>
 	</div>
 	
 	<div class="irohasoft">

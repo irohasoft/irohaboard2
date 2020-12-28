@@ -15,7 +15,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	</div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<?php echo __('設定')?>
+			<?= __('設定')?>
 		</div>
 		<div class="panel-body">
 			<?php

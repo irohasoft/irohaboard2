@@ -1,4 +1,4 @@
-<?php echo $this->element('admin_menu'); ?>
+<?= $this->element('admin_menu'); ?>
 <?php
 /**
  * @var \App\View\AppView $this
@@ -13,7 +13,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 <div class="admin-settings-index">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <?php echo __('システム設定'); ?>
+            <?= __('システム設定'); ?>
         </div>
         <div class="panel-body">
             <?php

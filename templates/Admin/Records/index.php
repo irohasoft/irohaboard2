@@ -9,13 +9,13 @@ use App\Vendor\Utils;
 
 $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 ?>
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <?php $this->start('script-embedded'); ?>
 <script>
 	function openRecord(course_id, user_id)
 	{
 		window.open(
-			'<?php echo Router::url(['controller' => 'contents', 'action' => 'admin-record', 'prefix' => false]) ?>/'+course_id+'/'+user_id,
+			'<?= Router::url(['controller' => 'contents', 'action' => 'admin-record', 'prefix' => false]) ?>/'+course_id+'/'+user_id,
 			'irohaboard_record',
 			'width=1100, height=700, menubar=no, toolbar=no, scrollbars=yes'
 		);

@@ -10,9 +10,9 @@ use App\Vendor\Utils;
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
+	<?= $this->Html->charset(); ?>
 	
-	<title><?php echo $content->title; ?></title>
+	<title><?= $content->title; ?></title>
 	<meta name="application-name" content="iroha Board">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1">
@@ -40,10 +40,10 @@ use App\Vendor\Utils;
 		echo $this->fetch('script-embedded');
 	?>
 	<script>
-	var URL_RECORDS_ADD		= '<?php echo Router::url(['controller' => 'records', 'action' => 'add', $content->id])?>'; // 学習履歴保存用URL
-	var URL_CONTNES_INDEX	= '<?php echo Router::url(['action' => 'index', $content->course->id])?>'; // コンテンツ一覧画面
-	var BUTTON_PC_LIST		= <?php echo json_encode(Configure::read('record_understanding_pc')) ?>;
-	var BUTTON_SPN_LIST		= <?php echo json_encode(Configure::read('record_understanding_spn')) ?>;
+	var URL_RECORDS_ADD		= '<?= Router::url(['controller' => 'records', 'action' => 'add', $content->id])?>'; // 学習履歴保存用URL
+	var URL_CONTNES_INDEX	= '<?= Router::url(['action' => 'index', $content->course->id])?>'; // コンテンツ一覧画面
+	var BUTTON_PC_LIST		= <?= json_encode(Configure::read('record_understanding_pc')) ?>;
+	var BUTTON_SPN_LIST		= <?= json_encode(Configure::read('record_understanding_spn')) ?>;
 	</script>
 </head>
 <body>
@@ -67,15 +67,15 @@ use App\Vendor\Utils;
 	}
 ?>
 <div class="content-view">
-	<div class="content-title"><?php echo h($content->title)?></div>
-	<div class="content-body content-body-<?php echo $content->kind?>"><?php echo $body;?></div>
+	<div class="content-title"><?= h($content->title)?></div>
+	<div class="content-body content-body-<?= $content->kind?>"><?= $body;?></div>
 	<div class="content-foot">
 		<div class="content-menu">
-			<div class="select-message text-success"><?php echo __('理解度を選択して終了して下さい。');?></div>
+			<div class="select-message text-success"><?= __('理解度を選択して終了して下さい。');?></div>
 			<span class='understanding-pc'></span>
 			<span class='understanding-spn'></span>
-			<button type="button" class="btn btn-danger" onclick="finish(0);"><?php echo __('中断');?></button>
-			<button type="button" class="btn btn-default" onclick="finish(-1);"><?php echo __('戻る');?></button>
+			<button type="button" class="btn btn-danger" onclick="finish(0);"><?= __('中断');?></button>
+			<button type="button" class="btn btn-default" onclick="finish(-1);"><?= __('戻る');?></button>
 		</div>
 	</div>
 </div>
