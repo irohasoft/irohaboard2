@@ -9,6 +9,9 @@
  */
 namespace App\Vendor;
 
+use Cake\Core\Configure;
+use \SplFileObject;
+
 // ユーティリティクラス
 class Utils
 {

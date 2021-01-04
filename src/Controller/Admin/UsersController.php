@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
+
+use App\Vendor\Utils;
 
 /**
  * Users Controller
@@ -223,17 +226,17 @@ class UsersController extends AdminController
 			
 			//debug($data);
 			
-			if($data['User']['new_password'] != $data['User']['new_password2'])
+			if($data['new_password'] != $data['new_password2'])
 			{
 				$this->Flash->error(__('入力された「パスワード」と「パスワード（確認用）」が一致しません'));
 				return;
 			}
 			
-			if($data['User']['new_password'] !== '')
+			if($data['new_password'] !== '')
 			{
 				$user = $this->Users->get($this->readAuthUser('id'));
 				
-				$user->password = $data['User']['new_password'];
+				$user->password = $data['new_password'];
 				
 				if ($this->Users->save($user))
 				{
@@ -250,5 +253,337 @@ class UsersController extends AdminController
 				$this->Flash->error(__('パスワードを入力して下さい'));
 			}
 		}
+	}
+
+	/**
+	 * ユーザ情報のインポート
+	 */
+	public function import()
+	{
+		if(Configure::read('demo_mode'))
+			return;
+		
+		$group_count  = Configure::read('import_group_count');		// 所属グループの列数
+		$course_count = Configure::read('import_course_count');		// 受講コースの列数
+		
+		//------------------------------//
+		//	列番号の定義				//
+		//------------------------------//
+		define('COL_LOGINID',	0);
+		define('COL_PASSWORD',	1);
+		define('COL_NAME',		2);
+		define('COL_ROLE',		3);
+		define('COL_EMAIL',		4);
+		define('COL_COMMENT',	5);
+		define('COL_GROUP',		6);
+		define('COL_COURSE',	6 + $group_count);
+		
+		$err_msg = '';
+		
+		if ($this->request->is(array(
+				'post',
+				'put'
+		)))
+		{
+			//------------------------------//
+			//	CSVファイルの読み込み		//
+			//------------------------------//
+			// 制限時間を120秒に設定
+			set_time_limit(120);
+			
+			//$csvfile = $this->getData('csvfile');
+			
+			$files = $this->request->getUploadedFiles();
+			//debug($files['csvfile']->getStream()->getMetadata('uri'));
+			
+			// インポートファイルが指定されていない場合、エラーメッセージを表示
+			if($files['csvfile']->getError() != 0)
+			{
+				$this->Flash->error(__('インポートファイルが指定されていません'));
+				$this->set(compact('err_msg'));
+				return;
+			}
+			
+			// CSVファイルの読み込み
+			$path = $files['csvfile']->getStream()->getMetadata('uri');
+			//debug($path);
+			$csv = Utils::getCsvData($path);
+			
+			$i = 0;
+			
+			$ds = ConnectionManager::get('default');
+			$ds->begin();
+			
+			try
+			{
+				$is_error = false;
+				
+				$group_list  = $this->Users->Groups->find('list');	// 所属グループ
+				$course_list = $this->Users->Courses->find('list');	// 受講コース
+				
+				// 1行ごとにデータを登録
+				foreach($csv as $row)
+				{
+					$i++;
+					
+					if($i < 2)
+						continue;
+					
+					if(count($row) < 5)
+						continue;
+					
+					$is_new = false;
+					
+					//------------------------------//
+					//	ユーザ情報の作成			//
+					//------------------------------//
+					$data = $this->Users->find('all')
+						->where(['Users.username' => $row[COL_LOGINID]])
+						->contain(['Courses', 'Groups'])
+						->first();
+					
+					// 指定したログインIDのユーザが存在しない場合、新規追加とする
+					if(!$data)
+					{
+						$data = $this->Users->newEmptyEntity();
+						$data->created = date('Y-m-d H:i:s');
+						$is_new = true;
+					}
+					
+					// ユーザ名
+					$data->username = $row[COL_LOGINID];
+					
+					// パスワード
+					if($row[COL_PASSWORD]=='')
+					{
+						unset($data->password);
+					}
+					else
+					{
+						$data->password = $row[COL_PASSWORD];
+					}
+					
+					$data->name = $row[COL_NAME];											// 氏名
+					$data->role = Utils::getKeyByValue('user_role', $row[COL_ROLE]);		// 権限
+					$data->email = $row[COL_EMAIL];											// メールアドレス
+					$data->comment = @$row[COL_COMMENT];									// 備考
+					//debug($data->groups);
+					//----------------------------------//
+					//	所属グループ・受講コースの割当	//
+					//----------------------------------//
+					$data->groups = [];		// 所属グループの割当の初期化
+					$data->courses = [];	// 受講コースの割当の初期化
+					
+					// 所属グループの割当
+					for($n=0; $n < $group_count; $n++)
+					{
+						$title = @$row[COL_GROUP + $n];
+						
+						if($title=='')
+							continue;
+						
+						$group_id = Utils::getIdByTitle($group_list, $title);
+						
+						if($group_id==null)
+							continue;
+						
+						$group = $this->Users->Groups->get($group_id);
+						$data->groups[] = $group;
+					}
+					
+					// 受講コースの割当
+					for($n=0; $n < $course_count; $n++)
+					{
+						$title = @$row[COL_COURSE + $n];
+						
+						if($title=='')
+							continue;
+						
+						$course_id = Utils::getIdByTitle($course_list, $title);
+						
+						if($course_id==null)
+							continue;
+						
+						$course = $this->Users->Courses->get($course_id);
+						$data->courses[] = $course;
+					}
+					
+					$data->modified = date('Y-m-d H:i:s');
+					
+					//debug($data);
+					
+					//------------------------------//
+					//	保存						//
+					//------------------------------//
+					if(!$this->Users->save($data))
+					{
+						//debug($data);
+						//debug($this->Users->validationErrors);
+						
+						// 保存時にエラーが発生した場合、モデルからエラー情報を抽出
+						$err_list = $data->getErrors();
+						
+						//debug($err_list);
+						foreach($err_list as $key => $value)
+						{
+							foreach($err_list[$key] as $key2 => $value2)
+							{
+								$err_msg .= '<li>'.$i.'行目 : '.$value2.'</li>';
+							}
+						}
+						
+						$is_error = true;
+					}
+				}
+				
+				//------------------------------//
+				//	エラー処理					//
+				//------------------------------//
+				if($is_error)
+				{
+					$ds->rollback();
+					$this->Flash->error(__('インポートに失敗しました'));
+				}
+				else
+				{
+					$ds->commit();
+					$this->Flash->success(__('インポートが完了しました'));
+					return $this->redirect(array(
+						'action' => 'index'
+					));
+				}
+			}
+			catch (Exception $e)
+			{
+				$ds->rollback();
+				$this->Flash->error(__('インポートに失敗しました'));
+			}
+		}
+		
+		$this->set(compact('err_msg'));
+	}
+
+	/**
+	 * ユーザ情報のエクスポート
+	 */
+	public function export()
+	{
+		$group_count  = Configure::read('import_group_count');		// 所属グループの列数
+		$course_count = Configure::read('import_course_count');		// 受講コースの列数
+		
+		$this->autoRender = false;
+		Configure::write('debug', 0);
+
+		//Content-Typeを指定
+		$this->response->withType('csv');
+		
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="users_'.date('Ymd').'.csv"');
+		
+		$fp = fopen('php://output','w');
+		
+		//------------------------------//
+		//	ヘッダー行の作成			//
+		//------------------------------//
+		$header = array(
+			__('ログインID'),
+			__('パスワード'),
+			__('氏名'),
+			__('権限'),
+			__('メールアドレス'),
+			__('備考'),
+		);
+		
+		for($n=0; $n < $group_count; $n++)
+		{
+			$header[count($header)] = __('グループ').($n+1);
+		}
+		
+		for($n=0; $n < $course_count; $n++)
+		{
+			$header[count($header)] = __('コース').($n+1);
+		}
+		
+		// ヘッダー行をCSV出力
+		mb_convert_variables('SJIS-win', 'UTF-8', $header);
+		fputcsv($fp, $header);
+		
+		//------------------------------//
+		//	ユーザ情報の取得			//
+		//------------------------------//
+		
+		// パフォーマンスの改善の為、一定件数に分割してデータを取得
+		$limit      = 500;
+		$user_count = $this->Users->find('all')->count();	// ユーザ数を取得
+		$page_size  = ceil($user_count / $limit);	// ページ数（ユーザ数 / ページ単位）
+		
+		// ページ単位でユーザを取得
+		for($page=1; $page <= $page_size; $page++)
+		{
+			// ユーザ情報を取得
+			$rows = $this->Users->find('all')->limit($limit)->page($page)->contain(['Groups', 'Courses']);
+			
+			foreach($rows as $row)
+			{
+				//------------------------------//
+				//	出力するデータを作成		//
+				//------------------------------//
+				$groups  = [];
+				$courses = [];
+				
+				for($n=0; $n < $group_count; $n++)
+					$groups[count($groups)] = '';
+				
+				for($n=0; $n < $course_count; $n++)
+					$courses[count($courses)] = '';
+				
+				$i = 0;
+				
+				// 所属グループのリストを作成
+				foreach($row->groups as $group)
+				{
+					$groups[$i] = $group->title;
+					$i++;
+				}
+				
+				$i = 0;
+				
+				// 受講コースのリストを作成
+				foreach($row->courses as $course)
+				{
+					$courses[$i] = $course->title;
+					$i++;
+				}
+				
+				// 出力行を作成
+				$line = array(
+					$row->username,								// ユーザ名
+					'',											// パスワード
+					$row->name,									// 氏名
+					Configure::read('user_role.'.$row->role),	// 権限
+					$row->email,								// メールアドレス
+					$row->comment,								// 備考
+				);
+				
+				// 所属グループを出力
+				for($n=0; $n < $group_count; $n++)
+				{
+					$line[count($line)] = $groups[$n];
+				}
+				
+				// 受講コースを出力
+				for($n=0; $n < $course_count; $n++)
+				{
+					$line[count($line)] = $courses[$n];
+				}
+				
+				
+				// CSV出力
+				mb_convert_variables('SJIS-win', 'UTF-8', $line);
+				fputcsv($fp, $line);
+			}
+		}
+		
+		fclose($fp);
 	}
 }
