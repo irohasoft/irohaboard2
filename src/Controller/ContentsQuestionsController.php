@@ -65,7 +65,7 @@ class ContentsQuestionsController extends AppController
 			
 			foreach($record->records_questions as $question)
 			{
-				$question_id_list[] = $question['question_id'];
+				$question_id_list[] = $question->question_id;
 			}
 			
 			// 問題ID一覧を元に問題情報を取得
@@ -86,16 +86,16 @@ class ContentsQuestionsController extends AppController
 		{
 			// ランダム出題情報を取得
 			$contentsQuestions = $this->ContentsQuestions->find('all')
-				->where(['content_id' => $content_id, 'ContentsQuestions.id IN' => $question_id_list])
+				->where(['content_id' => $content_id])
 				->limit($content->question_count) // 出題数
 				->order(['rand()']);// 乱数で並び替え
 			
 			// 問題IDの一覧を作成
 			$question_id_list = [];
 			
-			foreach ($contentsQuestions as $contentsQuestion)
+			foreach($contentsQuestions as $question)
 			{
-				$question_id_list[count($question_id_list)] = $contentsQuestion->id;
+				$question_id_list[] = $question->id;
 			}
 			
 			// ランダム出題情報を一時的にセッションに格納（リロードによる変化や、採点時の問題情報との矛盾を防ぐため）
@@ -114,7 +114,7 @@ class ContentsQuestionsController extends AppController
 		//------------------------------//
 		if ($this->request->is('post'))
 		{
-			$details	= [];								// 成績詳細情報
+			$details	= [];									// 成績詳細情報
 			$full_score	= 0;									// 最高点
 			$pass_score	= 0;									// 合格基準点
 			$my_score	= 0;									// 得点
@@ -173,8 +173,8 @@ class ContentsQuestionsController extends AppController
 			
 			// 追加する成績情報
 			$data = [
-				'user_id'		=> $this->readAuthUser('id'),						// ログインユーザのユーザID
-				'course_id'		=> $content->course->id,					// コースID
+				'user_id'		=> $this->readAuthUser('id'),					// ログインユーザのユーザID
+				'course_id'		=> $content->course->id,						// コースID
 				'content_id'	=> $content_id,									// コンテンツID
 				'full_score'	=> $full_score,									// 合計点
 				'pass_score'	=> $pass_score,									// 合格基準得点
@@ -248,9 +248,17 @@ class ContentsQuestionsController extends AppController
 		$this->render('index');
 	}
 
-	// 複数選択問題の正誤判定
+	/**
+	 * 複数選択問題の正誤判定
+	 * @param int $answers 受講者が選択した選択肢リスト
+	 * @param int $corrects 正解リスト
+	 * @return bool true : 正解 / false : 不正解
+	 */
 	private function isMultiCorrect($answers, $corrects)
 	{
+		if(!$answers)
+			return false;
+		
 		// 解答数と正解数が一致しない場合、不合格
 		if(count($answers)!=count($corrects))
 			return false;

@@ -180,7 +180,7 @@ class AppController extends Controller
 			return null;
 		
 		if($key)
-			$val = $val[$key];
+			$val = empty($val[$key]) ? null :$val[$key];
 		
 		return $val;
 	}
