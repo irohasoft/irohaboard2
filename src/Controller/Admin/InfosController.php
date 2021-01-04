@@ -19,7 +19,24 @@ class InfosController extends AdminController
 	public function index()
 	{
 		$this->paginate = [
-			'contain' => ['Users'],
+			'contain' => ['Infos'],
+		];
+
+		$this->paginate = [
+			'fields' => [
+				'Infos.id',
+				'Infos.title',
+				'Infos.created',
+				'Infos.modified',
+				// 対象グループ一覧
+				'group_title'	=> '(SELECT group_concat(g.title order by g.id SEPARATOR \', \') as group_title  FROM ib_infos_groups  ug INNER JOIN ib_groups  g ON g.id = ug.group_id  WHERE ug.info_id = Infos.id)',
+			
+			],
+			'limit' => 20,
+			'order' => [
+				'Infos.created' => 'desc'
+			],
+			'contain' => ['Groups'],
 		];
 		$infos = $this->paginate($this->Infos);
 
@@ -65,7 +82,7 @@ class InfosController extends AdminController
 		{
 			$info = $this->Infos->patchEntity($info, $this->request->getData());
 			
-			$info->user_id = $this->getRequest()->getSession()->read('Auth.id');
+			$info->info_id = $this->getRequest()->getSession()->read('Auth.id');
 			
 			if ($this->Infos->save($info))
 			{

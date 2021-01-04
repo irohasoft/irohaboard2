@@ -10,25 +10,27 @@
 	<h3><?= __('お知らせ一覧') ?></h3>
 	<table>
 		<thead>
-			<tr>
+		<tr>
 			<th><?= $this->Paginator->sort('title',		__('タイトル')) ?></th>
+			<th nowrap><?php echo __('対象グループ'); ?></th>
 			<th><?= $this->Paginator->sort('created',	__('作成日時')) ?></th>
 			<th><?= $this->Paginator->sort('modified',	__('更新日時')) ?></th>
 				<th class="actions"><?= __('Actions') ?></th>
-			</tr>
+		</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($infos as $info): ?>
-			<tr>
-				<td><?= h($info->title) ?></td>
-				<td><?= h($info->created) ?></td>
-				<td><?= h($info->modified) ?></td>
-				<td class="ib-col-action">
-					<?= $this->Html->link(__('編集'), ['action' => 'edit', $info->id], ['class' => 'btn btn-success']) ?>
-					<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $info->id], ['confirm' => __('{0} を削除してもよろしいですか?', $info->title), 'class'=>'btn btn-danger']) ?>
-				</td>
-			</tr>
-			<?php endforeach; ?>
+		<?php foreach ($infos as $info): ?>
+		<tr>
+			<td><?= h($info->title) ?></td>
+			<td><div class="reader col-group" title="<?php echo h($info->group_title); ?>"><p><?php echo h($info->group_title); ?>&nbsp;</p></td>
+			<td><?= h($info->created) ?></td>
+			<td><?= h($info->modified) ?></td>
+			<td class="ib-col-action">
+				<?= $this->Html->link(__('編集'), ['action' => 'edit', $info->id], ['class' => 'btn btn-success']) ?>
+				<?= $this->Form->postLink(__('削除'), ['action' => 'delete', $info->id], ['confirm' => __('{0} を削除してもよろしいですか?', $info->title), 'class'=>'btn btn-danger']) ?>
+			</td>
+		</tr>
+		<?php endforeach; ?>
 		</tbody>
 	</table>
 	<?= $this->element('paging');?>
