@@ -46,8 +46,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 				<th><?= $this->Paginator->sort('username',		__('ログインID')) ?></th>
 				<th><?= $this->Paginator->sort('name',			__('氏名')) ?></th>
 				<th><?= $this->Paginator->sort('role',			__('権限')) ?></th>
-				<th><?= $this->Paginator->sort('group_title',	__('所属グループ')) ?></th>
-				<th class="ib-col-datetime"><?= $this->Paginator->sort('course_title',	__('受講コース')) ?></th>
+				<th nowrap><?= __('所属グループ') ?></th>
+				<th nowrap class="ib-col-datetime"><?= __('受講コース') ?></th>
 				<th><?= $this->Paginator->sort('last_logined',	__('最終ログイン日時')) ?></th>
 				<th><?= $this->Paginator->sort('created',		__('作成日時')) ?></th>
 				<th class="actions"><?= __('Actions') ?></th>
@@ -58,7 +58,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 			<tr>
 				<td><?= h($user->username) ?></td>
 				<td><?= h($user->name) ?></td>
-				<td><?= h($user->role) ?></td>
+				<td><?= h(Configure::read('user_role.'.$user->role)) ?></td>
 				<td><div class="reader" title="<?= h($user->group_title); ?>"><p><?= h($user->group_title); ?>&nbsp;</p></td>
 				<td><div class="reader" title="<?= h($user->course_title); ?>"><p><?= h($user->course_title); ?>&nbsp;</p></div></td>
 				<td><?= h($user->last_logined) ?></td>
