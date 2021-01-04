@@ -81,7 +81,7 @@ class ContentsQuestionsController extends AdminController
 			}
 			
 			if ($this->ContentsQuestions->save($contentsQuestion)) {
-				$this->Flash->success(__('The contents question has been saved.'));
+				$this->Flash->success(__('問題が保存されました'));
 
 				return $this->redirect(['action' => 'index', $content_id]);
 			}

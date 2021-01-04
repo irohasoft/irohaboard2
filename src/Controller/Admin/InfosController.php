@@ -86,7 +86,7 @@ class InfosController extends AdminController
 			
 			if ($this->Infos->save($info))
 			{
-				$this->Flash->success(__('The info has been saved.'));
+				$this->Flash->success(__('お知らせが保存されました'));
 
 				return $this->redirect(['action' => 'index']);
 			}
@@ -110,7 +110,7 @@ class InfosController extends AdminController
 		
 		if ($this->Infos->delete($info))
 		{
-			$this->Flash->success(__('The info has been deleted.'));
+			$this->Flash->success(__('お知らせが削除されました'));
 		}
 		else
 		{

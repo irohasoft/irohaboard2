@@ -67,7 +67,7 @@ class CoursesController extends AdminController
 			
 			if ($this->Courses->save($course))
 			{
-				$this->Flash->success(__('The course has been saved.'));
+				$this->Flash->success(__('コースが保存されました'));
 
 				return $this->redirect(['action' => 'index']);
 			}

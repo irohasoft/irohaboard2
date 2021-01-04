@@ -80,7 +80,7 @@ class ContentsController extends AdminController
 			
 			if ($this->Contents->save($content))
 			{
-				$this->Flash->success(__('The content has been saved.'));
+				$this->Flash->success(__('コンテンツが保存されました'));
 
 				return $this->redirect(['action' => 'index', $course_id]);
 			}

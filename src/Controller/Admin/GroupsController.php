@@ -90,7 +90,7 @@ class GroupsController extends AdminController
 		$this->request->allowMethod(['post', 'delete']);
 		$group = $this->Groups->get($id);
 		if ($this->Groups->delete($group)) {
-			$this->Flash->success(__('The group has been deleted.'));
+			$this->Flash->success(__('グループ情報を削除しました'));
 		} else {
 			$this->Flash->error(__('The group could not be deleted. Please, try again.'));
 		}

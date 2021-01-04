@@ -173,7 +173,7 @@ class UsersController extends AdminController
 			
 			if ($this->Users->save($user))
 			{
-				$this->Flash->success(__('The user has been saved.'));
+				$this->Flash->success(__('ユーザ情報が保存されました'));
 
 				return $this->redirect(['action' => 'index']);
 			}
@@ -199,7 +199,7 @@ class UsersController extends AdminController
 		$this->request->allowMethod(['post', 'delete']);
 		$user = $this->Users->get($id);
 		if ($this->Users->delete($user)) {
-			$this->Flash->success(__('The user has been deleted.'));
+			$this->Flash->success(__('ユーザが削除されました'));
 		} else {
 			$this->Flash->error(__('The user could not be deleted. Please, try again.'));
 		}
