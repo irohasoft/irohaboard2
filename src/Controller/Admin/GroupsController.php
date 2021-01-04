@@ -16,8 +16,24 @@ class GroupsController extends AdminController
 	 */
 	public function index()
 	{
+		$this->paginate = [
+			'fields' => [
+				'Groups.id',
+				'Groups.title',
+				'Groups.created',
+				'Groups.modified',
+				// 受講コース一覧
+				'course_title'	=> '(SELECT group_concat(c.title order by c.id SEPARATOR \', \') as course_title FROM ib_groups_courses uc INNER JOIN ib_courses c ON c.id = uc.course_id WHERE uc.group_id = Groups.id)',
+			
+			],
+			'limit' => 20,
+			'order' => [
+				'Groups.created' => 'desc'
+			],
+			'contain' => ['Courses'],
+		];
+		
 		$groups = $this->paginate($this->Groups);
-
 		$this->set(compact('groups'));
 	}
 
