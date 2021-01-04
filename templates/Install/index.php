@@ -17,13 +17,13 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		<div class="panel-body">
 			<?php
 				echo $this->Form->create(null, ['class' => 'form-horizontal']);
-				echo $this->Form->control('User.password', [
+				echo $this->Form->control('password', [
 					'label' => __('新しいパスワード'),
 					'type' => 'password',
 					'autocomplete' => 'new-password'
 				]);
 				
-				echo $this->Form->control('User.password2', [
+				echo $this->Form->control('password2', [
 					'label' => __('新しいパスワード (確認用)'),
 					'type' => 'password',
 					'autocomplete' => 'new-password'

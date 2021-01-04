@@ -85,10 +85,6 @@ class UsersController extends AppController
 	 */
 	public function setting()
 	{
-		/*
-		$data = $this->request->getCookie('Auth');
-		debug($data);
-		*/
 		if ($this->request->is([
 				'post',
 				'put'
@@ -100,17 +96,17 @@ class UsersController extends AppController
 			
 			//debug($data);
 			
-			if($data['User']['new_password'] != $data['User']['new_password2'])
+			if($data['new_password'] != $data['new_password2'])
 			{
 				$this->Flash->error(__('入力された「パスワード」と「パスワード（確認用）」が一致しません'));
 				return;
 			}
 			
-			if($data['User']['new_password'] !== '')
+			if($data['new_password'] !== '')
 			{
 				$user = $this->Users->get($this->readAuthUser('id'));
 				
-				$user->password = $data['User']['new_password'];
+				$user->password = $data['new_password'];
 				
 				if ($this->Users->save($user))
 				{
