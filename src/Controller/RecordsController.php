@@ -30,7 +30,7 @@ class RecordsController extends AppController
 		]);
 		
 		$data = [
-			'user_id'		=> $this->Auth->user('id'),
+			'user_id'		=> $this->readAuthUser('id'),
 			'course_id'		=> $content->course->id,
 			'content_id'	=> $content_id,
 			'study_sec'		=> $study_sec,
@@ -46,11 +46,10 @@ class RecordsController extends AppController
 		{
 			$this->Flash->success(__('学習履歴を保存しました'));
 
-			return $this->redirect(['action' => 'index']);
 			return $this->redirect([
 				'controller' => 'contents',
 				'action' => 'index',
-				$content->id
+				$content->course->id
 			]);
 		}
 	}
