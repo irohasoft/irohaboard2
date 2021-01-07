@@ -12,7 +12,7 @@
 		<thead>
 		<tr>
 			<th><?= $this->Paginator->sort('title',		__('タイトル')) ?></th>
-			<th nowrap><?php echo __('対象グループ'); ?></th>
+			<th nowrap><?= __('対象グループ'); ?></th>
 			<th><?= $this->Paginator->sort('created',	__('作成日時')) ?></th>
 			<th><?= $this->Paginator->sort('modified',	__('更新日時')) ?></th>
 				<th class="actions"><?= __('Actions') ?></th>
@@ -22,7 +22,7 @@
 		<?php foreach ($infos as $info): ?>
 		<tr>
 			<td><?= h($info->title) ?></td>
-			<td><div class="reader col-group" title="<?php echo h($info->group_title); ?>"><p><?php echo h($info->group_title); ?>&nbsp;</p></td>
+			<td><div class="reader col-group" title="<?= h($info->group_title); ?>"><p><?= h($info->group_title); ?>&nbsp;</p></td>
 			<td><?= h($info->created) ?></td>
 			<td><?= h($info->modified) ?></td>
 			<td class="ib-col-action">

@@ -10,10 +10,10 @@ use App\Vendor\Utils;
 <div class="infos-index">
 	<div class="breadcrumb">
 	<?php
-	$this->Breadcrumbs->add('HOME', array(
+	$this->Breadcrumbs->add('HOME', [
 		'controller' => 'users_courses',
 		'action' => 'index'
-	));
+	]);
 	echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	?>
 	</div>

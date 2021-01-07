@@ -5,9 +5,9 @@ use App\Vendor\Utils;
 
 $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 ?>
-<?php echo $this->element('admin_menu');?>
+<?= $this->element('admin_menu');?>
 <div class="admin-users-import">
-<?php echo $this->Html->link(__('<< 戻る'), array('action' => 'index'))?>
+<?= $this->Html->link(__('<< 戻る'), ['action' => 'index'])?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			インポート
@@ -28,8 +28,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 					<th>権限 (受講者 / 管理者)*</th>
 					<th>メールアドレス</th>
 					<th>備考</th>
-					<th>所属グループ・・・<?php echo Configure::read('import_group_count');?>列</th>
-					<th>受講コース・・・<?php echo Configure::read('import_course_count');?>列</th>
+					<th>所属グループ・・・<?= Configure::read('import_group_count');?>列</th>
+					<th>受講コース・・・<?= Configure::read('import_course_count');?>列</th>
 				</tr>
 			</table>
 			<?php
@@ -39,7 +39,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				echo $this->Form->end();
 			?>
 			<div style="color:red;">
-			<?php echo $err_msg; ?>
+			<?= $err_msg; ?>
 			</div>
 		</div>
 	</div>
