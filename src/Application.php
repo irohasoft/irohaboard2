@@ -148,9 +148,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 	{
 		$service = new AuthenticationService();
 
+		// 認証されていない場合にユーザーがどこにリダイレクトするかを定義
 		$login_url = ($request->getParam('prefix')=='Admin') ? Router::url('/admin/users/login') : Router::url('/users/login');
 		
-		// Define where users should be redirected to when they are not authenticated
 		$service->setConfig([
 			'unauthenticatedRedirect' => $login_url,
 			'queryParam' => 'redirect',
@@ -161,14 +161,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 			IdentifierInterface::CREDENTIAL_PASSWORD => 'password'
 		];
 		
-		// Load the authenticators. Session should be first.
+		// 認証機能の読み込み。セッションを優先
+		$service->loadAuthenticator('Authentication.Session');
 		$service->loadAuthenticator('Authentication.Form', [
 			'fields' => $fields,
 			'loginUrl' => $login_url
 		]);
-		
-		$service->loadAuthenticator('Authentication.Session');
-		//$service->loadAuthenticator('Authentication.Session', ['identify' => true]);
 		
 		// If the user is on the login page, check for a cookie as well.
 		$service->loadAuthenticator('Authentication.Cookie', [

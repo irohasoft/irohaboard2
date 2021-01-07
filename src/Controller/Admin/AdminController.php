@@ -67,7 +67,7 @@ class AdminController extends AppController
 		parent::beforeFilter($event);
 		
 		// role が admin, manager, editor, teacher以外の場合、強制ログアウトする
-		if($this->readSession('Auth'))
+		if($this->isLogined())
 		{
 			if(
 				($this->readAuthUser('role')!='admin')&&

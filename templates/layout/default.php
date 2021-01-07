@@ -82,12 +82,12 @@
 		<div class="ib-logo ib-left">
 			<?= $this->Html->link($title, '/')?>
 		</div>
-		<?php if(isset($loginedUser)) {?>
+		<?php if($this->isLogined()) {?>
 		<div class="ib-navi-item ib-right"><?= $this->Html->link(__('ログアウト'), ['controller' => 'users', 'action' => 'logout']); ?></div>
 		<div class="ib-navi-sepa ib-right"></div>
 		<div class="ib-navi-item ib-right"><?= $this->Html->link(__('設定'), ['controller' => 'users', 'action' => 'setting']); ?></div>
 		<div class="ib-navi-sepa ib-right"></div>
-		<div class="ib-navi-item ib-right"><?= __('ようこそ').' '.h($loginedUser["name"]).' '.__('さん'); ?></div>
+		<div class="ib-navi-item ib-right"><?= __('ようこそ').' '.h($this->readAuthUser("name")).' '.__('さん'); ?></div>
 		<?php }?>
 	</div>
 

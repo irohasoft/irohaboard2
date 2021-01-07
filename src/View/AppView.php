@@ -45,6 +45,7 @@ class AppView extends View
 		$this->action = $this->request->getParam('action');
 		$this->webroot = Router::url('/', true);
 		
+		$this->loadHelper('Authentication.Identity');
 		/*
 		$this->Breadcrumbs->setTemplates([
 			'wrapper' => '{{content}}',
@@ -53,6 +54,16 @@ class AppView extends View
 			'separator' => ' > '
 		]);
 		*/
+	}
+
+	protected function readAuthUser($key)
+	{
+		return $this->getRequest()->getAttribute('identity')->get($key);
+	}
+
+	protected function isLogined()
+	{
+		return $this->Identity->isLoggedIn();
 	}
 
 	public function getAction()

@@ -77,7 +77,6 @@ class UpdateController extends AppController
 	 */
 	function error()
 	{
-		$this->set('loginedUser', $this->readSession('Auth'));
 		$this->set('body', $this->err_msg);
 	}
 	

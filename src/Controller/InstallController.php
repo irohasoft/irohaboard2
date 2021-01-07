@@ -143,7 +143,6 @@ class InstallController extends AppController
 	 */
 	function installed()
 	{
-		$this->set('loginedUser', $this->readSession('Auth'));
 	}
 	
 	/**
@@ -151,7 +150,6 @@ class InstallController extends AppController
 	 */
 	function complete()
 	{
-		$this->set('loginedUser', $this->readSession('Auth'));
 	}
 	
 	/**
@@ -159,7 +157,6 @@ class InstallController extends AppController
 	 */
 	function error()
 	{
-		$this->set('loginedUser', $this->readSession('Auth'));
 		$this->set('body', $this->err_msg);
 	}
 	

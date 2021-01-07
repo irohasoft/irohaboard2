@@ -18,7 +18,7 @@
 			$is_active = ($this->name=='Records') ? ' active' : '';
 			echo '<li class="'.$is_active.'">'.$this->Html->link(__('学習履歴'), ['controller' => 'records', 'action' => 'index']).'</li>';
 
-			if($loginedUser['role']=='admin')
+			if($this->readAuthUser('role')=='admin')
 			{
 				$is_active = ($this->name=='Settings') ? ' active' : '';
 				echo '<li class="'.$is_active.'">'.$this->Html->link(__('システム設定'), ['controller' => 'settings', 'action' => 'index']).'</li>';

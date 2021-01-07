@@ -67,7 +67,8 @@ class AppController extends Controller
 
 	public function beforeFilter(\Cake\Event\EventInterface $event)
 	{
-		$this->set('loginedUser', $this->readSession('Auth'));
+		//$this->set('loginedUser', $this->readSession('Auth'));
+		$this->set('loginedUser', $this->getRequest()->getAttribute('identity'));
 		
 		// 他のサイトの設定が存在する場合、設定情報及びログイン情報をクリア
 		if($this->readSession('Setting'))
@@ -119,7 +120,12 @@ class AppController extends Controller
 
 	protected function readAuthUser($key)
 	{
-		return $this->getRequest()->getSession()->read('Auth.'.$key);
+		return $this->getRequest()->getAttribute('identity')->get($key);
+	}
+
+	protected function isLogined()
+	{
+		return $this->getRequest()->getAttribute('identity')->get('id') > 0;
 	}
 
 	protected function readCookie($key)
