@@ -280,10 +280,10 @@ class UsersController extends AdminController
 		
 		$err_msg = '';
 		
-		if ($this->request->is(array(
+		if ($this->request->is([
 				'post',
 				'put'
-		)))
+		]))
 		{
 			//------------------------------//
 			//	CSVファイルの読み込み		//
@@ -448,9 +448,9 @@ class UsersController extends AdminController
 				{
 					$ds->commit();
 					$this->Flash->success(__('インポートが完了しました'));
-					return $this->redirect(array(
+					return $this->redirect([
 						'action' => 'index'
-					));
+					]);
 				}
 			}
 			catch (Exception $e)
@@ -485,14 +485,14 @@ class UsersController extends AdminController
 		//------------------------------//
 		//	ヘッダー行の作成			//
 		//------------------------------//
-		$header = array(
+		$header = [
 			__('ログインID'),
 			__('パスワード'),
 			__('氏名'),
 			__('権限'),
 			__('メールアドレス'),
 			__('備考'),
-		);
+		];
 		
 		for($n=0; $n < $group_count; $n++)
 		{
@@ -556,14 +556,14 @@ class UsersController extends AdminController
 				}
 				
 				// 出力行を作成
-				$line = array(
+				$line = [
 					$row->username,								// ユーザ名
 					'',											// パスワード
 					$row->name,									// 氏名
 					Configure::read('user_role.'.$row->role),	// 権限
 					$row->email,								// メールアドレス
 					$row->comment,								// 備考
-				);
+				];
 				
 				// 所属グループを出力
 				for($n=0; $n < $group_count; $n++)

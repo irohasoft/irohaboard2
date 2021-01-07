@@ -87,7 +87,7 @@ class UpdateController extends AppController
 	{
 		$statements = file_get_contents($this->path);
 		$statements = explode(';', $statements);
-		$err_statements = array();
+		$err_statements = [];
 		
 		foreach ($statements as $statement)
 		{

@@ -201,7 +201,7 @@ class InstallController extends AppController
 		//debug($this->path);
 		$statements = file_get_contents($this->path);
 		$statements = explode(';', $statements);
-		$err_statements = array();
+		$err_statements = [];
 		
 		foreach ($statements as $statement)
 		{
@@ -243,13 +243,13 @@ class InstallController extends AppController
 		if(!$user)
 		{
 			// 管理者アカウントが１つも存在しない場合、初期管理者アカウント root を作成
-			$data = array(
+			$data = [
 				'username' => 'root',
 				'password' => $password,
 				'name' => 'root',
 				'role' => 'admin',
 				'email' => 'info@example.com'
-			);
+			];
 
 			$user = $this->Users->newEmptyEntity();
 			$user = $this->Users->patchEntity($user, $data);
