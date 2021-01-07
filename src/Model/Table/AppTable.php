@@ -42,4 +42,17 @@ class AppTable extends Table
 		
 		return $list;
 	}
+
+
+	/**
+	 * 英数字チェック（マルチバイト対応）
+	 */
+	public function alphaNumericMB($value, $context)
+	{
+		/*
+		$value = array_values($check);
+		$value = $value[0];
+		*/
+		return preg_match('/^[a-zA-Z0-9]+$/', $value)==1;
+	}
 }

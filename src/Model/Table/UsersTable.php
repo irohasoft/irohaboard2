@@ -35,7 +35,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class UsersTable extends Table
+class UsersTable extends AppTable
 {
 	/**
 	 * Initialize method
@@ -120,10 +120,10 @@ class UsersTable extends Table
 
 		$validator
 			->scalar('username')
-			->minLength('username', 4)
-			->maxLength('username', 50)
 			->notEmptyString('username')
-			->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+			->add('username', 'length', ['rule' => ['lengthBetween', 4, 50], 'message' => 'ログインIDは4文字以上32文字以内で入力して下さい'])
+			->add('username', 'unique', ['rule' => 'validateUnique','provider' => 'table', 'message' => 'ログインIDが重複しています'])
+			->add('username', 'custom', ['rule' => [$this, 'alphaNumericMB'], 'message' => 'パスワードは英数字で入力して下さい']);
 
 		$validator
 			->scalar('password')
@@ -143,7 +143,7 @@ class UsersTable extends Table
 
 		$validator
 			->email('email')
-			->notEmptyString('email');
+			->allowEmptyString('email');
 
 		$validator
 			->scalar('comment')
