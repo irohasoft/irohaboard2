@@ -34,7 +34,9 @@ CommonUtility.prototype.setRichTextEditor = function (selector, upload_image_max
 			onImageUpload: function(files)
 			{
 				var data = new FormData();
-				data.append("file", files[0]);
+				var csrf = $('input[name=_csrfToken]').val();
+				
+				data.append("upload_file", files[0]);
 				
 				$.ajax({
 					data: data,
@@ -43,6 +45,9 @@ CommonUtility.prototype.setRichTextEditor = function (selector, upload_image_max
 					cache: false,
 					contentType: false,
 					processData: false,
+					beforeSend: function(xhr){
+						xhr.setRequestHeader("X-CSRF-Token",csrf);
+					},
 					success: function(url) {
 						if(url)
 						{

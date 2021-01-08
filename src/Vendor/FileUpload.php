@@ -48,11 +48,11 @@ class FileUpload
 	//------------------------------//
 	public function readFile( $file )
 	{
-		$this->_file			= $file['tmp_name'];							//	ファイルの実体を取得
-		$this->_file_name 		= basename( $file['name'] );					//	ファイルの名前の取得
+		$this->_file			= $file->getStream()->getMetadata('uri');		//	ファイルの実体を取得
+		$this->_file_name 		= basename( $file->getClientFilename() );		//	ファイルの名前の取得
 		$this->_file_name_ext 	= $this->getExtension( $this->_file_name );		//	ファイルの拡張子を取得
-		$this->_file_size 		= $file['size'];								//	ファイルサイズの取得
-		$this->_error_code 		= $file['error'];								//	PHP側のエラーコード
+		$this->_file_size 		= $file->getSize();								//	ファイルサイズの取得
+		$this->_error_code 		= $file->getError();							//	PHP側のエラーコード
 	}
 
 	//------------------------------//

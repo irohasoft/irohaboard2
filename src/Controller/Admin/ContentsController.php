@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
+use App\Vendor\FileUpload;
 
 /**
  * Contents Controller
@@ -122,6 +123,172 @@ class ContentsController extends AdminController
 		return $this->redirect(['action' => 'index', $content->course_id]);
 	}
 
+	/**
+	 * ファイル（配布資料、動画）のアップロード
+	 *
+	 * @param int $file_type ファイルの種類
+	 */
+	public function upload($file_type)
+	{
+		header("X-Frame-Options: SAMEORIGIN");
+		
+		$fileUpload = new FileUpload();
+
+		$mode = '';
+		$file_url = '';
+		
+		// ファイルの種類によって、アップロード可能な拡張子とファイルサイズを指定
+		switch ($file_type)
+		{
+			case 'file' :
+				$upload_extensions = (array)Configure::read('upload_extensions');
+				$upload_maxsize = Configure::read('upload_maxsize');
+				break;
+			case 'image' :
+				$upload_extensions = (array)Configure::read('upload_image_extensions');
+				$upload_maxsize = Configure::read('upload_image_maxsize');
+				break;
+			case 'movie' :
+				$upload_extensions = (array)Configure::read('upload_movie_extensions');
+				$upload_maxsize = Configure::read('upload_movie_maxsize');
+				break;
+			default :
+				throw new NotFoundException(__('Invalid access'));
+		}
+		
+		// php.ini の upload_max_filesize, post_max_size の値を確認（互換性維持のためメソッドが存在する場合のみ）
+		if(method_exists($fileUpload, 'getBytes'))
+		{
+			$upload_max_filesize = $fileUpload->getBytes(ini_get('upload_max_filesize'));
+			$post_max_size		 = $fileUpload->getBytes(ini_get('post_max_size'));
+			
+			// upload_max_filesize が設定サイズより小さい場合、upload_max_filesize を優先する
+			if($upload_max_filesize < $upload_maxsize)
+				$upload_maxsize	= $upload_max_filesize;
+			
+			// post_max_size が設定サイズより小さい場合、post_max_size を優先する
+			if($post_max_size < $upload_maxsize)
+				$upload_maxsize	= $post_max_size;
+		}
+		
+		$fileUpload->setExtension($upload_extensions);
+		$fileUpload->setMaxSize($upload_maxsize);
+		
+		$original_file_name = '';
+		
+		if ($this->request->is(array(
+				'post',
+				'put'
+		)))
+		{
+			if(Configure::read('demo_mode'))
+				return;
+			
+			$file = $this->request->getUploadedFiles()['upload_file'];
+			
+			/*
+			debug($path);
+			debug($files['upload_file']->getSize());
+			debug($files['upload_file']);
+			*/
+			
+			// ファイルの読み込み
+			$fileUpload->readFile( $file );
+
+			$error_code = 0;
+			
+			// エラーチェック（互換性維持のためメソッドが存在する場合のみ）
+			if(method_exists($fileUpload, 'checkFile'))
+				$error_code = $fileUpload->checkFile();
+			
+			if($error_code > 0)
+			{
+				$mode = 'error';
+				
+				switch ($error_code)
+				{
+					case 1001 : // 拡張子エラー
+						$this->Flash->error('アップロードされたファイルの形式は許可されていません');
+						break;
+					case 1002 : // ファイルサイズが0
+					case 1003 : // ファイルサイズオバー
+						$size = $this->request->data['Content']['file']['size'];
+						$this->Flash->error('アップロードされたファイルのサイズ（'.$size.'）は許可されていません');
+						break;
+					default :
+						$this->Flash->error('アップロード中にエラーが発生しました ('.$error_code.')');
+				}
+			}
+			else
+			{
+				$original_file_name = $file->getClientFilename();
+
+				//	ファイル名：YYYYMMDDHHNNSS形式＋"既存の拡張子"
+				$new_name = date("YmdHis").$fileUpload->getExtension( $fileUpload->getFileName() );
+
+				$file_name = WWW_ROOT."uploads".DS.$new_name;										//	ファイルのパス
+				$file_url = $this->webroot.'uploads/'.$new_name;									//	ファイルのURL
+
+				$result = $fileUpload->saveFile( $file_name );										//	ファイルの保存
+
+				if($result)																			//	結果によってメッセージを設定
+				{
+					//$this->Flash->success('ファイルのアップロードが完了いたしました');
+					$mode = 'complete';
+				}
+				else
+				{
+					$this->Flash->error('ファイルのアップロードに失敗しました');
+					$mode = 'error';
+				}
+			}
+		}
+
+		$this->set('mode',					$mode);
+		$this->set('file_url',				$file_url);
+		$this->set('file_name',				$original_file_name);
+		$this->set('upload_extensions',		join(', ', $upload_extensions));
+		$this->set('upload_maxsize',		$upload_maxsize);
+	}
+	
+	/**
+	 * リッチテキストエディタ(Summernote) からPOSTされた画像を保存
+	 *
+	 * @return string アップロードした画像のURL(JSON形式)
+	 */
+	public function uploadImage()
+	{
+		$this->autoRender = FALSE;
+		
+		if ($this->request->is(array(
+				'post',
+				'put'
+		)))
+		{
+			$fileUpload = new FileUpload();
+			
+			$upload_extensions = (array)Configure::read('upload_image_extensions');
+			$upload_maxsize = Configure::read('upload_image_maxsize');
+			
+			$fileUpload->setExtension($upload_extensions);
+			$fileUpload->setMaxSize($upload_maxsize);
+			
+			$file = $this->request->getUploadedFiles()['upload_file'];
+			
+			$fileUpload->readFile( $file );						//	ファイルの読み込み
+			
+			$new_name = date("YmdHis").$fileUpload->getExtension( $fileUpload->getFileName() );	//	ファイル名：YYYYMMDDHHNNSS形式＋"既存の拡張子"
+
+			$file_name = WWW_ROOT."uploads".DS.$new_name;											//	ファイルのパス
+			$file_url = $this->webroot.'uploads/'.$new_name;										//	ファイルのURL
+
+			$result = $fileUpload->saveFile( $file_name );											//	ファイルの保存
+			
+			//debug($result);
+			$response = $result ? array($file_url) : array(false);
+			echo json_encode($response);
+		}
+	}
 
 	/**
 	 * Ajax によるコースの並び替え
