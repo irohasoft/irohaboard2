@@ -27,20 +27,20 @@ $this->Form->setConfig('errorClass', 'form-control form-error');
 		</div>
 		<div class="panel-body">
 			<?php
-			$password_label = ($this->action == 'edit') ? __('新しいパスワード') : __('パスワード');
-			
-			echo $this->Form->create($user, ['class' => 'form-horizontal']);
-			echo $this->Form->control('username',		['label' => __('ログインID'), 'required' => true]);
-			echo $this->Form->control('new_password',	['label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password']);
-			echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
-			echo $this->Form->control('role',			['label' => __('権限'), 'required' => true, 
-				'options' => Configure::read('user_role'), 'type' => 'radio', 'hiddenField' => false]);
-			echo $this->Form->control('email',			['label' => __('メールアドレス'), 'required' => false]);
-			echo $this->Form->control('groups._ids',	['options' => $groups, 'label' => __('対象グループ')]);
-			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
-			echo $this->Form->button(__('保存'), Configure::read('form_submit_defaults'));
-			echo $this->Form->end();
-				?>
+				$password_label = ($this->action == 'edit') ? __('新しいパスワード') : __('パスワード');
+				
+				echo $this->Form->create($user, ['class' => 'form-horizontal']);
+				echo $this->Form->control('username',		['label' => __('ログインID'), 'required' => true]);
+				echo $this->Form->control('new_password',	['label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password']);
+				echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
+				echo $this->Form->control('role',			['label' => __('権限'), 'required' => true, 
+					'options' => Configure::read('user_role'), 'type' => 'radio', 'hiddenField' => false]);
+				echo $this->Form->control('email',			['label' => __('メールアドレス'), 'required' => false]);
+				echo $this->Form->control('groups._ids',	['options' => $groups, 'label' => __('対象グループ')]);
+				echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
+				echo $this->Form->button(__('保存'), Configure::read('form_submit_defaults'));
+				echo $this->Form->end();
+			?>
 		</div>
 	</div>
 </div>

@@ -31,67 +31,67 @@ use Cake\Validation\Validator;
  */
 class GroupsTable extends AppTable
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config): void
+	{
+		parent::initialize($config);
 
-        $this->setTable('ib_groups');
-        $this->setDisplayField('title');
-        $this->setPrimaryKey('id');
+		$this->setTable('ib_groups');
+		$this->setDisplayField('title');
+		$this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
 /*
-        $this->belongsToMany('Users', [
-            'foreignKey' => 'group_id',
-            'targetForeignKey' => 'user_id',
-            'joinTable' => 'users_groups',
-        ]);
+		$this->belongsToMany('Users', [
+			'foreignKey' => 'group_id',
+			'targetForeignKey' => 'user_id',
+			'joinTable' => 'users_groups',
+		]);
 */
-        $this->belongsToMany('Courses', [
-            'foreignKey' => 'group_id',
-            'targetForeignKey' => 'course_id',
-            'joinTable' => 'groups_courses',
-        ]);
-    }
+		$this->belongsToMany('Courses', [
+			'foreignKey' => 'group_id',
+			'targetForeignKey' => 'course_id',
+			'joinTable' => 'groups_courses',
+		]);
+	}
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator): Validator
-    {
-        $validator
-            ->integer('id')
-            ->allowEmptyString('id', null, 'create');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator): Validator
+	{
+		$validator
+			->integer('id')
+			->allowEmptyString('id', null, 'create');
 
-        $validator
-            ->scalar('title')
-            ->maxLength('title', 200)
-            ->notEmptyString('title');
+		$validator
+			->scalar('title')
+			->maxLength('title', 200)
+			->notEmptyString('title');
 
-        $validator
-            ->scalar('comment')
-            ->allowEmptyString('comment');
+		$validator
+			->scalar('comment')
+			->allowEmptyString('comment');
 
-        $validator
-            ->dateTime('deleted')
-            ->allowEmptyDateTime('deleted');
+		$validator
+			->dateTime('deleted')
+			->allowEmptyDateTime('deleted');
 
-        $validator
-            ->integer('status')
-            ->notEmptyString('status');
+		$validator
+			->integer('status')
+			->notEmptyString('status');
 
-        return $validator;
-    }
+		return $validator;
+	}
 
 	/**
 	 * 指定したグループに所属するユーザIDリストを取得
