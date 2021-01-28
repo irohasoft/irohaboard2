@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use Cake\Core\Configure;
 use Cake\Routing\Router;
+use Cake\Datasource\ConnectionManager;
 use App\Vendor\Utils;
 use App\Vendor\FileUpload;
 
@@ -30,6 +31,7 @@ class ContentsController extends AdminController
 		
 		// コンテンツ一覧を取得
 		$contents = $this->Contents->find('all')->where(['course_id' => $course_id])->order('Contents.sort_no');
+		//$contents = $this->Contents->findAllByCourse_id($course_id, null, ['Content.sort_no' => 'asc']);
 
 		$this->set(compact('contents', 'course'));
 	}
@@ -305,5 +307,53 @@ class ContentsController extends AdminController
 			$this->Contents->setOrder($this->getData('id_list'));
 			echo "OK";
 		}
+	}
+
+
+	/**
+	 * コンテンツのコピー
+	 * @param int $course_id コピー先のコースのID
+	 * @param int $content_id コピーするコンテンツのID
+	 */
+	public function copy($course_id, $content_id)
+	{
+		// コンテンツのコピー
+		$old_content = $this->Contents->get($content_id);
+		
+		$content = $this->Contents->newEmptyEntity();
+		$content = $this->Contents->patchEntity($content, $old_content->toArray());
+		
+		$content->status = 0;
+		$content->title .= 'の複製';
+		
+		$this->Contents->save($content);
+		//debug($content);
+		
+		// テスト問題のコピー
+		$this->LoadModel('ContentsQuestions');
+		$contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order(['ContentsQuestions.sort_no' => 'asc']);
+		
+		//$sort_no = 1;
+		
+		foreach ($contentsQuestions as $contentsQuestion)
+		{
+			$this->ContentsQuestions->validate = null;
+			
+			$question = $this->ContentsQuestions->newEmptyEntity();
+			$question = $this->ContentsQuestions->patchEntity($question, $contentsQuestion->toArray());
+			
+			$question->content_id	= $content->id;
+			//$question->sort_no		= $sort_no;
+			
+			$conn = ConnectionManager::get('default');
+			$conn->getDriver()->enableAutoQuoting();
+			
+			$this->ContentsQuestions->save($question);
+			//debug($question);
+			
+			//$sort_no++;
+		}
+		
+		return $this->redirect(['action' => 'index', $course_id]);
 	}
 }
