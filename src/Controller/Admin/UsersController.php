@@ -41,14 +41,17 @@ class UsersController extends AdminController
 	{
 		$this->request->allowMethod(['get', 'post']);
 		$result = $this->Authentication->getResult();
+		//debug($result);
 		
 		// If the user is logged in send them away.
-		if ($result->isValid()) {
+		if($result->isValid())
+		{
 			return $this->redirect(['controller' => 'Users', 'action' => 'index']);
 		}
 
 		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
-		if ($this->request->is('post') && !$result->isValid()) {
+		if($this->request->is('post') && !$result->isValid())
+		{
 			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
 		}
 	}
@@ -56,6 +59,7 @@ class UsersController extends AdminController
 	public function logout()
 	{
 		$result = $this->Authentication->getResult();
+		
 		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクトします
 		if ($result->isValid()) {
 			$this->Authentication->logout();
@@ -153,11 +157,9 @@ class UsersController extends AdminController
 		}
 		
 		// データの取得
-		if($user_id)
+		if ($user_id)
 		{
-			$user = $this->Users->get($user_id, [
-				'contain' => ['Courses', 'Groups'],
-			]);
+			$user = $this->Users->get($user_id, ['contain' => ['Courses', 'Groups'],]);
 		}
 		else
 		{
@@ -167,12 +169,12 @@ class UsersController extends AdminController
 		// 保存処理
 		if ($this->request->is(['patch', 'post', 'put']))
 		{
-			$user = $this->Users->patchEntity($user, $this->request->getData());
-			
 			$user->user_id = $this->getRequest()->getSession()->read('Auth.id');
 			
 			if ($this->request->getData('new_password') !== '')
 				$user->password = $this->request->getData('new_password');
+			
+			$user = $this->Users->patchEntity($user, $this->request->getData());
 			
 			if ($this->Users->save($user))
 			{
@@ -181,7 +183,7 @@ class UsersController extends AdminController
 				return $this->redirect(['action' => 'index']);
 			}
 			
-			$this->Flash->error(__('The user could not be saved. Please, try again.'));
+			$this->Flash->error(__('ユーザ情報が保存できませんでした'));
 		}
 		
 		$courses = $this->Users->Courses->find('list');
@@ -215,13 +217,13 @@ class UsersController extends AdminController
 	 */
 	public function setting()
 	{
-		if ($this->request->is([
-				'post',
-				'put'
-		]))
+		$user = $this->Users->get($this->readAuthUser('id'));
+		
+		if($this->request->is(['post', 'put']))
 		{
 			if(Configure::read('demo_mode'))
 				return;
+			
 			$data = $this->getData();
 			
 			//debug($data);
@@ -234,18 +236,17 @@ class UsersController extends AdminController
 			
 			if($data['new_password'] !== '')
 			{
-				$user = $this->Users->get($this->readAuthUser('id'));
-				
 				$user->password = $data['new_password'];
+				$user = $this->Users->patchEntity($user, $this->getData());
 				
-				if ($this->Users->save($user))
+				if($this->Users->save($user))
 				{
 					$this->Flash->success(__('パスワードが保存されました'));
 					$data = null;
 				}
 				else
 				{
-					$this->Flash->error(__('The user could not be saved. Please, try again.'));
+					$this->Flash->error(__('パスワードが保存できませんでした'));
 				}
 			}
 			else
@@ -253,6 +254,8 @@ class UsersController extends AdminController
 				$this->Flash->error(__('パスワードを入力して下さい'));
 			}
 		}
+		
+		$this->set(compact('user'));
 	}
 
 	/**
