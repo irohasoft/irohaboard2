@@ -123,13 +123,20 @@ class UsersTable extends AppTable
 			->notEmptyString('username')
 			->add('username', 'length', ['rule' => ['lengthBetween', 4, 50], 'message' => 'ログインIDは4文字以上32文字以内で入力して下さい'])
 			->add('username', 'unique', ['rule' => 'validateUnique','provider' => 'table', 'message' => 'ログインIDが重複しています'])
-			->add('username', 'custom', ['rule' => [$this, 'alphaNumericMB'], 'message' => 'パスワードは英数字で入力して下さい']);
+			->add('username', 'custom', ['rule' => [$this, 'alphaNumericMB'], 'message' => 'ログインIDは英数字で入力して下さい']);
 
 		$validator
 			->scalar('password')
-			->minLength('password', 4)
-			->maxLength('password', 200)
-			->notEmptyString('password');
+			->add('password', 'length', ['rule' => ['lengthBetween', 4, 50], 'message' => 'パスワードは4文字以上32文字以内で入力して下さい'])
+			->add('password', 'custom', ['rule' => [$this, 'alphaNumericMB'], 'message' => 'パスワードは英数字で入力して下さい'])
+			->allowEmptyString('password');
+
+		$validator
+			->scalar('new_password')
+			->add('new_password', 'length', ['rule' => ['lengthBetween', 4, 50], 'message' => 'パスワードは4文字以上32文字以内で入力して下さい'])
+			->add('new_password', 'custom', ['rule' => [$this, 'alphaNumericMB'], 'message' => 'パスワードは英数字で入力して下さい'])
+			->allowEmptyString('new_password');
+
 
 		$validator
 			->scalar('name')
@@ -138,7 +145,6 @@ class UsersTable extends AppTable
 
 		$validator
 			->scalar('role')
-			->maxLength('role', 20)
 			->notEmptyString('role');
 
 		$validator
@@ -178,7 +184,7 @@ class UsersTable extends AppTable
 	public function buildRules(RulesChecker $rules): RulesChecker
 	{
 		$rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
-		$rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+//		$rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
 
 		return $rules;
 	}

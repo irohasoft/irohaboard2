@@ -19,7 +19,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		</div>
 		<div class="panel-body">
 			<?php
-				echo $this->Form->create(null, ['class' => 'form-horizontal']);
+				echo $this->Form->create($user, ['class' => 'form-horizontal']);
 				echo $this->Form->control('new_password', [
 					'label' => __('新しいパスワード'),
 					'type' => 'password',

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Core\Configure;
 use Cake\Routing\Router;
+use Cake\Utility\Security;
 /*
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
@@ -39,6 +40,8 @@ class UsersController extends AppController
 		//debug($this->getData());
 		//exit;
 		*/
+		
+		// debug(Security::hash('irohaboard', 'sha1', '397110e45242a23e5802e78f4eec95a7bd39e0f0'));
 		$this->request->allowMethod(['get', 'post']);
 		$result = $this->Authentication->getResult();
 		//debug($result);
@@ -72,8 +75,9 @@ class UsersController extends AppController
 	public function logout()
 	{
 		$result = $this->Authentication->getResult();
+		
 		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクト
-		if ($result->isValid())
+		if($result->isValid())
 		{
 			$this->Authentication->logout();
 			return $this->redirect(['controller' => 'Users', 'action' => 'login']);
@@ -85,37 +89,35 @@ class UsersController extends AppController
 	 */
 	public function setting()
 	{
-		if ($this->request->is([
-				'post',
-				'put'
-		]))
+		$user = $this->Users->get($this->readAuthUser('id'));
+		
+		if($this->request->is(['post', 'put']))
 		{
 			if(Configure::read('demo_mode'))
 				return;
-			$data = $this->getData();
 			
-			//debug($data);
+			$data = $this->getData();
 			
 			if($data['new_password'] != $data['new_password2'])
 			{
 				$this->Flash->error(__('入力された「パスワード」と「パスワード（確認用）」が一致しません'));
+				$this->set(compact('user'));
 				return;
 			}
 			
 			if($data['new_password'] !== '')
 			{
-				$user = $this->Users->get($this->readAuthUser('id'));
-				
 				$user->password = $data['new_password'];
+				$user = $this->Users->patchEntity($user, $data);
 				
-				if ($this->Users->save($user))
+				if($this->Users->save($user))
 				{
 					$this->Flash->success(__('パスワードが保存されました'));
 					$data = null;
 				}
 				else
 				{
-					$this->Flash->error(__('The user could not be saved. Please, try again.'));
+					$this->Flash->error(__('パスワードが保存できませんでした'));
 				}
 			}
 			else
@@ -123,5 +125,7 @@ class UsersController extends AppController
 				$this->Flash->error(__('パスワードを入力して下さい'));
 			}
 		}
+		
+		$this->set(compact('user'));
 	}
 }
