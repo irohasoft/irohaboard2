@@ -60,7 +60,7 @@ class InfosController extends AdminController
 	 */
 	public function edit($info_id = null)
 	{
-		if ($this->action == 'edit' && !$this->Infos->exists(['id' => $info_id]))
+		if($this->action == 'edit' && !$this->Infos->exists(['id' => $info_id]))
 		{
 			throw new NotFoundException(__('Invalid info'));
 		}
@@ -78,13 +78,13 @@ class InfosController extends AdminController
 		}
 		
 		// 保存処理
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$info = $this->Infos->patchEntity($info, $this->request->getData());
 			
 			$info->info_id = $this->getRequest()->getSession()->read('Auth.id');
 			
-			if ($this->Infos->save($info))
+			if($this->Infos->save($info))
 			{
 				$this->Flash->success(__('お知らせが保存されました'));
 
@@ -108,7 +108,7 @@ class InfosController extends AdminController
 		$this->request->allowMethod(['post', 'delete']);
 		$info = $this->Infos->get($info_id);
 		
-		if ($this->Infos->delete($info))
+		if($this->Infos->delete($info))
 		{
 			$this->Flash->success(__('お知らせが削除されました'));
 		}

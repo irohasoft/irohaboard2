@@ -61,7 +61,7 @@ class UsersController extends AdminController
 		$result = $this->Authentication->getResult();
 		
 		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクトします
-		if ($result->isValid()) {
+		if($result->isValid()) {
 			$this->Authentication->logout();
 			return $this->redirect(['controller' => 'Users', 'action' => 'login']);
 		}
@@ -151,13 +151,13 @@ class UsersController extends AdminController
 	 */
 	public function edit($user_id = null)
 	{
-		if ($this->action == 'edit' && !$this->Users->exists(['id' => $user_id]))
+		if($this->action == 'edit' && !$this->Users->exists(['id' => $user_id]))
 		{
 			throw new NotFoundException(__('Invalid user'));
 		}
 		
 		// データの取得
-		if ($user_id)
+		if($user_id)
 		{
 			$user = $this->Users->get($user_id, ['contain' => ['Courses', 'Groups'],]);
 		}
@@ -167,16 +167,16 @@ class UsersController extends AdminController
 		}
 		
 		// 保存処理
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$user->user_id = $this->getRequest()->getSession()->read('Auth.id');
 			
-			if ($this->request->getData('new_password') !== '')
+			if($this->request->getData('new_password') !== '')
 				$user->password = $this->request->getData('new_password');
 			
 			$user = $this->Users->patchEntity($user, $this->request->getData());
 			
-			if ($this->Users->save($user))
+			if($this->Users->save($user))
 			{
 				$this->Flash->success(__('ユーザ情報が保存されました'));
 
@@ -203,7 +203,7 @@ class UsersController extends AdminController
 	{
 		$this->request->allowMethod(['post', 'delete']);
 		$user = $this->Users->get($id);
-		if ($this->Users->delete($user)) {
+		if($this->Users->delete($user)) {
 			$this->Flash->success(__('ユーザが削除されました'));
 		} else {
 			$this->Flash->error(__('The user could not be deleted. Please, try again.'));
@@ -283,10 +283,7 @@ class UsersController extends AdminController
 		
 		$err_msg = '';
 		
-		if ($this->request->is([
-				'post',
-				'put'
-		]))
+		if($this->request->is(['post', 'put']))
 		{
 			//------------------------------//
 			//	CSVファイルの読み込み		//

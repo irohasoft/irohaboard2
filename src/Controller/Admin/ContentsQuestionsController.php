@@ -65,7 +65,7 @@ class ContentsQuestionsController extends AdminController
 			]);
 		}
 		
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->request->getData());
 			
@@ -80,7 +80,7 @@ class ContentsQuestionsController extends AdminController
 				$contentsQuestion->sort_no	= $this->ContentsQuestions->getNextSortNo($content_id);
 			}
 			
-			if ($this->ContentsQuestions->save($contentsQuestion)) {
+			if($this->ContentsQuestions->save($contentsQuestion)) {
 				$this->Flash->success(__('問題が保存されました'));
 
 				return $this->redirect(['action' => 'index', $content_id]);
@@ -101,7 +101,7 @@ class ContentsQuestionsController extends AdminController
 		$this->request->allowMethod(['post', 'delete']);
 		$contentsQuestion = $this->ContentsQuestions->get($question_id);
 		
-		if ($this->ContentsQuestions->delete($contentsQuestion))
+		if($this->ContentsQuestions->delete($contentsQuestion))
 		{
 			$this->Flash->success(__('問題が削除されました'));
 		}

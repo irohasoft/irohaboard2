@@ -69,7 +69,7 @@ class ContentsController extends AdminController
 			]);
 		}
 		
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$content = $this->Contents->patchEntity($content, $this->request->getData());
 			
@@ -81,7 +81,7 @@ class ContentsController extends AdminController
 				$content->sort_no	= $this->Contents->getNextSortNo($course_id);
 			}
 			
-			if ($this->Contents->save($content))
+			if($this->Contents->save($content))
 			{
 				$this->Flash->success(__('コンテンツが保存されました'));
 
@@ -110,7 +110,7 @@ class ContentsController extends AdminController
 		
 		$content = $this->Contents->get($content_id);
 		
-		if ($this->Contents->delete($content))
+		if($this->Contents->delete($content))
 		{
 			// コンテンツに紐づくテスト問題も削除
 			$this->LoadModel('ContentsQuestions');
@@ -178,10 +178,7 @@ class ContentsController extends AdminController
 		
 		$original_file_name = '';
 		
-		if ($this->request->is(array(
-				'post',
-				'put'
-		)))
+		if($this->request->is(['post', 'put']))
 		{
 			if(Configure::read('demo_mode'))
 				return;
@@ -262,10 +259,7 @@ class ContentsController extends AdminController
 	{
 		$this->autoRender = FALSE;
 		
-		if ($this->request->is(array(
-				'post',
-				'put'
-		)))
+		if($this->request->is(['post', 'put']))
 		{
 			$fileUpload = new FileUpload();
 			

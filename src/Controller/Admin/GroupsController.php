@@ -52,7 +52,7 @@ class GroupsController extends AdminController
 	 */
 	public function edit($group_id = null)
 	{
-		if ($group_id) // 編集の場合
+		if($group_id) // 編集の場合
 		{
 			$group = $this->Groups->get($group_id, [
 				'contain' => ['Courses'],
@@ -63,11 +63,11 @@ class GroupsController extends AdminController
 			$group = $this->Groups->newEmptyEntity();
 		}
 		
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$group = $this->Groups->patchEntity($group, $this->request->getData());
 			
-			if ($this->Groups->save($group))
+			if($this->Groups->save($group))
 			{
 				$this->Flash->success(__('グループ情報を保存しました'));
 
@@ -89,7 +89,7 @@ class GroupsController extends AdminController
 	{
 		$this->request->allowMethod(['post', 'delete']);
 		$group = $this->Groups->get($id);
-		if ($this->Groups->delete($group)) {
+		if($this->Groups->delete($group)) {
 			$this->Flash->success(__('グループ情報を削除しました'));
 		} else {
 			$this->Flash->error(__('The group could not be deleted. Please, try again.'));

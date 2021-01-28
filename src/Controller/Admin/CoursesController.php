@@ -52,7 +52,7 @@ class CoursesController extends AdminController
 	 */
 	public function edit($course_id = null)
 	{
-		if ($course_id) // 編集の場合
+		if($course_id) // 編集の場合
 		{
 			$course = $this->Courses->get($course_id, []);
 		}
@@ -61,11 +61,11 @@ class CoursesController extends AdminController
 			$course = $this->Courses->newEmptyEntity();
 		}
 
-		if ($this->request->is(['patch', 'post', 'put']))
+		if($this->request->is(['patch', 'post', 'put']))
 		{
 			$course = $this->Courses->patchEntity($course, $this->request->getData());
 			
-			if ($this->Courses->save($course))
+			if($this->Courses->save($course))
 			{
 				$this->Flash->success(__('コースが保存されました'));
 
@@ -91,7 +91,7 @@ class CoursesController extends AdminController
 		
 		$course = $this->Courses->get($course_id);
 		
-		if ($this->Courses->delete($course))
+		if($this->Courses->delete($course))
 		{
 			$this->Flash->success(__('コースが削除されました'));
 		}
