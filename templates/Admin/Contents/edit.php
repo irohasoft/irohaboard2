@@ -156,7 +156,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		$this->Breadcrumbs->add(__('コース一覧'), ['controller' => 'courses', 'action' => 'index']);
 		$this->Breadcrumbs->add($course['Course']['title'],  ['controller' => 'contents', 'action' => 'index', $course['Course']['id']]);
 
-		echo $this->Breadcrumbs->render([], [' / ']);
+		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
