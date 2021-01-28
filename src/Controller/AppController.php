@@ -125,6 +125,9 @@ class AppController extends Controller
 
 	protected function isLogined()
 	{
+		if(!$this->getRequest()->getAttribute('identity'))
+			return false;
+		
 		return $this->getRequest()->getAttribute('identity')->get('id') > 0;
 	}
 
