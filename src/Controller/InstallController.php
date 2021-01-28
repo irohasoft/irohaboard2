@@ -97,7 +97,7 @@ class InstallController extends AppController
 				if($this->getData())
 				{
 					//debug($this->getData('User'));
-					$data = $this->getData('User');
+					$data = $this->getData();
 					//debug($data);
 					$password	= $data['password'];
 					$password2	= $data['password2'];
