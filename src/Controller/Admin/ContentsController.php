@@ -60,16 +60,7 @@ class ContentsController extends AdminController
 		// コースの情報を取得
 		$course = $this->Contents->Courses->get($course_id);
 		
-		if($content_id)
-		{
-			// 編集
-			$content = $this->Contents->get($content_id, ['contain' => []]);
-		}
-		else
-		{
-			// 新規
-			$content = $this->Contents->newEmptyEntity();
-		}
+		$content = $this->Contents->getOrNew($content_id, ['contain' => []]);
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{

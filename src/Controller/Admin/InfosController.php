@@ -62,17 +62,7 @@ class InfosController extends AdminController
 			throw new NotFoundException(__('Invalid info'));
 		}
 		
-		// データの取得
-		if($this->action == 'edit')
-		{
-			// 編集
-			$info = $this->Infos->get($info_id, ['contain' => ['Groups']]);
-		}
-		else
-		{
-			// 新規
-			$info = $this->Infos->newEmptyEntity();
-		}
+		$info = $this->Infos->getOrNew($info_id, ['contain' => ['Groups']]);
 		
 		// 保存処理
 		if($this->request->is(['patch', 'post', 'put']))

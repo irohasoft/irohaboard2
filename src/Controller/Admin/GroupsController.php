@@ -52,16 +52,7 @@ class GroupsController extends AdminController
 	 */
 	public function edit($group_id = null)
 	{
-		if($group_id)
-		{
-			// 編集
-			$group = $this->Groups->get($group_id, ['contain' => ['Courses']]);
-		}
-		else
-		{
-			// 新規
-			$group = $this->Groups->newEmptyEntity();
-		}
+		$group = $this->Groups->getOrNew($group_id, ['contain' => ['Courses']]);
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{

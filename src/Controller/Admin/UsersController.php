@@ -151,17 +151,7 @@ class UsersController extends AdminController
 			throw new NotFoundException(__('Invalid user'));
 		}
 		
-		// データの取得
-		if($user_id)
-		{
-			// 編集
-			$user = $this->Users->get($user_id, ['contain' => ['Courses', 'Groups'],]);
-		}
-		else
-		{
-			// 新規
-			$user = $this->Users->newEmptyEntity();
-		}
+		$user = $this->Users->getOrNew($user_id, ['contain' => ['Courses', 'Groups'],]);
 		
 		// 保存処理
 		if($this->request->is(['patch', 'post', 'put']))
@@ -200,12 +190,16 @@ class UsersController extends AdminController
 	{
 		$this->request->allowMethod(['post', 'delete']);
 		$user = $this->Users->get($id);
-		if($this->Users->delete($user)) {
+		
+		if($this->Users->delete($user))
+		{
 			$this->Flash->success(__('ユーザが削除されました'));
-		} else {
+		}
+		else
+		{
 			$this->Flash->error(__('The user could not be deleted. Please, try again.'));
 		}
-
+		
 		return $this->redirect(['action' => 'index']);
 	}
 

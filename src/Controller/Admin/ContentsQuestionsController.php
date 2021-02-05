@@ -57,16 +57,7 @@ class ContentsQuestionsController extends AdminController
 			'contain' => ['Courses'],
 		]);
 
-		if($question_id)
-		{
-			// 編集
-			$contentsQuestion = $this->ContentsQuestions->get($question_id, ['contain' => []]);
-		}
-		else
-		{
-			// 新規
-			$contentsQuestion = $this->ContentsQuestions->newEmptyEntity();
-		}
+		$contentsQuestion = $this->ContentsQuestions->getOrNew($question_id, ['contain' => []]);
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{

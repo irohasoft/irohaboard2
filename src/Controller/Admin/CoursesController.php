@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 
 /**
@@ -54,16 +55,7 @@ class CoursesController extends AdminController
 	 */
 	public function edit($course_id = null)
 	{
-		if($course_id)
-		{
-			// 編集
-			$course = $this->Courses->get($course_id, []);
-		}
-		else
-		{
-			// 新規
-			$course = $this->Courses->newEmptyEntity();
-		}
+		$course = $this->Courses->getOrNew($course_id, []);
 
 		if($this->request->is(['patch', 'post', 'put']))
 		{
