@@ -30,7 +30,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class UsersGroupsTable extends Table
+class UsersGroupsTable extends AppTable
 {
     /**
      * Initialize method

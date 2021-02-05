@@ -31,7 +31,7 @@ use Cake\Datasource\ConnectionManager;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class UsersCoursesTable extends Table
+class UsersCoursesTable extends AppTable
 {
     /**
      * Initialize method
