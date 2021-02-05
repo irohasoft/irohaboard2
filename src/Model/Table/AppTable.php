@@ -15,6 +15,14 @@ use Cake\Datasource\ConnectionManager;
  */
 class AppTable extends Table
 {
+	public function getOrNew($primaryKey, array $options = [])
+	{
+		if($primaryKey == null)
+			return $this->newEmptyEntity();
+		
+		return $this->get($primaryKey, $options);
+	}
+	
 	public function db_query($sql, $params)
 	{
 		$connection = ConnectionManager::get('default');
