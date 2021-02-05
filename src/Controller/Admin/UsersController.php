@@ -156,7 +156,7 @@ class UsersController extends AdminController
 		// 保存処理
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$user->user_id = $this->getRequest()->getSession()->read('Auth.id');
+			$user->user_id = $this->readAuthUser('id');
 			
 			if($this->request->getData('new_password') !== '')
 				$user->password = $this->request->getData('new_password');

@@ -64,7 +64,7 @@ class ContentsController extends AdminController
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$content = $this->Contents->patchEntity($content, $this->request->getData());
+			$content = $this->Contents->patchEntity($content, $this->getData());
 			
 			// 新規追加の場合、コンテンツの作成者と所属コースを指定
 			if($this->action == 'add')

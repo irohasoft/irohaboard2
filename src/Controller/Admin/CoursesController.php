@@ -59,7 +59,7 @@ class CoursesController extends AdminController
 
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$course = $this->Courses->patchEntity($course, $this->request->getData());
+			$course = $this->Courses->patchEntity($course, $this->getData());
 			
 			if($this->Courses->save($course))
 			{

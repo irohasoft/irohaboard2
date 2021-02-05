@@ -28,7 +28,7 @@ class SettingsController extends AdminController
 			//debug($this->Settings->getSettings());
 			$this->Settings->setSettings($this->getData());
 			
-			foreach($this->request->getData() as $key => $value)
+			foreach($this->getData() as $key => $value)
 			{
 				//debug($key.':'.$value);
 				$this->writeSession('Setting.'.$key, $value);

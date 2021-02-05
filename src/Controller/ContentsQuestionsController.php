@@ -71,7 +71,7 @@ class ContentsQuestionsController extends AppController
 			// 問題ID一覧を元に問題情報を取得
 			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id, 'ContentsQuestions.id IN' => $question_id_list])
-				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']) // 指定したID順で並び替え
+				->order('FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')') // 指定したID順で並び替え
 				->all();
 		}
 		else if($this->readSession('Iroha.RondomQuestions.'.$content_id.'.id_list') != null) // 既にランダム出題情報がセッション上にある場合
@@ -81,7 +81,7 @@ class ContentsQuestionsController extends AppController
 			
 			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id, 'ContentsQuestions.id IN' => $question_id_list])
-				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']) // 指定したID順で並び替え
+				->order('FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')') // 指定したID順で並び替え
 				->all();
 		}
 		else if($content->question_count > 0) // ランダム出題の場合
@@ -90,7 +90,7 @@ class ContentsQuestionsController extends AppController
 			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id])
 				->limit($content->question_count) // 出題数
-				->order(['rand()'])// 乱数で並び替え
+				->order('rand()')// 乱数で並び替え
 				->all();
 			
 			// 問題IDの一覧を作成
@@ -109,7 +109,7 @@ class ContentsQuestionsController extends AppController
 			// 全ての問題情報を取得（通常の処理）
 			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id])
-				->order(['ContentsQuestions.sort_no' => 'asc'])
+				->order('ContentsQuestions.sort_no asc')
 				->all();
 		}
 		

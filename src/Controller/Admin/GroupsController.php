@@ -56,7 +56,7 @@ class GroupsController extends AdminController
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$group = $this->Groups->patchEntity($group, $this->request->getData());
+			$group = $this->Groups->patchEntity($group, $this->getData());
 			
 			if($this->Groups->save($group))
 			{

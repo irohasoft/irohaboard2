@@ -61,7 +61,7 @@ class ContentsQuestionsController extends AdminController
 		
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->request->getData());
+			$contentsQuestion = $this->ContentsQuestions->patchEntity($contentsQuestion, $this->getData());
 			
 			$conn = ConnectionManager::get('default');
 			$conn->getDriver()->enableAutoQuoting();
