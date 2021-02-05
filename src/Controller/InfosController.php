@@ -18,11 +18,12 @@ class InfosController extends AppController
      */
     public function index()
     {
+        //debug($this->Infos->find()->where(['Infos.id' => 2])->first());
         $this->paginate = [
             'contain' => ['Users'],
         ];
         $infos = $this->paginate($this->Infos);
-
+        
         $this->set(compact('infos'));
     }
 
@@ -33,12 +34,18 @@ class InfosController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($info_id = null)
     {
-        $info = $this->Infos->get($id, [
+        $info = $this->Infos->get($info_id, [
             'contain' => ['Users', 'Groups'],
         ]);
-
+        
+        /*
+        debug($info);
+        debug($this->Infos->findById($info_id, [
+            'contain' => ['Users', 'Groups'],
+        ])->first());
+        */
         $this->set(compact('info'));
     }
 }

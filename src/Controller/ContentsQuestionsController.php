@@ -69,26 +69,29 @@ class ContentsQuestionsController extends AppController
 			}
 			
 			// 問題ID一覧を元に問題情報を取得
-			$contentsQuestions = $this->ContentsQuestions->find('all')
+			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id, 'ContentsQuestions.id IN' => $question_id_list])
-				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']);// 指定したID順で並び替え
+				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']) // 指定したID順で並び替え
+				->all();
 		}
 		else if($this->readSession('Iroha.RondomQuestions.'.$content_id.'.id_list') != null) // 既にランダム出題情報がセッション上にある場合
 		{
 			// セッションにランダム出題情報が存在する場合、その情報を使用
 			$question_id_list = $this->readSession('Iroha.RondomQuestions.'.$content_id.'.id_list');
 			
-			$contentsQuestions = $this->ContentsQuestions->find('all')
+			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id, 'ContentsQuestions.id IN' => $question_id_list])
-				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']);// 指定したID順で並び替え
+				->order(['FIELD(ContentsQuestions.id,'.implode(',', $question_id_list).')']) // 指定したID順で並び替え
+				->all();
 		}
 		else if($content->question_count > 0) // ランダム出題の場合
 		{
 			// ランダム出題情報を取得
-			$contentsQuestions = $this->ContentsQuestions->find('all')
+			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id])
 				->limit($content->question_count) // 出題数
-				->order(['rand()']);// 乱数で並び替え
+				->order(['rand()'])// 乱数で並び替え
+				->all();
 			
 			// 問題IDの一覧を作成
 			$question_id_list = [];
@@ -104,15 +107,16 @@ class ContentsQuestionsController extends AppController
 		else // 通常の出題の場合
 		{
 			// 全ての問題情報を取得（通常の処理）
-			$contentsQuestions = $this->ContentsQuestions->find('all')
+			$contentsQuestions = $this->ContentsQuestions->find()
 				->where(['content_id' => $content_id])
-				->order(['ContentsQuestions.sort_no' => 'asc']);
+				->order(['ContentsQuestions.sort_no' => 'asc'])
+				->all();
 		}
 		
 		//------------------------------//
 		//	採点処理					//
 		//------------------------------//
-		if ($this->request->is('post'))
+		if($this->request->is('post'))
 		{
 			$details	= [];									// 成績詳細情報
 			$full_score	= 0;									// 最高点
@@ -126,7 +130,7 @@ class ContentsQuestionsController extends AppController
 			//	成績の詳細情報の作成		//
 			//------------------------------//
 			$i = 0;
-			foreach ($contentsQuestions as $contentsQuestion)
+			foreach($contentsQuestions as $contentsQuestion)
 			{
 				$question_id	= $contentsQuestion->id;			// 問題ID
 				$answer			= @$data['answer_' . $question_id];	// 解答
@@ -151,7 +155,7 @@ class ContentsQuestionsController extends AppController
 					$is_correct	= ($answer == $correct) ? 1 : 0;
 				}
 				
-				if ($is_correct == 1)
+				if($is_correct == 1)
 					$my_score += $score;
 				
 				// 問題の正誤
@@ -191,12 +195,12 @@ class ContentsQuestionsController extends AppController
 			//------------------------------//
 			//	テスト結果の保存			//
 			//------------------------------//
-			if ($this->Records->save($record))
+			if($this->Records->save($record))
 			{
 				$this->loadModel('RecordsQuestions');
 				
 				// 問題単位の成績を保存
-				foreach ($details as $detail)
+				foreach($details as $detail)
 				{
 					$detail['record_id'] = $record->id;
 					$new_data = $this->RecordsQuestions->newEmptyEntity();

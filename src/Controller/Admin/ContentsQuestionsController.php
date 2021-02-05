@@ -27,8 +27,11 @@ class ContentsQuestionsController extends AdminController
 		]);
 		
 		// 問題一覧を取得
-		$contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order('ContentsQuestions.sort_no');
-
+		$contentsQuestions = $this->ContentsQuestions->find()
+			->where(['content_id' => $content_id])
+			->order('ContentsQuestions.sort_no')
+			->all();
+		
 		$this->set(compact('contentsQuestions', 'content'));
 	}
 
@@ -54,15 +57,15 @@ class ContentsQuestionsController extends AdminController
 			'contain' => ['Courses'],
 		]);
 
-		if($this->action == 'add')
+		if($question_id)
 		{
-			$contentsQuestion = $this->ContentsQuestions->newEmptyEntity();
+			// 編集
+			$contentsQuestion = $this->ContentsQuestions->get($question_id, ['contain' => []]);
 		}
 		else
 		{
-			$contentsQuestion = $this->ContentsQuestions->get($question_id, [
-				'contain' => [],
-			]);
+			// 新規
+			$contentsQuestion = $this->ContentsQuestions->newEmptyEntity();
 		}
 		
 		if($this->request->is(['patch', 'post', 'put']))

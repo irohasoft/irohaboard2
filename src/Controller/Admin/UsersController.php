@@ -83,14 +83,7 @@ class UsersController extends AdminController
 		$group_id	= ($this->getQuery('group_id')) ? $this->getQuery('group_id') : $this->readSession('Iroha.group_id');
 		
 		$conditions = [];
-		/*
-		debug($this->getRequest());
-		debug($this->getRequest()->getQuery('group_id'));
-		debug($this->readSession('Iroha.group_id'));
-		debug($this->getQuery('group_id'));
-		debug(intval($this->getQuery('group_id')));
-		debug($group_id);
-		*/
+		
 		// 独自の検索条件を追加（指定したグループに所属するユーザを検索）
 		if($group_id)
 			$conditions['Users.id IN'] = $this->Users->Groups->getUserIdByGroupID($group_id);
@@ -117,12 +110,14 @@ class UsersController extends AdminController
 				'course_title'	=> '(SELECT group_concat(c.title order by c.id SEPARATOR \', \') as course_title FROM ib_users_courses uc INNER JOIN ib_courses c ON c.id = uc.course_id WHERE uc.user_id = Users.id)',
 			
 			],
+			'conditions' => $conditions,
 			'limit' => 20,
 			'order' => [
 				'Users.created' => 'desc'
 			]
 		];
-		$users = $this->paginate($this->Users->find('all')->where($conditions));
+		
+		$users = $this->paginate();
 		
 		//debug($users);
 		// グループ一覧を取得
@@ -159,10 +154,12 @@ class UsersController extends AdminController
 		// データの取得
 		if($user_id)
 		{
+			// 編集
 			$user = $this->Users->get($user_id, ['contain' => ['Courses', 'Groups'],]);
 		}
 		else
 		{
+			// 新規
 			$user = $this->Users->newEmptyEntity();
 		}
 		
@@ -174,7 +171,7 @@ class UsersController extends AdminController
 			if($this->request->getData('new_password') !== '')
 				$user->password = $this->request->getData('new_password');
 			
-			$user = $this->Users->patchEntity($user, $this->request->getData());
+			$user = $this->Users->patchEntity($user, $this->getData());
 			
 			if($this->Users->save($user))
 			{
@@ -354,7 +351,7 @@ class UsersController extends AdminController
 					$data->username = $row[COL_LOGINID];
 					
 					// パスワード
-					if($row[COL_PASSWORD]=='')
+					if($row[COL_PASSWORD] == '')
 					{
 						unset($data->password);
 					}
@@ -379,12 +376,12 @@ class UsersController extends AdminController
 					{
 						$title = @$row[COL_GROUP + $n];
 						
-						if($title=='')
+						if($title == '')
 							continue;
 						
 						$group_id = Utils::getIdByTitle($group_list, $title);
 						
-						if($group_id==null)
+						if($group_id == null)
 							continue;
 						
 						$group = $this->Users->Groups->get($group_id);
@@ -396,12 +393,12 @@ class UsersController extends AdminController
 					{
 						$title = @$row[COL_COURSE + $n];
 						
-						if($title=='')
+						if($title == '')
 							continue;
 						
 						$course_id = Utils::getIdByTitle($course_list, $title);
 						
-						if($course_id==null)
+						if($course_id == null)
 							continue;
 						
 						$course = $this->Users->Courses->get($course_id);

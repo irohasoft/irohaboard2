@@ -89,9 +89,9 @@ class UpdateController extends AppController
 		$statements = explode(';', $statements);
 		$err_statements = [];
 		
-		foreach ($statements as $statement)
+		foreach($statements as $statement)
 		{
-			if (trim($statement) != '')
+			if(trim($statement) != '')
 			{
 				try
 				{
@@ -100,19 +100,19 @@ class UpdateController extends AppController
 				catch (\PDOException $e)
 				{
 					// レコード重複追加エラー
-					if($e->errorInfo[0]=='23000')
+					if($e->errorInfo[0] == '23000')
 						continue;
 					
 					// カラム重複追加エラー
-					if($e->errorInfo[0]=='42S21')
+					if($e->errorInfo[0] == '42S21')
 						continue;
 					
 					// ビュー重複追加エラー
-					if($e->errorInfo[0]=='42S01')
+					if($e->errorInfo[0] == '42S01')
 						continue;
 					
 					// インデックス重複追加エラー
-					if($e->errorInfo[0]=='42000')
+					if($e->errorInfo[0] == '42000')
 						continue;
 					
 					$error_msg = sprintf("%s\n[Error Code]%s\n[Error Code2]%s\n[SQL]%s", $e->errorInfo[2], $e->errorInfo[0], $e->errorInfo[1], $statement);

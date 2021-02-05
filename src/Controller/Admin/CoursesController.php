@@ -32,7 +32,9 @@ class CoursesController extends AdminController
 	 */
 	public function index()
 	{
-		$courses = $this->Courses->find('all')->order('Courses.sort_no');
+		$courses = $this->Courses->find()
+			->order('Courses.sort_no')
+			->all();
 
 		$this->set(compact('courses'));
 	}
@@ -52,12 +54,14 @@ class CoursesController extends AdminController
 	 */
 	public function edit($course_id = null)
 	{
-		if($course_id) // 編集の場合
+		if($course_id)
 		{
+			// 編集
 			$course = $this->Courses->get($course_id, []);
 		}
 		else
 		{
+			// 新規
 			$course = $this->Courses->newEmptyEntity();
 		}
 

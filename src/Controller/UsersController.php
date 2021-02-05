@@ -46,7 +46,7 @@ class UsersController extends AppController
 		$result = $this->Authentication->getResult();
 		//debug($result);
 		// If the user is logged in send them away.
-		if ($result->isValid())
+		if($result->isValid())
 		{
 			/*
 			if($this->getData('remember_me'))
@@ -67,7 +67,7 @@ class UsersController extends AppController
 		}
 
 		// ユーザーが submit 後、認証失敗した場合は、エラーを表示
-		if ($this->request->is('post') && !$result->isValid()) {
+		if($this->request->is('post') && !$result->isValid()) {
 			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
 		}
 	}

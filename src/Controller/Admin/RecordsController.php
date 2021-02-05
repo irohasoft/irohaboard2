@@ -55,21 +55,22 @@ class RecordsController extends AdminController
 			$conditions['Users.id IN'] = $this->Groups->getUserIdByGroupID($this->getQuery('group_id'));
 		
 		// コンテンツ種別：学習の場合
-		if($this->getQuery('content_category')=='study')
+		if($this->getQuery('content_category') == 'study')
 			$conditions['Contents.kind IN'] = ['text', 'html', 'movie', 'url'];
 		
 		// コンテンツ種別：テストの場合
-		if($this->getQuery('content_category')=='test')
+		if($this->getQuery('content_category') == 'test')
 			$conditions['Contents.kind IN'] = ['test'];
 		
 		$from_date	= ($this->getQuery('from_date')) ? $this->getQuery('from_date') : date('Y-m-d', strtotime('-10 month'));
 		$to_date	= ($this->getQuery('to_date')) ? $this->getQuery('to_date') : date('Y-m-d');
 		
 		$records = $this->paginate(
-			$this->Records->find('all')->where($conditions)
-			->where(['Records.created BETWEEN :from_date AND :to_date'])
-			->bind(':from_date', $from_date, 'date')
-			->bind(':to_date',	 $to_date.' 23:59:50', 'datetime')
+			$this->Records->find()
+				->where($conditions)
+				->where(['Records.created BETWEEN :from_date AND :to_date'])
+				->bind(':from_date', $from_date, 'date')
+				->bind(':to_date',	 $to_date.' 23:59:50', 'datetime')
 		);
 		
 		$groups = $this->Groups->find('list');

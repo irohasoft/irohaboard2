@@ -30,9 +30,11 @@ class ContentsController extends AdminController
 		$course = $this->Contents->Courses->get($course_id);
 		
 		// コンテンツ一覧を取得
-		$contents = $this->Contents->find('all')->where(['course_id' => $course_id])->order('Contents.sort_no');
-		//$contents = $this->Contents->findAllByCourse_id($course_id, null, ['Content.sort_no' => 'asc']);
-
+		$contents = $this->Contents->find()
+			->where(['course_id' => $course_id])
+			->order('Contents.sort_no')
+			->all();
+		
 		$this->set(compact('contents', 'course'));
 	}
 
@@ -58,15 +60,15 @@ class ContentsController extends AdminController
 		// コースの情報を取得
 		$course = $this->Contents->Courses->get($course_id);
 		
-		if($this->action == 'add')
+		if($content_id)
 		{
-			$content = $this->Contents->newEmptyEntity();
+			// 編集
+			$content = $this->Contents->get($content_id, ['contain' => []]);
 		}
 		else
 		{
-			$content = $this->Contents->get($content_id, [
-				'contain' => [],
-			]);
+			// 新規
+			$content = $this->Contents->newEmptyEntity();
 		}
 		
 		if($this->request->is(['patch', 'post', 'put']))
@@ -184,12 +186,6 @@ class ContentsController extends AdminController
 				return;
 			
 			$file = $this->request->getUploadedFiles()['upload_file'];
-			
-			/*
-			debug($path);
-			debug($files['upload_file']->getSize());
-			debug($files['upload_file']);
-			*/
 			
 			// ファイルの読み込み
 			$fileUpload->readFile( $file );
@@ -321,15 +317,15 @@ class ContentsController extends AdminController
 		$content->title .= 'の複製';
 		
 		$this->Contents->save($content);
-		//debug($content);
 		
 		// テスト問題のコピー
 		$this->LoadModel('ContentsQuestions');
-		$contentsQuestions = $this->ContentsQuestions->find('all')->where(['content_id' => $content_id])->order(['ContentsQuestions.sort_no' => 'asc']);
+		$contentsQuestions = $this->ContentsQuestions->find()
+			->where(['content_id' => $content_id])
+			->order(['ContentsQuestions.sort_no' => 'asc'])
+			->all();
 		
-		//$sort_no = 1;
-		
-		foreach ($contentsQuestions as $contentsQuestion)
+		foreach($contentsQuestions as $contentsQuestion)
 		{
 			$this->ContentsQuestions->validate = null;
 			
@@ -337,15 +333,11 @@ class ContentsController extends AdminController
 			$question = $this->ContentsQuestions->patchEntity($question, $contentsQuestion->toArray());
 			
 			$question->content_id	= $content->id;
-			//$question->sort_no		= $sort_no;
 			
 			$conn = ConnectionManager::get('default');
 			$conn->getDriver()->enableAutoQuoting();
 			
 			$this->ContentsQuestions->save($question);
-			//debug($question);
-			
-			//$sort_no++;
 		}
 		
 		return $this->redirect(['action' => 'index', $course_id]);

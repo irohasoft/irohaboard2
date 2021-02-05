@@ -42,7 +42,7 @@ class RecordsController extends AppController
 		$record = $this->Records->newEmptyEntity();
 		$record = $this->Records->patchEntity($record, $data);
 		
-		if ($this->Records->save($record))
+		if($this->Records->save($record))
 		{
 			$this->Flash->success(__('学習履歴を保存しました'));
 

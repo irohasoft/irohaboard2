@@ -44,7 +44,7 @@ class InstallController extends AppController
 			$data = $this->db->query($sql);
 			
 			// apache_get_modules が存在する場合のみ、Apache のモジュールチェックを行う
-			if (function_exists('apache_get_modules'))
+			if(function_exists('apache_get_modules'))
 			{
 				// mod_rewrite 存在チェック
 				if(!$this->__apache_module_loaded('mod_rewrite'))
@@ -88,7 +88,7 @@ class InstallController extends AppController
 			}
 			
 			// ユーザテーブルが存在する場合、インストール済みと判断
-			if (count($data) > 0)
+			if(count($data) > 0)
 			{
 				$this->render('installed');
 			}
@@ -203,9 +203,9 @@ class InstallController extends AppController
 		$statements = explode(';', $statements);
 		$err_statements = [];
 		
-		foreach ($statements as $statement)
+		foreach($statements as $statement)
 		{
-			if (trim($statement) != '')
+			if(trim($statement) != '')
 			{
 				try
 				{
@@ -214,11 +214,11 @@ class InstallController extends AppController
 				catch (PDOException $e)
 				{
 					// カラム重複追加エラー
-					if($e->errorInfo[0]=='42S21')
+					if($e->errorInfo[0] == '42S21')
 						continue;
 					
 					// ビュー重複追加エラー
-					if($e->errorInfo[0]=='42S01')
+					if($e->errorInfo[0] == '42S01')
 						continue;
 					
 					$error_msg = sprintf("%s\n[Error Code]%s\n[Error Code2]%s\n[SQL]%s", $e->errorInfo[2], $e->errorInfo[0], $e->errorInfo[1], $statement);
@@ -237,7 +237,9 @@ class InstallController extends AppController
 	{
 		// 管理者アカウントの存在確認
 		$this->loadModel('Users');
-		$user = $this->Users->find('all')->where(['Users.role' => 'admin'])->first();
+		$user = $this->Users->find()
+			->where(['Users.role' => 'admin'])
+			->first();
 		
 		//debug($data);
 		if(!$user)

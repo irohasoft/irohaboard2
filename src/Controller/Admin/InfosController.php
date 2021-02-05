@@ -19,10 +19,6 @@ class InfosController extends AdminController
 	public function index()
 	{
 		$this->paginate = [
-			'contain' => ['Infos'],
-		];
-
-		$this->paginate = [
 			'fields' => [
 				'Infos.id',
 				'Infos.title',
@@ -38,7 +34,8 @@ class InfosController extends AdminController
 			],
 			'contain' => ['Groups'],
 		];
-		$infos = $this->paginate($this->Infos);
+		
+		$infos = $this->paginate();
 
 		$this->set(compact('infos'));
 	}
@@ -68,30 +65,31 @@ class InfosController extends AdminController
 		// データの取得
 		if($this->action == 'edit')
 		{
-			$info = $this->Infos->get($info_id, [
-				'contain' => ['Groups'],
-			]);
+			// 編集
+			$info = $this->Infos->get($info_id, ['contain' => ['Groups']]);
 		}
 		else
 		{
+			// 新規
 			$info = $this->Infos->newEmptyEntity();
 		}
 		
 		// 保存処理
 		if($this->request->is(['patch', 'post', 'put']))
 		{
-			$info = $this->Infos->patchEntity($info, $this->request->getData());
+			$info = $this->Infos->patchEntity($info, $this->getData());
 			
-			$info->info_id = $this->getRequest()->getSession()->read('Auth.id');
+			$info->info_id = $this->readAuthUser('id');
 			
 			if($this->Infos->save($info))
 			{
 				$this->Flash->success(__('お知らせが保存されました'));
-
 				return $this->redirect(['action' => 'index']);
 			}
-			
-			$this->Flash->error(__('The info could not be saved. Please, try again.'));
+			else
+			{
+				$this->Flash->error(__('The info could not be saved. Please, try again.'));
+			}
 		}
 		
 		$groups = $this->Infos->Groups->find('list');

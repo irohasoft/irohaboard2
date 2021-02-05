@@ -52,14 +52,14 @@ class GroupsController extends AdminController
 	 */
 	public function edit($group_id = null)
 	{
-		if($group_id) // 編集の場合
+		if($group_id)
 		{
-			$group = $this->Groups->get($group_id, [
-				'contain' => ['Courses'],
-			]);
+			// 編集
+			$group = $this->Groups->get($group_id, ['contain' => ['Courses']]);
 		}
 		else
 		{
+			// 新規
 			$group = $this->Groups->newEmptyEntity();
 		}
 		
@@ -89,9 +89,13 @@ class GroupsController extends AdminController
 	{
 		$this->request->allowMethod(['post', 'delete']);
 		$group = $this->Groups->get($id);
-		if($this->Groups->delete($group)) {
+		
+		if($this->Groups->delete($group))
+		{
 			$this->Flash->success(__('グループ情報を削除しました'));
-		} else {
+		}
+		else
+		{
 			$this->Flash->error(__('The group could not be deleted. Please, try again.'));
 		}
 

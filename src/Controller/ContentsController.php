@@ -28,7 +28,7 @@ class ContentsController extends AppController
 		// ロールを取得
 		$role = $this->readAuthUser('role');
 		
-		$is_admin_record = (($role=='admin') && ($this->action=='adminRecord'));
+		$is_admin_record = (($role == 'admin') && ($this->action == 'adminRecord'));
 		
 		// 管理者かつ、学習履歴表示モードの場合、
 		if($is_admin_record)
@@ -61,7 +61,7 @@ class ContentsController extends AppController
 	 */
 	public function adminRecord($course_id, $user_id)
 	{
-		if($this->readAuthUser('role')!='admin')
+		if($this->readAuthUser('role') != 'admin')
 			return;
 		
 		$this->index($course_id, $user_id);

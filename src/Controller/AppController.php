@@ -96,7 +96,7 @@ class AppController extends Controller
 			
 			$this->writeSession('Setting.app_dir', APP_DIR);
 			
-			foreach ($settings as $key => $value)
+			foreach($settings as $key => $value)
 			{
 				$this->writeSession('Setting.'.$key, $value);
 			}
@@ -175,7 +175,7 @@ class AppController extends Controller
 	{
 		$val = $this->getRequest()->getQuery($key);
 		
-		if($val=='')
+		if($val == '')
 			return null;
 		
 		return $val;
