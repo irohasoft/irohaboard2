@@ -57,7 +57,7 @@ class InfosController extends AdminController
 	 */
 	public function edit($info_id = null)
 	{
-		if($this->action == 'edit' && !$this->Infos->exists(['id' => $info_id]))
+		if($this->action == 'edit' && !$this->Infos->exists($info_id))
 		{
 			throw new NotFoundException(__('Invalid info'));
 		}

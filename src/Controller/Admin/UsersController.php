@@ -146,7 +146,7 @@ class UsersController extends AdminController
 	 */
 	public function edit($user_id = null)
 	{
-		if($this->action == 'edit' && !$this->Users->exists(['id' => $user_id]))
+		if(($this->action == 'edit') && !$this->Users->exists(['id' => $user_id]))
 		{
 			throw new NotFoundException(__('Invalid user'));
 		}

@@ -34,7 +34,7 @@ class ContentsQuestionsController extends AppController
 		{
 			$this->loadModel('Courses');
 			
-			if(! $this->Courses->hasRight($this->readAuthUser('id'), $content->course_id))
+			if(!$this->Courses->hasRight($this->readAuthUser('id'), $content->course_id))
 				throw new NotFoundException(__('Invalid access'));
 		}
 		

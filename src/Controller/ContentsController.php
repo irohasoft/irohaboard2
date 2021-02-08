@@ -37,9 +37,8 @@ class ContentsController extends AppController
 		}
 		else
 		{
-			//debug($this->readAuthUser('id'));
 			// コースの閲覧権限の確認
-			if(! $this->Courses->hasRight($this->readAuthUser('id'), $course_id))
+			if(!$this->Courses->hasRight($this->readAuthUser('id'), $course_id))
 			{
 				throw new NotFoundException(__('Invalid access'));
 			}
@@ -47,10 +46,6 @@ class ContentsController extends AppController
 			$contents = $this->Contents->getContentRecord($this->readAuthUser('id'), $course_id, $role);
 		}
 		
-		//debug($contents);
-		/*
-		exit;
-		*/
 		$this->set(compact('course', 'contents', 'is_admin_record'));
 	}
 
