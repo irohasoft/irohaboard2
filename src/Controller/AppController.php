@@ -71,7 +71,7 @@ class AppController extends Controller
 		$this->set('loginedUser', $this->getRequest()->getAttribute('identity'));
 		
 		// 他のサイトの設定が存在する場合、設定情報及びログイン情報をクリア
-		if($this->readSession('Setting'))
+		if($this->hasSession('Setting'))
 		{
 			if($this->readSession('Setting.app_dir')!=APP_DIR)
 			{
@@ -89,7 +89,7 @@ class AppController extends Controller
 		}
 
 		// データベース内に格納された設定情報をセッションに格納
-		if(!$this->readSession('Setting'))
+		if(!$this->hasSession('Setting'))
 		{
 			$this->loadModel('Settings');
 			$settings = $this->Settings->getSettings();
@@ -111,6 +111,13 @@ class AppController extends Controller
 	protected function deleteSession($key)
 	{
 		$this->getRequest()->getSession()->delete($key);
+	}
+
+	protected function hasSession($key)
+	{
+		$val = $this->getRequest()->getSession()->read($key);
+		
+		return ($val != null);
 	}
 
 	protected function writeSession($key, $value)
@@ -179,6 +186,13 @@ class AppController extends Controller
 			return null;
 		
 		return $val;
+	}
+
+	protected function hasQuery($key)
+	{
+		$val = $this->getRequest()->getQuery($key);
+		
+		return ($val != null);
 	}
 
 	protected function getData($key = null)
