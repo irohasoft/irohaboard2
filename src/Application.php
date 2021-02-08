@@ -173,13 +173,13 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 			'fields' => $fields,
 			'loginUrl' => $login_url,
 			'cookie' => [
-						'name' => 'CookieAuth',
-						'expires' => '+2 weeks',
-						'path' => '/',
-						'domain' => '',
-						'secure' => false,
-						'httpOnly' => true,
-					],
+				'name' => 'CookieAuth',
+				'expires' => '+2 weeks',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httponly' => true,
+			],
 		]);
 		
 		// Load identifiers

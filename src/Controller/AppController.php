@@ -178,7 +178,7 @@ class AppController extends Controller
 		/*
 		$this->Cookie->configKey('User', [
 			'expires' => '+2 weeks',
-			'httpOnly' => true
+			'httponly' => true
 		]);
 		exit;
 		*/
