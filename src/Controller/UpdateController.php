@@ -7,6 +7,7 @@
  * @link          https://irohaboard.irohasoft.jp
  * @license       https://www.gnu.org/licenses/gpl-3.0.en.html GPL License
  */
+
 declare(strict_types=1);
 
 namespace App\Controller;
