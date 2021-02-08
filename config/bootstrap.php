@@ -221,3 +221,6 @@ ServerRequest::addDetector('tablet', function ($request) {
 
 // iroha Board 設定ファイルをロード
 Configure::load("ib_config");
+
+// キャッシュを無効化
+Cache::disable();
