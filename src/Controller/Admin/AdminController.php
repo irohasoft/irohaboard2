@@ -79,10 +79,10 @@ class AdminController extends AppController
 		if($this->isLogined())
 		{
 			if(
-				($this->readAuthUser('role')!='admin')&&
-				($this->readAuthUser('role')!='manager')&&
-				($this->readAuthUser('role')!='editor')&&
-				($this->readAuthUser('role')!='teacher')
+				($this->readAuthUser('role') != 'admin')&&
+				($this->readAuthUser('role') != 'manager')&&
+				($this->readAuthUser('role') != 'editor')&&
+				($this->readAuthUser('role') != 'teacher')
 			)
 			{
 				if($this->readCookie('Auth'))

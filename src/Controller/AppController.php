@@ -69,7 +69,7 @@ class AppController extends Controller
 		// 他のサイトの設定が存在する場合、設定情報及びログイン情報をクリア
 		if($this->hasSession('Setting'))
 		{
-			if($this->readSession('Setting.app_dir')!=APP_DIR)
+			if($this->readSession('Setting.app_dir') != APP_DIR)
 			{
 				// セッション内の設定情報を削除
 				$this->deleteSession('Setting');
@@ -271,6 +271,15 @@ class AppController extends Controller
 		}
 		
 		return $where;
+	}
+
+	/**
+	 * 管理画面のアクセスか確認
+	 * @return bool true : 管理画面, false : 受講者画面
+	 */
+	protected function isAdminPage()
+	{
+		return ($this->getRequest()->getParam('prefix') == 'Admin');
 	}
 
 	/**
