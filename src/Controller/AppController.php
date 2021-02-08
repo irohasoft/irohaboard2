@@ -103,16 +103,30 @@ class AppController extends Controller
 		}
 	}
 	
+	/**
+	 * セッションの取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値
+	 */
 	protected function readSession($key)
 	{
 		return $this->getRequest()->getSession()->read($key);
 	}
 
+	/**
+	 * セッションの削除
+	 * @param string $key キー
+	 */
 	protected function deleteSession($key)
 	{
 		$this->getRequest()->getSession()->delete($key);
 	}
 
+	/**
+	 * セッションの存在確認
+	 * @param string $key キー
+     * @return bool true : 存在する, false : 存在しない
+	 */
 	protected function hasSession($key)
 	{
 		$val = $this->getRequest()->getSession()->read($key);
@@ -120,16 +134,30 @@ class AppController extends Controller
 		return ($val != null);
 	}
 
+	/**
+	 * セッションの保存
+	 * @param string $key キー
+	 * @param string $value 値
+	 */
 	protected function writeSession($key, $value)
 	{
 		$this->getRequest()->getSession()->write($key, $value);
 	}
 
-	protected function readAuthUser($key)
+	/**
+	 * ログインユーザ情報の取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値
+	 */
+	protected function readAuthUser($key = null)
 	{
 		return $this->getRequest()->getAttribute('identity')->get($key);
 	}
 
+	/**
+	 * ログイン確認
+	 * @return bool true : ログイン済み, false : ログインしていない
+	 */
 	protected function isLogined()
 	{
 		if(!$this->getRequest()->getAttribute('identity'))
@@ -178,6 +206,11 @@ class AppController extends Controller
 		*/
 	}
 
+	/**
+	 * クエリストリングの取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値
+	 */
 	protected function getQuery($key)
 	{
 		$val = $this->getRequest()->getQuery($key);
@@ -188,6 +221,11 @@ class AppController extends Controller
 		return $val;
 	}
 
+	/**
+	 * クエリストリングの存在確認
+	 * @param string $key キー
+	 * @return bool true : 存在する, false : 存在しない
+	 */
 	protected function hasQuery($key)
 	{
 		$val = $this->getRequest()->getQuery($key);
@@ -195,6 +233,11 @@ class AppController extends Controller
 		return ($val != null);
 	}
 
+	/**
+	 * POSTデータの取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値（省略した場合、全て）
+	 */
 	protected function getData($key = null)
 	{
 		$val = $this->getRequest()->getData();
@@ -208,6 +251,13 @@ class AppController extends Controller
 		return $val;
 	}
 
+	/**
+	 * 条件の追加（検索キーの値が指定されている場合のみ）
+	 * @param string $where 条件
+	 * @param string $key キー
+	 * @param string $field 対象フィールド
+	 * @return string $where 新しい条件
+	 */
 	protected function addCondition($where, $key, $field)
 	{
 		$val = $this->getQuery($key);
@@ -227,6 +277,11 @@ class AppController extends Controller
 		return $where;
 	}
 
+	/**
+	 * ログの保存
+	 * @param string $log_type ログの種類
+	 * @param string $log_content ログの内容
+	 */
 	protected function writeLog($log_type, $log_content)
 	{
 		$data = [
