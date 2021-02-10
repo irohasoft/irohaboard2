@@ -192,35 +192,24 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			echo $this->Form->control('body',		['label' => __('内容')]);
 			echo "</div>";
 
-			// テスト
-			echo "<span class='kind kind-test'>";
-			echo $this->Form->control('timelimit', [
-				'label' => __('制限時間 (1-100分)'),
-				'templateVars' => ['after' => __('指定した場合、制限時間を過ぎると自動的に採点されます。')],
-			]);
-			
-			echo $this->Form->control('pass_rate', [
-				'label' => __('合格とする得点率 (1-100%)'),
-			]);
+			// テスト用設定 start
+			echo '<span class="kind kind-test">';
+			echo $this->Form->controlExp('timelimit', ['label' => __('制限時間 (1-100分)')], __('指定した場合、制限時間を過ぎると自動的に採点されます。'));
+			echo $this->Form->controlExp('pass_rate', ['label' => __('合格とする得点率 (1-100%)')], __('指定した場合、合否の判定が行われ、指定しない場合は無条件に合格となります。'));
 			
 			// ランダム出題用
-			echo $this->Form->control('question_count', [
-				'label' => __('出題数 (1-100問)'),
-				'templateVars' => ['after' => __('指定した場合、登録した問題の中からランダムに出題されます。')],
-			]);
-			echo "</span>";
+			echo $this->Form->controlExp('question_count', ['label' => __('出題数 (1-100問)')], __('指定した場合、登録した問題の中からランダムに出題され、指定しない場合は全問出題されます。'));
+			
+			// 問題が不正解時の表示
+			echo $this->Form->controlRadio('wrong_mode', ['label' => __('不正解時の表示'), 'options' => Configure::read('wrong_mode'), 'default' => 2, 'required' => true],
+				__('テスト結果画面にて不正解の問題の表示方法を指定します。正解時は解説のみが表示されます。'));
+			
+			echo '</span>';
+			// テスト用設定 end
 
 			// ステータス
-			echo $this->Form->control('status',	[
-				'type' => 'radio',
-				'label' => __('ステータス'),
-				'templateVars' => ['after' => __('　非公開と設定した場合、管理者権限でログインした場合のみ表示されます。')],
-				'default' => 1,
-				'options' => Configure::read('content_status'),
-				'hiddenField' => false,
-				'required' => true
-				]
-			);
+			echo $this->Form->controlRadio('status', ['label' => __('ステータス'), 'options' => Configure::read('content_status'), 'default' => 1, 'required' => true],
+				__('非公開と設定した場合、管理者権限でログインした場合のみ表示されます。'));
 			
 			// コンテンツ移動用
 			if(($this->action == 'edit'))

@@ -48,6 +48,8 @@ class Content extends Entity
         'kind' => true,
         'body' => true,
         'timelimit' => true,
+        'status' => true,
+        'wrong_mode' => true,
         'pass_rate' => true,
         'opened' => true,
         'created' => true,

@@ -36,6 +36,8 @@ $config['content_category']	= [
 	'test'		=> 'テスト'
 ];
 
+$config['wrong_mode']	= ['0' => '正解と解説を表示しない', '1' => '正解と解説を表示する', '2' => '解説のみ表示する'];
+
 $config['record_result'] = ['-1' => '', '1' => '合格', '0' => '不合格'];
 $config['record_complete'] = ['1' => '完了', '0' => '未完了'];
 
