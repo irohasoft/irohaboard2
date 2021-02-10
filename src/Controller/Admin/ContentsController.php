@@ -15,6 +15,7 @@ namespace App\Controller\Admin;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\Exception\NotFoundException;
 use App\Vendor\Utils;
 use App\Vendor\FileUpload;
 
@@ -41,7 +42,7 @@ class ContentsController extends AdminController
 		// コンテンツ一覧を取得
 		$contents = $this->Contents->find()
 			->where(['course_id' => $course_id])
-			->order('Contents.sort_no')
+			->order('Contents.sort_no asc')
 			->all();
 		
 		$this->set(compact('contents', 'course'));
@@ -66,6 +67,13 @@ class ContentsController extends AdminController
 	 */
 	public function edit($course_id, $content_id = null)
 	{
+		$course_id = intval($course_id);
+
+		if(($this->action == 'edit') && !$this->Contents->exists(['id' => $content_id]))
+		{
+			throw new NotFoundException(__('Invalid content'));
+		}
+
 		// コースの情報を取得
 		$course = $this->Contents->Courses->get($course_id);
 		
@@ -142,7 +150,7 @@ class ContentsController extends AdminController
 		$file_url = '';
 		
 		// ファイルの種類によって、アップロード可能な拡張子とファイルサイズを指定
-		switch ($file_type)
+		switch($file_type)
 		{
 			case 'file' :
 				$upload_extensions = (array)Configure::read('upload_extensions');
@@ -200,7 +208,7 @@ class ContentsController extends AdminController
 			{
 				$mode = 'error';
 				
-				switch ($error_code)
+				switch($error_code)
 				{
 					case 1001 : // 拡張子エラー
 						$this->Flash->error('アップロードされたファイルの形式は許可されていません');
@@ -239,11 +247,10 @@ class ContentsController extends AdminController
 			}
 		}
 
-		$this->set('mode',					$mode);
-		$this->set('file_url',				$file_url);
-		$this->set('file_name',				$original_file_name);
-		$this->set('upload_extensions',		join(', ', $upload_extensions));
-		$this->set('upload_maxsize',		$upload_maxsize);
+		$file_name = $original_file_name;
+		$upload_extensions = join(', ', $upload_extensions);
+		
+		$this->set(compact('mode', 'file_url', 'file_name', 'upload_extensions', 'upload_maxsize'));
 	}
 	
 	/**
@@ -277,13 +284,13 @@ class ContentsController extends AdminController
 			$result = $fileUpload->saveFile( $file_name );											//	ファイルの保存
 			
 			//debug($result);
-			$response = $result ? array($file_url) : array(false);
+			$response = $result ? [$file_url] : [false];
 			echo json_encode($response);
 		}
 	}
 
 	/**
-	 * Ajax によるコースの並び替え
+	 * Ajax によるコンテンツの並び替え
 	 *
 	 * @return string 実行結果
 	 */
@@ -322,7 +329,7 @@ class ContentsController extends AdminController
 		$this->LoadModel('ContentsQuestions');
 		$contentsQuestions = $this->ContentsQuestions->find()
 			->where(['content_id' => $content_id])
-			->order(['ContentsQuestions.sort_no' => 'asc'])
+			->order('ContentsQuestions.sort_no asc')
 			->all();
 		
 		foreach($contentsQuestions as $contentsQuestion)

@@ -61,6 +61,13 @@ class ContentsQuestionsController extends AdminController
 	 */
 	public function edit($content_id, $question_id = null)
 	{
+		$content_id = intval($content_id);
+		
+		if(($this->action == 'edit') && !$this->ContentsQuestions->exists(['id' => $question_id]))
+		{
+			throw new NotFoundException(__('Invalid contents question'));
+		}
+
 		// コンテンツ情報を取得
 		$content = $this->ContentsQuestions->Contents->get($content_id, [
 			'contain' => ['Courses'],

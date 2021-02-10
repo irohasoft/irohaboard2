@@ -21,40 +21,33 @@ namespace App\Controller;
 class InfosController extends AppController
 {
     /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
+	 * お知らせ一覧を表示（受講者側）
      */
     public function index()
     {
-        //debug($this->Infos->find()->where(['Infos.id' => 2])->first());
-        $this->paginate = [
-            'contain' => ['Users'],
-        ];
-        $infos = $this->paginate($this->Infos);
+		// お知らせ一覧を取得
+		$this->loadModel('Infos');
+		$this->paginate = $this->Infos->getInfoOption($this->readAuthUser('id'));
+		
+		$infos = $this->paginate();
         
         $this->set(compact('infos'));
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Info id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * お知らせの内容を表示
+	 * @param string $info_id 表示するお知らせのID
      */
     public function view($info_id = null)
     {
-        $info = $this->Infos->get($info_id, [
-            'contain' => ['Users', 'Groups'],
-        ]);
+		if(!$this->Infos->exists(['id' => $info_id]))
+		{
+			throw new NotFoundException(__('Invalid info'));
+		}
+
+        $info = $this->Infos->get($info_id);
         
-        /*
-        debug($info);
-        debug($this->Infos->findById($info_id, [
-            'contain' => ['Users', 'Groups'],
-        ])->first());
-        */
         $this->set(compact('info'));
     }
+
 }

@@ -1,4 +1,13 @@
 <?php
+/**
+ * iroha Board Project
+ *
+ * @author        Kotaro Miura
+ * @copyright     2015-2021 iroha Soft, Inc. (https://irohasoft.jp)
+ * @link          https://irohaboard.irohasoft.jp
+ * @license       https://www.gnu.org/licenses/gpl-3.0.en.html GPL License
+ */
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -200,10 +209,10 @@ EOF;
 	{
 		for($i=0; $i< count($id_list); $i++)
 		{
-			$sql = "UPDATE ib_contents SET sort_no = :sort_no WHERE id= :id";
+			$sql = "UPDATE ib_contents SET sort_no = :sort_no WHERE id = :id";
 
 			$params = [
-				'sort_no' => ($i+1),
+				'sort_no' => ($i + 1),
 				'id' => $id_list[$i]
 			];
 
@@ -219,16 +228,12 @@ EOF;
 	 */
 	public function getNextSortNo($course_id)
 	{
-		$row = $this->find()
+		$data = $this->find()
+			->select(['sort_no' => 'MAX(Contents.sort_no)'])
 			->where(['Contents.course_id' => $course_id])
-			->order(['Contents.sort_no' => 'DESC'])
-			->limit(1)
 			->first();
 		
-		if(!$row)
-			return 1;
-		
-		return ($row->sort_no + 1);
+		return ($data->sort_no + 1);
 	}
 
 }

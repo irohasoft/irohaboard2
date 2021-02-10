@@ -149,8 +149,7 @@ EOF;
 			'user_id' => $user_id
 		];
 		
-		$connection = ConnectionManager::get('default');
-		$data = $connection->execute($sql, $params)->fetchAll('assoc');
+		$data = $this->db_query($sql, $params);
 
 		return $data;
 	}

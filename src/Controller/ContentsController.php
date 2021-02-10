@@ -59,6 +59,35 @@ class ContentsController extends AppController
 	}
 
 	/**
+	 * コンテンツの表示
+	 * @param int $content_id 表示するコンテンツのID
+	 */
+	public function view($content_id)
+	{
+		$content_id = intval($content_id);
+		
+		if(!$this->Contents->exists(['id' => $content_id]))
+		{
+			throw new NotFoundException(__('Invalid content'));
+		}
+
+		// ヘッダー、フッターを非表示
+		$this->viewBuilder()->disableAutoLayout();
+		
+		$content = $this->Contents->get($content_id, ['contain' => ['Courses'],]);
+
+		// コンテンツの閲覧権限の確認
+		$this->loadModel('Courses');
+		
+		if(!$this->Courses->hasRight($this->readAuthUser('id'), $content->course_id))
+		{
+			throw new NotFoundException(__('Invalid access'));
+		}
+		
+		$this->set(compact('content'));
+	}
+
+	/**
 	 * テスト結果を表示（管理者用）
 	 * @param int $content_id 表示するコンテンツ(テスト)のID
 	 * @param int $record_id 履歴ID
@@ -73,18 +102,13 @@ class ContentsController extends AppController
 	}
 
 	/**
-	 * コンテンツの表示
-	 * @param int $content_id 表示するコンテンツのID
+	 * セッションに保存された情報を元にプレビュー
 	 */
-	public function view($content_id = null)
+	public function preview()
 	{
 		// ヘッダー、フッターを非表示
-		$this->viewBuilder()->disableAutoLayout();
-		
-		$content = $this->Contents->get($content_id, [
-			'contain' => ['Courses'],
-		]);
-
-		$this->set(compact('content'));
+		$this->layout = '';
+		$this->set('content', $this->readSession('Iroha.preview_content'));
+		$this->render('view');
 	}
 }

@@ -20,13 +20,7 @@ namespace App\Controller\Admin;
  */
 class RecordsController extends AdminController
 {
-	/*
-	public $paginate = [
-		'limit' => 25,
-		'order' => ['Records.created' => 'desc']
-	];
-	*/
-	
+
 	public function initialize(): void
 	{
 		parent::initialize();
@@ -38,9 +32,7 @@ class RecordsController extends AdminController
 	}
 	
 	/**
-	 * Index method
-	 *
-	 * @return \Cake\Http\Response|null|void Renders view
+	 * 学習履歴一覧を表示
 	 */
 	public function index()
 	{

@@ -21,9 +21,7 @@ namespace App\Controller\Admin;
 class InfosController extends AdminController
 {
 	/**
-	 * Index method
-	 *
-	 * @return \Cake\Http\Response|null|void Renders view
+	 * お知らせ一覧を表示
 	 */
 	public function index()
 	{
@@ -50,9 +48,7 @@ class InfosController extends AdminController
 	}
 
 	/**
-	 * Add method
-	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+	 * お知らせの追加
 	 */
 	public function add()
 	{

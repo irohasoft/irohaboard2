@@ -133,7 +133,7 @@ class InstallController extends AppController
 		}
 		catch (\Exception $e)
 		{
-			$this->err_msg = 'データベースへの接続に失敗しました。設定ファイル(config/app_local.php)のデータベースの設定をご確認ください。';
+			$this->err_msg = 'データベースへの接続に失敗しました。データベース設定ファイル(config/database.php)をご確認ください。';
 			$this->error();
 			$this->render('error');
 		}
@@ -142,21 +142,21 @@ class InstallController extends AppController
 	/**
 	 * インストール済みメッセージを表示
 	 */
-	function installed()
+	public function installed()
 	{
 	}
 	
 	/**
 	 * インストール完了メッセージを表示
 	 */
-	function complete()
+	public function complete()
 	{
 	}
 	
 	/**
 	 * インストールエラーメッセージを表示
 	 */
-	function error()
+	public function error()
 	{
 		$this->set('body', $this->err_msg);
 	}
@@ -199,7 +199,6 @@ class InstallController extends AppController
 	 */
 	private function __executeSQLScript()
 	{
-		//debug($this->path);
 		$statements = file_get_contents($this->path);
 		$statements = explode(';', $statements);
 		$err_statements = [];

@@ -187,14 +187,14 @@ EOF;
 		
 		// テスト問題の削除
 		$sql = "DELETE FROM ib_contents_questions WHERE content_id IN (SELECT id FROM  ib_contents WHERE course_id = :course_id);";
-		$this->query($sql, $params);
+		$this->db_execute($sql, $params);
 		
 		// コンテンツの削除
 		$sql = "DELETE FROM ib_contents WHERE course_id = :course_id;";
-		$this->query($sql, $params);
+		$this->db_execute($sql, $params);
 		
 		// コースの削除
 		$sql = "DELETE FROM ib_courses WHERE id = :course_id;";
-		$this->query($sql, $params);
+		$this->db_execute($sql, $params);
 	}
 }
