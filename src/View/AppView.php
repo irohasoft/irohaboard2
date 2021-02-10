@@ -25,24 +25,26 @@ use Cake\Routing\Router;
  */
 class AppView extends View
 {
-    /**
-     * Initialization hook method.
-     *
-     * Use this method to add common initialization code like loading helpers.
-     *
-     * e.g. `$this->loadHelper('Html');`
-     *
-     * @return void
-     */
-    public $action; //CakePHP2の仕様の引継ぎ
-    public $webroot; //CakePHP2の仕様の引継ぎ
-    
-    public function initialize(): void
-    {
+	/**
+	 * Initialization hook method.
+	 *
+	 * Use this method to add common initialization code like loading helpers.
+	 *
+	 * e.g. `$this->loadHelper('Html');`
+	 *
+	 * @return void
+	 */
+	public $action; //CakePHP2の仕様の引継ぎ
+	public $webroot; //CakePHP2の仕様の引継ぎ
+	
+	public function initialize(): void
+	{
 		$this->action = $this->request->getParam('action');
 		$this->webroot = Router::url('/', true);
 		
 		$this->loadHelper('Authentication.Identity');
+		$this->loadHelper('Form', ['className' => 'AppForm']);
+		
 		/*
 		$this->Breadcrumbs->setTemplates([
 			'wrapper' => '{{content}}',

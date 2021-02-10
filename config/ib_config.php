@@ -176,9 +176,9 @@ $config['bootstrap_form_template'] = [
 	'select' => '<div class="col col-sm-9"><select name="{{name}}"{{attrs}} class="form-control">{{content}}</select><span class="input-after">{{after}}</span></div>',
 	'selectMultiple' => '<div class="col col-sm-9"><select name="{{name}}[]" multiple="multiple"{{attrs}} class="form-control">{{content}}</select></div>',
 	'button' => '<div class="col col-sm-9 col-sm-offset-3"><button{{attrs}}>{{text}}</button></div>',
-//	'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
+	'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}> ',
 	'radioWrapper' => '{{label}}　',
-	'radioFormGroup' => '{{label}}<div class="col col-sm-9">{{input}}</div><span class="input-after">{{after}}</span>'
+	'radioFormGroup' => '{{label}}<div class="col col-sm-9">{{input}}</div><div class="col col-sm-3"></div><div class="col col-sm-9 col-exp status-exp">{{after}}</div>'
 //	'nestingLabel' => '2{{hidden}}{{input}}{{text}}1'
 ];
 
