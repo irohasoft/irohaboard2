@@ -20,6 +20,7 @@ namespace App\Controller;
  */
 class RecordsController extends AppController
 {
+
 	/**
 	 * 学習履歴を追加
 	 * 
@@ -34,9 +35,7 @@ class RecordsController extends AppController
 		
 		// コンテンツ情報を取得
 		$this->loadModel('Contents');
-		$content = $this->Contents->get($content_id, [
-			'contain' => ['Courses'],
-		]);
+		$content = $this->Contents->get($content_id, ['contain' => ['Courses']]);
 		
 		$data = [
 			'user_id'		=> $this->readAuthUser('id'),

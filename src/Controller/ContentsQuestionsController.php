@@ -31,9 +31,7 @@ class ContentsQuestionsController extends AppController
 		//	コンテンツ情報を取得		//
 		//------------------------------//
 		$this->loadModel('Contents');
-		$content = $this->Contents->get($content_id, [
-			'contain' => ['Courses'],
-		]);
+		$content = $this->Contents->get($content_id, ['contain' => ['Courses']]);
 		
 		//------------------------------//
 		//	権限チェック				//

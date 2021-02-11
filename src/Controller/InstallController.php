@@ -34,7 +34,7 @@ class InstallController extends AppController
 	/**
 	 * インストール
 	 */
-	function index()
+	public function index()
 	{
 		try
 		{
@@ -131,7 +131,7 @@ class InstallController extends AppController
 				}
 			}
 		}
-		catch (\Exception $e)
+		catch(\Exception $e)
 		{
 			$this->err_msg = 'データベースへの接続に失敗しました。データベース設定ファイル(config/database.php)をご確認ください。';
 			$this->error();

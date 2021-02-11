@@ -159,18 +159,18 @@ class ContentsTable extends AppTable
 	public function getContentRecord($user_id, $course_id, $role = 'user')
 	{
 		$sql = <<<EOF
- SELECT Content.*, first_date, last_date, record_id, Record.study_sec, Record.study_count,
+ SELECT Contents.*, first_date, last_date, record_id, Records.study_sec, Records.study_count,
        (SELECT understanding
           FROM ib_records h1
-         WHERE h1.id = Record.record_id
+         WHERE h1.id = Records.record_id
          ORDER BY created
           DESC LIMIT 1) as understanding,
        (SELECT ifnull(is_passed, 0)
           FROM ib_records h2
-         WHERE h2.id = Record.record_id
+         WHERE h2.id = Records.record_id
          ORDER BY created
           DESC LIMIT 1) as is_passed
-   FROM ib_contents Content
+   FROM ib_contents Contents
    LEFT OUTER JOIN
        (SELECT h.content_id, h.user_id,
                MAX(DATE_FORMAT(created, '%Y/%m/%d')) as last_date,
@@ -181,12 +181,12 @@ class ContentsTable extends AppTable
 		  FROM ib_records h
          WHERE h.user_id    =:user_id
 		   AND h.course_id  =:course_id
-         GROUP BY h.content_id, h.user_id) Record
-     ON Record.content_id  = Content.id
-    AND Record.user_id     =:user_id
-  WHERE Content.course_id  =:course_id
+         GROUP BY h.content_id, h.user_id) Records
+     ON Records.content_id  = Contents.id
+    AND Records.user_id     =:user_id
+  WHERE Contents.course_id  =:course_id
     AND (status = 1 OR 'admin' = :role)
-  ORDER BY Content.sort_no
+  ORDER BY Contents.sort_no
 EOF;
 
 		$params = [
@@ -233,7 +233,8 @@ EOF;
 			->where(['Contents.course_id' => $course_id])
 			->first();
 		
-		return ($data->sort_no + 1);
+		$sort_no = $data->sort_no + 1;
+		
+		return $sort_no;
 	}
-
 }

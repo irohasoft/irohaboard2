@@ -39,6 +39,10 @@ class UsersController extends AppController
 		$this->Authentication->addUnauthenticatedActions(['login']);
 	}
 	
+
+	/**
+	 * ログイン
+	 */
 	public function login()
 	{
 		//debug($this->request->getCookie('Auth'));
@@ -81,6 +85,9 @@ class UsersController extends AppController
 		}
 	}
 
+	/**
+	 * ログアウト
+	 */
 	public function logout()
 	{
 		$result = $this->Authentication->getResult();

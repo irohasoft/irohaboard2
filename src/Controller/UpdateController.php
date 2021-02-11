@@ -31,7 +31,7 @@ class UpdateController extends AppController
 	/**
 	 * アップデート
 	 */
-	function index()
+	public function index()
 	{
 		try
 		{
@@ -65,7 +65,7 @@ class UpdateController extends AppController
 				return;
 			}
 		}
-		catch (Exception $e)
+		catch(\Exception $e)
 		{
 			$this->err_msg = 'データベースへの接続に失敗しました。<br>Config / database.php ファイル内のデータベースの設定を確認して下さい。';
 			$this->error();

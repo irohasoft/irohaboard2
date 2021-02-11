@@ -129,7 +129,7 @@ class CoursesTable extends AppTable
 			$sql = "UPDATE ib_courses SET sort_no = :sort_no WHERE id= :id";
 
 			$params = [
-				'sort_no' => ($i+1),
+				'sort_no' => ($i + 1),
 				'id' => $id_list[$i]
 			];
 
@@ -178,7 +178,11 @@ EOF;
 		return $has_right;
 	}
 	
-	// コースの削除
+	/**
+	 * コースの削除
+	 * 
+	 * @param int $course_id 削除するコースのID
+	 */
 	public function deleteCourse($course_id)
 	{
 		$params = [

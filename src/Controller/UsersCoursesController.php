@@ -46,7 +46,7 @@ class UsersCoursesController extends AppController
 		$no_info = '';
 
 		// 全体のお知らせもお知らせも存在しない場合
-		if(($info == '') && count($infos) == 0)
+		if(($info == '') && (count($infos) == 0))
 			$no_info = __('お知らせはありません');
 
 		// 受講コース情報の取得

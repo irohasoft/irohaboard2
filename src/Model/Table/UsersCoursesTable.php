@@ -110,18 +110,18 @@ class UsersCoursesTable extends AppTable
 	public function getCourseRecord($user_id)
 	{
 		$sql = <<<EOF
- SELECT Course.*, Course.id, Course.title, first_date, last_date,
+ SELECT Courses.*, Courses.id, Courses.title, first_date, last_date,
 	   (ifnull(content_cnt, 0) - ifnull(study_cnt, 0) ) as left_cnt
-   FROM ib_courses Course
+   FROM ib_courses Courses
    LEFT OUTER JOIN
 	   (SELECT h.course_id, h.user_id,
 			   MAX(DATE_FORMAT(created, '%Y/%m/%d')) as last_date,
 			   MIN(DATE_FORMAT(created, '%Y/%m/%d')) as first_date
 		  FROM ib_records h
 		 WHERE h.user_id =:user_id
-		 GROUP BY h.course_id, h.user_id) Record
-	 ON Record.course_id   = Course.id
-	AND Record.user_id	   =:user_id
+         GROUP BY h.course_id, h.user_id) Records
+     ON Records.course_id   = Courses.id
+    AND Records.user_id     =:user_id
    LEFT OUTER JOIN
 		(SELECT course_id, COUNT(*) as study_cnt
 		   FROM
@@ -132,17 +132,17 @@ class UsersCoursesTable extends AppTable
 				AND status = 1
 			  GROUP BY r.course_id, r.content_id) as c
 		 GROUP BY course_id) StudyCount
-	 ON StudyCount.course_id   = Course.id
+     ON StudyCount.course_id   = Courses.id
    LEFT OUTER JOIN
 		(SELECT course_id, COUNT(*) as content_cnt
 		   FROM ib_contents
 		  WHERE kind NOT IN ('label', 'file')
 			AND status = 1
 		  GROUP BY course_id) ContentCount
-	 ON ContentCount.course_id	 = Course.id
+     ON ContentCount.course_id   = Courses.id
   WHERE id IN (SELECT course_id FROM ib_users_groups ug INNER JOIN ib_groups_courses gc ON ug.group_id = gc.group_id WHERE user_id = :user_id)
 	 OR id IN (SELECT course_id FROM ib_users_courses WHERE user_id = :user_id)
-  ORDER BY Course.sort_no asc
+  ORDER BY Courses.sort_no asc
 EOF;
 
 		$params = [

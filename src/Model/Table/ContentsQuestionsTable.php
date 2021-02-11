@@ -143,10 +143,10 @@ class ContentsQuestionsTable extends AppTable
 	{
 		for($i=0; $i< count($id_list); $i++)
 		{
-			$sql = "UPDATE ib_contents_questions SET sort_no = :sort_no WHERE id= :id";
+			$sql = "UPDATE ib_contents_questions SET sort_no = :sort_no WHERE id = :id";
 
 			$params = [
-				'sort_no' => ($i+1),
+				'sort_no' => ($i + 1),
 				'id' => $id_list[$i]
 			];
 
@@ -162,15 +162,15 @@ class ContentsQuestionsTable extends AppTable
 	 */
 	public function getNextSortNo($content_id)
 	{
-		$row = $this->find()
+		$data = $this->find()
 			->where(['ContentsQuestions.content_id' => $content_id])
 			->order(['ContentsQuestions.sort_no' => 'DESC'])
 			->limit(1)
 			->first();
 		
-		if(!$row)
+		if(!$data)
 			return 1;
 		
-		return ($row->sort_no + 1);
+		return ($data->sort_no + 1);
 	}
 }
