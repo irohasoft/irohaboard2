@@ -37,20 +37,19 @@ class AppTable extends Table
 		$connection->execute($sql, $params);
 	}
 	
-	public function db_query_value($sql, $params, $field_name)
+	public function db_query_list($sql, $params, $field_name)
 	{
-		$data = $this->db_query($sql, $params, $field_name);
+		$data = $this->db_query($sql, $params);
 		
 		$list = [];
 		
 		for($i=0; $i< count($data); $i++)
 		{
-			$list[$i] = $data[$i]['user_id'];
+			$list[$i] = $data[$i][$field_name];
 		}
 		
 		return $list;
 	}
-
 
 	/**
 	 * 英数字チェック（マルチバイト対応）

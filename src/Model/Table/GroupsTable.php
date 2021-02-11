@@ -105,7 +105,7 @@ class GroupsTable extends AppTable
 		
 		$params = ['group_id' => $group_id];
 		
-		$list = $this->db_query_value($sql, $params, 'user_id');
+		$list = $this->db_query_list($sql, $params, 'user_id');
 		/*
 		
 		debug($list);

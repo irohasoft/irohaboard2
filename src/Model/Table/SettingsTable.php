@@ -93,7 +93,7 @@ EOF;
 				'setting_key' => $setting_key
 		];
 		
-		$data = $this->query($sql, $params);
+		$data = $this->db_query($sql, $params);
 		
 		
 		return $setting_value;

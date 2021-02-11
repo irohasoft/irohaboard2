@@ -21,7 +21,7 @@ use App\Vendor\Utils;
 			</div>
 			<?php }?>
 			
-			<?php if(count($infos) > 0){?>
+			<?php if($infos->count() > 0){?>
 			<table cellpadding="0" cellspacing="0">
             <tbody>
 			<?php foreach ($infos as $info): ?>
