@@ -45,37 +45,6 @@ class UsersController extends AdminController
 		$this->Authentication->addUnauthenticatedActions(['login']);
 	}
 
-	// custom 2020.06.07
-	public function login()
-	{
-		$this->request->allowMethod(['get', 'post']);
-		$result = $this->Authentication->getResult();
-		//debug($result);
-		
-		// If the user is logged in send them away.
-		if($result->isValid())
-		{
-			return $this->redirect(['controller' => 'Users', 'action' => 'index']);
-		}
-
-		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
-		if($this->request->is('post') && !$result->isValid())
-		{
-			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
-		}
-	}
-
-	public function logout()
-	{
-		$result = $this->Authentication->getResult();
-		
-		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクトします
-		if($result->isValid()) {
-			$this->Authentication->logout();
-			return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-		}
-	}
-	
 	/**
 	 * Index method
 	 *
@@ -136,9 +105,7 @@ class UsersController extends AdminController
 	}
 
 	/**
-	 * Add method
-	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+	 * ユーザを追加（編集画面へ）
 	 */
 	public function add()
 	{
@@ -147,11 +114,8 @@ class UsersController extends AdminController
 	}
 
 	/**
-	 * Edit method
-	 *
-	 * @param string|null $id User id.
-	 * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * ユーザ情報編集
+	 * @param int $user_id 編集対象のユーザのID
 	 */
 	public function edit($user_id = null)
 	{
@@ -189,16 +153,14 @@ class UsersController extends AdminController
 	}
 
 	/**
-	 * Delete method
+	 * ユーザの削除
 	 *
-	 * @param string|null $id User id.
-	 * @return \Cake\Http\Response|null|void Redirects to index.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @param int $user_id 削除するユーザのID
 	 */
-	public function delete($id = null)
+	public function delete($user_id = null)
 	{
 		$this->request->allowMethod(['post', 'delete']);
-		$user = $this->Users->get($id);
+		$user = $this->Users->get($user_id);
 		
 		if($this->Users->delete($user))
 		{
@@ -206,10 +168,23 @@ class UsersController extends AdminController
 		}
 		else
 		{
-			$this->Flash->error(__('The user could not be deleted. Please, try again.'));
+			$this->Flash->error(__('ユーザを削除できませんでした'));
 		}
 		
 		return $this->redirect(['action' => 'index']);
+	}
+
+	/**
+	 * ユーザの学習履歴のクリア
+	 *
+	 * @param int $user_id 学習履歴をクリアするユーザのID
+	 */
+	public function clear($user_id)
+	{
+		$this->request->allowMethod('post', 'delete');
+		$this->Users->deleteUserRecords($user_id);
+		$this->Flash->success(__('学習履歴を削除しました'));
+		return $this->redirect(['action' => 'edit', $user_id]);
 	}
 
 	/**
@@ -256,6 +231,42 @@ class UsersController extends AdminController
 		}
 		
 		$this->set(compact('user'));
+	}
+
+	/**
+	 * ログイン
+	 */
+	public function login()
+	{
+		$this->request->allowMethod(['get', 'post']);
+		$result = $this->Authentication->getResult();
+		//debug($result);
+		
+		// If the user is logged in send them away.
+		if($result->isValid())
+		{
+			return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+		}
+
+		// ユーザーが submit 後、認証失敗した場合は、エラーを表示します
+		if($this->request->is('post') && !$result->isValid())
+		{
+			$this->Flash->error(__('ログインID、もしくはパスワードが正しくありません'));
+		}
+	}
+
+	/**
+	 * ログアウト
+	 */
+	public function logout()
+	{
+		$result = $this->Authentication->getResult();
+		
+		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクトします
+		if($result->isValid()) {
+			$this->Authentication->logout();
+			return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+		}
 	}
 
 	/**
@@ -337,7 +348,7 @@ class UsersController extends AdminController
 					//------------------------------//
 					//	ユーザ情報の作成			//
 					//------------------------------//
-					$data = $this->Users->find('all')
+					$data = $this->Users->find()
 						->where(['Users.username' => $row[COL_LOGINID]])
 						->contain(['Courses', 'Groups'])
 						->first();
@@ -514,7 +525,7 @@ class UsersController extends AdminController
 		
 		// パフォーマンスの改善の為、一定件数に分割してデータを取得
 		$limit      = 500;
-		$user_count = $this->Users->find('all')->count();	// ユーザ数を取得
+		$user_count = $this->Users->find()->count();	// ユーザ数を取得
 		$page_size  = ceil($user_count / $limit);	// ページ数（ユーザ数 / ページ単位）
 		
 		// ページ単位でユーザを取得
