@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\NotFoundException;
+
 /**
  * Infos Controller
  *
@@ -45,6 +47,12 @@ class InfosController extends AppController
 			throw new NotFoundException(__('Invalid info'));
 		}
 
+		// お知らせの閲覧権限の確認
+		if(!$this->Infos->hasRight($this->readAuthUser('id'), $info_id))
+		{
+			throw new NotFoundException(__('Invalid access'));
+		}
+		
         $info = $this->Infos->get($info_id);
         
         $this->set(compact('info'));

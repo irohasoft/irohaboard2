@@ -123,10 +123,10 @@ class InfosTable extends AppTable
 	 */
 	public function getInfos($user_id, $limit = null)
 	{
-		$infos = $this->getInfoOption($user_id, $limit);
+		$infos = $this->find('all', $this->getInfoOption($user_id, $limit));
 		return $infos;
 	}
-	
+
 	/**
 	 * お知らせ一覧を取得
 	 * 
@@ -136,37 +136,71 @@ class InfosTable extends AppTable
 	 */
 	public function getInfoOption($user_id, $limit = null)
 	{
+		// 閲覧可能なお知らせを取得
+		$info_id_list = $this->getInfoIdList($user_id, $limit);
+
+		$option = [
+			'fields' => ['Infos.id', 'Infos.title', 'Infos.created'],
+			'conditions' => ['Infos.id IN ' => $info_id_list],
+			'order' => ['Infos.created' => 'desc'],
+		];
+		
+		if($limit)
+			$option['limit'] = $limit;
+		
+		return $option;
+	}
+
+	/**
+	 * お知らせへのアクセス権限チェック
+	 * 
+	 * @param int $user_id   アクセス者のユーザID
+	 * @param int $course_id アクセス先のコースのID
+	 * @return bool true: アクセス可能, false : アクセス不可
+	 */
+	public function hasRight($user_id, $info_id)
+	{
+		$info_id_list = $this->getInfoIdList($user_id);
+		
+		return in_array($info_id, $info_id_list);
+	}
+	
+	/**
+	 * 閲覧可能なお知らせのIDリストを取得
+	 * @param int $user_id ユーザID
+	 * @return array お知らせIDリスト
+	 */
+	private function getInfoIdList($user_id, $limit = null)
+	{
 		$sql = <<<EOF
 	SELECT
-		Info.id,
-		Info.title,
-		Info.created 
+		Infos.id
 	FROM
-		ib_infos AS Info
-		LEFT OUTER JOIN ib_infos_groups AS InfoGroup ON ( Info.id = InfoGroup.info_id ) 
+		ib_infos AS Infos
+		LEFT OUTER JOIN ib_infos_groups AS InfoGroups ON ( Infos.id = InfoGroups.info_id ) 
 	WHERE
-		InfoGroup.group_id IS NULL 
-		OR InfoGroup.group_id IN ( SELECT group_id FROM ib_users_groups WHERE user_id = :user_id ) 
+		InfoGroups.group_id IS NULL 
+		OR InfoGroups.group_id IN ( SELECT group_id FROM ib_users_groups WHERE user_id = :user_id ) 
 	GROUP BY
-		Info.id,
-		Info.title,
-		Info.created 
-	ORDER BY
-		Info.created DESC 
+		Infos.id
+	ORDER BY Infos.created desc
 EOF;
 		if($limit)
 			$sql .= ' LIMIT '.intval($limit);
-		
-		//debug($sql);
-		
+
 		$params = [
 			'user_id' => $user_id,
 		];
 		
-		$connection = ConnectionManager::get('default');
-		$data = $connection->execute($sql, $params)->fetchAll('assoc');
-
-		//debug($data);
-		return $data;
+		$infos = $this->db_query($sql, $params);
+		
+		$info_id_list = [];
+		
+		foreach ($infos as $info)
+		{
+			$info_id_list[] = $info['id'];
+		}
+		
+		return $info_id_list;
 	}
 }
