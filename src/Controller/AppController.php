@@ -205,14 +205,14 @@ class AppController extends Controller
 	/**
 	 * クエリストリングの取得
 	 * @param string $key キー
-	 * @return string 指定したキーの値
+	 * @param string $default キーが存在しない場合に返す値
 	 */
-	protected function getQuery($key)
+	protected function getQuery($key, $default = '')
 	{
 		$val = $this->getRequest()->getQuery($key);
 		
-		if($val == '')
-			return null;
+		if($val == null)
+			return $default;
 		
 		return $val;
 	}
@@ -230,19 +230,34 @@ class AppController extends Controller
 	}
 
 	/**
+	 * ルート要素とリクエストパラメータを取得
+	 * @param string $key キー
+	 * @param string $default キーが存在しない場合に返す値
+	 */
+	protected function getParam($key, $default = '')
+	{
+		$val = $this->getRequest()->getParam($key);
+
+		if($val == null)
+			return $default;
+		
+		return $val;
+	}
+
+	/**
 	 * POSTデータの取得
 	 * @param string $key キー
-	 * @return string 指定したキーの値（省略した場合、全て）
+	 * @param string $default キーが存在しない場合に返す値
 	 */
-	protected function getData($key = null)
+	protected function getData($key = null, $default = null)
 	{
 		$val = $this->getRequest()->getData();
 		
 		if(!$val)
-			return null;
+			return $default;
 		
 		if($key)
-			$val = empty($val[$key]) ? null :$val[$key];
+			$val = empty($val[$key]) ? $default :$val[$key];
 		
 		return $val;
 	}
