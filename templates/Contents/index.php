@@ -6,6 +6,8 @@
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
+
+$is_admin_record = $this->isAdminPage() && $this->isRecordPage();
 ?>
 <?php $this->start('css-embedded'); ?>
 <style>
@@ -16,9 +18,10 @@ use App\Vendor\Utils;
 	.responsive-table tbody td:nth-of-type(5):before { content: "<?= __('学習時間').' : '?>"; }
 	.responsive-table tbody td:nth-of-type(6):before { content: "<?= __('学習回数').' : '?>"; }
 	.responsive-table tbody td:nth-of-type(7):before { content: "<?= __('理解度').' : '?>"; }
+	.responsive-table tbody td:nth-of-type(8):before { content: "<?= __('完了').' : '?>"; }
 }
 
-<?php if($this->action=='adminRecord') { // 学習履歴表示モードの場合、メニューを表示しない ?>
+<?php if($is_admin_record) { // 管理者による学習履歴表示の場合、メニューを表示しない ?>
 .ib-navi-item
 {
 	display					: none;
@@ -41,7 +44,6 @@ use App\Vendor\Utils;
 			'controller' => 'users_courses',
 			'action' => 'index'
 		]);
-		
 		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	}
 	?>

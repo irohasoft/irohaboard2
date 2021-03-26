@@ -63,7 +63,7 @@ class ContentsQuestionsController extends AdminController
 	{
 		$content_id = intval($content_id);
 		
-		if(($this->action == 'edit') && !$this->ContentsQuestions->exists(['id' => $question_id]))
+		if($this->isEditPage() && !$this->ContentsQuestions->exists(['id' => $question_id]))
 		{
 			throw new NotFoundException(__('Invalid contents question'));
 		}
@@ -83,7 +83,7 @@ class ContentsQuestionsController extends AdminController
 			$conn->getDriver()->enableAutoQuoting();
 			
 			// 新規追加の場合、コンテンツの作成者と所属コースを指定
-			if($this->action == 'add')
+			if(!$this->isEditPage())
 			{
 				$contentsQuestion->user_id	= $this->readAuthUser('id');
 				$contentsQuestion->content_id = $content_id;
@@ -124,7 +124,7 @@ class ContentsQuestionsController extends AdminController
 	}
 
 	/**
-	 * Ajax によるコースの並び替え
+	 * Ajax によるコンテンツの並び替え
 	 *
 	 * @return string 実行結果
 	 */
@@ -134,9 +134,9 @@ class ContentsQuestionsController extends AdminController
 		
 		if($this->request->is('ajax'))
 		{
-			debug($this->getData('id_list'));
 			$this->ContentsQuestions->setOrder($this->getData('id_list'));
 			echo "OK";
 		}
 	}
+
 }

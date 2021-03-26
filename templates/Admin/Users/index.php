@@ -13,7 +13,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 <div class="admin-users-index">
 	<div class="ib-page-title"><?= __('ユーザ一覧'); ?></div>
 	<div class="buttons_container">
-		<?php if($this->readAuthUser('role')=='admin'){ ?>
+		<?php if($this->readAuthUser('role') == 'admin'){ ?>
 		<button type="button" class="btn btn-primary btn-export" onclick="location.href='<?= Router::url(['action' => 'export']) ?>'">エクスポート</button>
 		<button type="button" class="btn btn-primary btn-import" onclick="location.href='<?= Router::url(['action' => 'import']) ?>'">インポート</button>
 		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add']) ?>'">+ 追加</button>
@@ -27,7 +27,6 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 			echo $this->Form->control('group_id',	[
 				'label'		=> 'グループ : ', 
 				'options'	=>$groups, 
-//				'value'		=>$group_id, 
 				'empty'		=> '全て', 
 				'class'		=> 'form-control',
 				'onchange'	=> 'submit(this.form);'

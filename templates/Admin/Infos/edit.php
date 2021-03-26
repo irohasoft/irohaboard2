@@ -21,7 +21,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 <?= $this->Html->link(__('<< 戻る'), ['action' => 'index'])?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<?= ($this->request->getParam('action') == 'edit') ? __('編集') :  __('新規お知らせ'); ?>
+			<?= $this->isEditPage() ? __('編集') :  __('新規お知らせ'); ?>
 		</div>
 		<div class="panel-body">
 			<?php

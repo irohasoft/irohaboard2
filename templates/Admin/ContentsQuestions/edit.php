@@ -25,7 +25,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		txt	= document.all("option");
 		opt	= document.all("option_list[]").options;
 		
-		if(txt.value=="")
+		if(txt.value == '')
 		{
 			alert("選択肢を入力してください");
 			return false;
@@ -37,7 +37,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			return false;
 		}
 		
-		if(opt.length==10)
+		if(opt.length == 10)
 		{
 			alert("選択肢の数が最大値を超えています");
 			return false;
@@ -152,7 +152,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	</div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<?= ($this->action == 'admin_edit') ? __('編集') :  __('新規問題'); ?>
+			<?= $this->isEditPage() ? __('編集') :  __('新規問題'); ?>
 		</div>
 		<div class="panel-body">
 			<?php

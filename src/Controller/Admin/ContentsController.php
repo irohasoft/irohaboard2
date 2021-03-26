@@ -69,7 +69,7 @@ class ContentsController extends AdminController
 	{
 		$course_id = intval($course_id);
 
-		if(($this->action == 'edit') && !$this->Contents->exists(['id' => $content_id]))
+		if($this->isEditPage() && !$this->Contents->exists(['id' => $content_id]))
 		{
 			throw new NotFoundException(__('Invalid content'));
 		}
@@ -84,7 +84,7 @@ class ContentsController extends AdminController
 			$content = $this->Contents->patchEntity($content, $this->getData());
 			
 			// 新規追加の場合、コンテンツの作成者と所属コースを指定
-			if($this->action == 'add')
+			if(!$this->isEditPage())
 			{
 				$content->user_id	= $this->readAuthUser('id');
 				$content->course_id = $course_id;

@@ -37,10 +37,8 @@ class ContentsController extends AppController
 		// ロールを取得
 		$role = $this->readAuthUser('role');
 		
-		$is_admin_record = (($role == 'admin') && ($this->action == 'adminRecord'));
-		
 		// 管理者かつ、学習履歴表示モードの場合、
-		if($is_admin_record)
+		if($this->isAdminPage() &&  $this->isRecordPage())
 		{
 			$contents = $this->Contents->getContentRecord($user_id, $course_id, $role);
 		}
@@ -55,7 +53,7 @@ class ContentsController extends AppController
 			$contents = $this->Contents->getContentRecord($this->readAuthUser('id'), $course_id, $role);
 		}
 		
-		$this->set(compact('course', 'contents', 'is_admin_record'));
+		$this->set(compact('course', 'contents'));
 	}
 
 	/**

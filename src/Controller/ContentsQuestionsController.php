@@ -37,7 +37,7 @@ class ContentsQuestionsController extends AppController
 		//	権限チェック				//
 		//------------------------------//
 		// 管理者以外の場合、コンテンツの閲覧権限の確認
-		if($this->readAuthUser('role') != 'admin')
+		if(!$this->isAdminPage())
 		{
 			$this->loadModel('Courses');
 			
@@ -59,16 +59,14 @@ class ContentsQuestionsController extends AppController
 			]);
 			
 			// 受講者によるテスト結果表示の場合、自身のテスト結果か確認
-			if(
-				($this->action == 'record')&&
-				($record->user_id != $this->readAuthUser('id'))
-			)
+			if(!$this->isAdminPage() && $this->isRecordPage() && ($record->user_id != $this->readAuthUser('id')))
 			{
 				throw new NotFoundException(__('Invalid access'));
 			}
 			
 			// テスト結果に紐づく問題ID一覧（出題順）を作成
-			$question_id_list = [];
+			// 問題が存在しない場合のエラーを防ぐため、0を追加
+			$question_id_list = [0];
 			
 			foreach($record->records_questions as $question)
 			{
@@ -228,8 +226,8 @@ class ContentsQuestionsController extends AppController
 			}
 		}
 		
-		$is_record = (($this->action == 'record') || ($this->action == 'adminRecord'));	// テスト結果表示フラグ
-		$is_admin_record = ($this->action == 'adminRecord');
+		$is_record = $this->isRecordPage();	// テスト結果表示フラグ
+		$is_admin_record = $this->isAdminPage() && $this->isRecordPage();
 		
 		$this->set(compact('content', 'contentsQuestions', 'record', 'is_record', 'is_admin_record'));
 	}
