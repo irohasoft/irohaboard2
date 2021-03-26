@@ -23,19 +23,19 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 
 		$url.after('<input id="btnUpload" type="button" value="ファイルを指定">');
 
-		$("#btnUpload").click(function(){
+		$("#btnUpload").click(function() {
 			var val = $('input[name="kind"]:checked').val();
 			
 			if(!val)
 				return false;
 			
 			if(
-				(val=='text')||
-				(val=='test')
+				(val == 'text')||
+				(val == 'test')
 			)
 				return false;
 			
-			if(val=='url')
+			if(val == 'url')
 				val = 'file';
 			
 			//window.open('<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/'+val, '_upload', 'width=650,height=500,resizable=no');
@@ -54,9 +54,10 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		$("form").submit( function() {
 			var val = $('input[name="kind"]:checked').val();
 			
-			if(val=='html')
+			if(val == 'html')
 			{
-				if ($('#body').summernote('codeview.isActivated')) {
+				if ($('#body').summernote('codeview.isActivated'))
+				{
 					$('#body').summernote('codeview.deactivate')
 				}
 			}
@@ -70,7 +71,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		var content_kind = $('input[name="kind"]:checked').val();
 		
 		$(".kind").hide();
-		$(".kind-"+content_kind).show();
+		$(".kind-" + content_kind).show();
 		$("#btnPreview").hide();
 		
 		switch(content_kind)
@@ -78,7 +79,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			case 'text': // テキスト
 				$("#body").summernote('destroy');
 				// テキストが存在しない場合、空文字にする。
-				if($('<span>').html($("#body").val()).text()=="")
+				if($('<span>').html($("#body").val()).text() == '')
 					$("#body").val("");
 				$("#btnPreview").show();
 				break;
@@ -160,7 +161,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<?= ($this->action == 'admin_edit') ? __('編集') :  __('新規コンテンツ'); ?>
+			<?= $this->isEditPage() ? __('編集') :  __('新規コンテンツ'); ?>
 		</div>
 		<div class="panel-body">
 			<?php
@@ -212,7 +213,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				__('非公開と設定した場合、管理者権限でログインした場合のみ表示されます。'));
 			
 			// コンテンツ移動用
-			if(($this->action == 'edit'))
+			if($this->isEditPage())
 			{
 				echo $this->Form->control('course_id', [
 					'label' => __('所属コース'),
