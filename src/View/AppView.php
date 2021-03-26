@@ -92,7 +92,15 @@ class AppView extends View
 	 */
 	protected function isRecordPage()
 	{
-		return ($this->request->getParam('action') == 'record');
+		return (($this->request->getParam('action') == 'record') || ($this->request->getParam('action') == 'adminRecord'));
+	}
+
+	/**
+	 * 管理者向けテスト結果画面へのアクセスかを確認
+	 */
+	protected function isAdminRecordPage()
+	{
+		return ($this->request->getParam('action') == 'adminRecord');
 	}
 
 	/**

@@ -37,7 +37,7 @@ class ContentsQuestionsController extends AppController
 		//	権限チェック				//
 		//------------------------------//
 		// 管理者以外の場合、コンテンツの閲覧権限の確認
-		if(!$this->isAdminPage())
+		if($this->readAuthUser('role') == 'user')
 		{
 			$this->loadModel('Courses');
 			
@@ -227,7 +227,7 @@ class ContentsQuestionsController extends AppController
 		}
 		
 		$is_record = $this->isRecordPage();	// テスト結果表示フラグ
-		$is_admin_record = $this->isAdminPage() && $this->isRecordPage();
+		$is_admin_record = $this->isAdminRecordPage();
 		
 		$this->set(compact('content', 'contentsQuestions', 'record', 'is_record', 'is_admin_record'));
 	}

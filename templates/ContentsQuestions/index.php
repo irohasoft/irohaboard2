@@ -13,7 +13,7 @@ use App\Vendor\Utils;
 	// 管理者による学習履歴表示モードの場合、コース一覧リンクを表示しない
 	if($is_admin_record)
 	{
-		$course_url = ['controller' => 'contents', 'action' => 'record', $record->course->id, $record->user_id];
+		$course_url = ['controller' => 'contents', 'action' => 'adminRecord', $record->course->id, $record->user_id];
 	}
 	else
 	{

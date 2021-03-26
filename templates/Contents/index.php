@@ -7,7 +7,7 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 
-$is_admin_record = $this->isAdminPage() && $this->isRecordPage();
+$is_admin_record = $this->isAdminRecordPage();
 ?>
 <?php $this->start('css-embedded'); ?>
 <style>
