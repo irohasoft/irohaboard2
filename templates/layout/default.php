@@ -20,7 +20,7 @@
 	<?= $this->Html->charset() ?>
 	<title><?= h($this->getRequest()->getSession()->read('Setting.title')); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="application-name" content="iroha Board">
+	<meta name="application-name" content="<?= APP_NAME; ?>">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<?php
 		// 管理画面フラグ（ログイン画面は例外とする）

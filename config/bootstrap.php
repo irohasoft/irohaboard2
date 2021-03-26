@@ -224,3 +224,9 @@ Configure::load("ib_config");
 
 // キャッシュを無効化
 Cache::disable();
+
+// アプリケーション名の設定
+if (!defined('APP_NAME')) {
+	define('APP_NAME', 'iroha Board');
+}
+
