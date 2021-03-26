@@ -71,6 +71,7 @@ $is_admin_record = $this->isAdminRecordPage();
 				<th nowrap class="ib-col-center"><?= __('学習時間'); ?></th>
 				<th nowrap class="ib-col-center"><?= __('学習回数'); ?></th>
 				<th nowrap class="ib-col-center"><?= __('理解度'); ?></th>
+				<th nowrap class="ib-col-center"><?= __('完了'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -161,6 +162,7 @@ $is_admin_record = $this->isAdminRecordPage();
 			<td class="ib-col-center"><?= h(Utils::getHNSBySec($content['study_sec'])); ?>&nbsp;</td>
 			<td class="ib-col-center"><?= h($content['study_count']); ?>&nbsp;</td>
 			<td nowrap class="ib-col-center"><?= $understanding; ?></td>
+			<td class="ib-col-center"><?= ($content['is_complete'] == 1) ? '<span class="glyphicon glyphicon-ok text-muted"></span>' : ''; ?></td>
 		</tr>
 		<?php
 		}

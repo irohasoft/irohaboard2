@@ -159,34 +159,47 @@ class ContentsTable extends AppTable
 	public function getContentRecord($user_id, $course_id, $role = 'user')
 	{
 		$sql = <<<EOF
- SELECT Contents.*, first_date, last_date, record_id, Records.study_sec, Records.study_count,
+ SELECT Content.*, first_date, last_date, record_id, Record.study_sec, Record.study_count,
        (SELECT understanding
           FROM ib_records h1
-         WHERE h1.id = Records.record_id
+         WHERE h1.id = Record.record_id
          ORDER BY created
           DESC LIMIT 1) as understanding,
        (SELECT ifnull(is_passed, 0)
           FROM ib_records h2
-         WHERE h2.id = Records.record_id
+         WHERE h2.id = Record.record_id
          ORDER BY created
-          DESC LIMIT 1) as is_passed
-   FROM ib_contents Contents
-   LEFT OUTER JOIN
+          DESC LIMIT 1) as is_passed,
+        CompleteRecord.is_complete
+   FROM ib_contents Content
+   LEFT OUTER JOIN # 全ての学習履歴の集計
        (SELECT h.content_id, h.user_id,
                MAX(DATE_FORMAT(created, '%Y/%m/%d')) as last_date,
                MIN(DATE_FORMAT(created, '%Y/%m/%d')) as first_date,
-			   MAX(id) as record_id,
-			   SUM(ifnull(study_sec, 0)) as study_sec,
-			   COUNT(*) as study_count
-		  FROM ib_records h
+               MAX(id) as record_id,
+               SUM(ifnull(study_sec, 0)) as study_sec,
+               COUNT(*) as study_count
+          FROM ib_records h
          WHERE h.user_id    =:user_id
-		   AND h.course_id  =:course_id
-         GROUP BY h.content_id, h.user_id) Records
-     ON Records.content_id  = Contents.id
-    AND Records.user_id     =:user_id
-  WHERE Contents.course_id  =:course_id
+           AND h.course_id  =:course_id
+         GROUP BY h.content_id) Record
+     ON Record.content_id  = Content.id
+   LEFT OUTER JOIN # 完了した学習履歴の集計
+       (SELECT r.content_id, 1 as is_complete #学習履歴をコンテンツ別に集計
+          FROM ib_records r
+         INNER JOIN ib_contents c ON r.content_id = c.id AND r.course_id = c.course_id
+         WHERE r.user_id    = :user_id
+           AND r.course_id  =:course_id
+           AND c.status = 1
+           AND (
+                 (c.kind != 'test' AND r.is_complete = 1) OR 
+                 (c.kind  = 'test' AND r.is_passed   = 1)
+               ) #学習コンテンツが受講済、もしくはテストが合格済の場合
+         GROUP BY r.content_id) as CompleteRecord
+     ON CompleteRecord.content_id = Content.id
+  WHERE Content.course_id  =:course_id
     AND (status = 1 OR 'admin' = :role)
-  ORDER BY Contents.sort_no
+  ORDER BY Content.sort_no
 EOF;
 
 		$params = [
