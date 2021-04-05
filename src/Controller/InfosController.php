@@ -40,7 +40,7 @@ class InfosController extends AppController
 	 * お知らせの内容を表示
 	 * @param string $info_id 表示するお知らせのID
      */
-    public function view($info_id = null)
+	public function view($info_id)
     {
 		if(!$this->Infos->exists(['id' => $info_id]))
 		{
