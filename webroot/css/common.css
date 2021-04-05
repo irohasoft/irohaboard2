@@ -236,6 +236,12 @@ form .required .control-label:after
 	padding				: 5px;
 }
 
+.ib-breadcrumbs
+{
+	margin-bottom			: 0px;
+	padding-inline-start	: 10px
+}
+
 .ib-breadcrumbs li
 {
 	display				: inline;
