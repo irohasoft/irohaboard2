@@ -102,8 +102,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	<table cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
-		<th nowrap><?= $this->Paginator->sort('User.username', __('ログインID')); ?></th>
-		<th nowrap><?= $this->Paginator->sort('User.name', __('氏名')); ?></th>
+		<th nowrap><?= $this->Paginator->sort('Users.username', __('ログインID')); ?></th>
+		<th nowrap><?= $this->Paginator->sort('Users.name', __('氏名')); ?></th>
 		<th nowrap><?= $this->Paginator->sort('course_id', __('コース')); ?></th>
 		<th nowrap><?= $this->Paginator->sort('content_id', __('コンテンツ')); ?></th>
 		<th nowrap class="ib-col-center"><?= $this->Paginator->sort('score', __('得点')); ?></th>
