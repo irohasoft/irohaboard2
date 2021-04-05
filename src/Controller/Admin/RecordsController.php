@@ -39,6 +39,10 @@ class RecordsController extends AdminController
 		$this->paginate = [
 			'contain' => ['Courses', 'Users', 'Contents'],
 			'order' => ['Records.created' => 'desc'],
+			'sortableFields' => [
+				'Users.username',
+				'Users.name',
+			],
 		];
 		
 		$conditions = [];
