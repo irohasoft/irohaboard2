@@ -263,32 +263,6 @@ class AppController extends Controller
 	}
 
 	/**
-	 * 条件の追加（検索キーの値が指定されている場合のみ）
-	 * @param string $where 条件
-	 * @param string $key キー
-	 * @param string $field 対象フィールド
-	 * @return string $where 新しい条件
-	 */
-	protected function addCondition($where, $key, $field)
-	{
-		$val = $this->getQuery($key);
-		
-		if(!$val)
-			return $where;
-		
-		if(strpos(strtolower($field), 'like') > 0)
-		{
-			$where[$field] = '%'.$val.'%';
-		}
-		else
-		{
-			$where[$field] = $val;
-		}
-		
-		return $where;
-	}
-
-	/**
 	 * 管理画面へのアクセスかを確認
 	 * @return bool true : 管理画面, false : 受講者画面
 	 */
@@ -327,6 +301,32 @@ class AppController extends Controller
 	protected function isLoginPage()
 	{
 		return ($this->request->getParam('action') == 'login');
+	}
+
+	/**
+	 * 条件の追加（検索キーの値が指定されている場合のみ）
+	 * @param string $where 条件
+	 * @param string $key キー
+	 * @param string $field 対象フィールド
+	 * @return string $where 新しい条件
+	 */
+	protected function addCondition($where, $key, $field)
+	{
+		$val = $this->getQuery($key);
+		
+		if(!$val)
+			return $where;
+		
+		if(strpos(strtolower($field), 'like') > 0)
+		{
+			$where[$field] = '%'.$val.'%';
+		}
+		else
+		{
+			$where[$field] = $val;
+		}
+		
+		return $where;
 	}
 
 	/**
