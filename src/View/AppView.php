@@ -55,19 +55,167 @@ class AppView extends View
 		*/
 	}
 
-	protected function readAuthUser($key)
+	/**
+	 * セッションの取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値
+	 */
+	protected function readSession($key)
+	{
+		return $this->getRequest()->getSession()->read($key);
+	}
+
+	/**
+	 * セッションの削除
+	 * @param string $key キー
+	 */
+	protected function deleteSession($key)
+	{
+		$this->getRequest()->getSession()->delete($key);
+	}
+
+	/**
+	 * セッションの存在確認
+	 * @param string $key キー
+     * @return bool true : 存在する, false : 存在しない
+	 */
+	protected function hasSession($key)
+	{
+		$val = $this->getRequest()->getSession()->read($key);
+		
+		return ($val != null);
+	}
+
+	/**
+	 * セッションの保存
+	 * @param string $key キー
+	 * @param string $value 値
+	 */
+	protected function writeSession($key, $value)
+	{
+		$this->getRequest()->getSession()->write($key, $value);
+	}
+
+	/**
+	 * ログインユーザ情報の取得
+	 * @param string $key キー
+	 * @return string 指定したキーの値
+	 */
+	protected function readAuthUser($key = null)
 	{
 		return $this->getRequest()->getAttribute('identity')->get($key);
 	}
 
+	/**
+	 * ログイン確認
+	 * @return bool true : ログイン済み, false : ログインしていない
+	 */
 	protected function isLogined()
 	{
-		return $this->Identity->isLoggedIn();
+		if(!$this->getRequest()->getAttribute('identity'))
+			return false;
+		
+		return $this->getRequest()->getAttribute('identity')->get('id') > 0;
 	}
 
-	public function getAction()
+	protected function readCookie($key)
 	{
-		return $this->request->getParam('action');
+		return $this->getRequest()->getCookie($key);
+	}
+
+	protected function deleteCookie($key)
+	{
+		$cookie = new Cookie($key);
+		$this->response = $this->response->withExpiredCookie($cookie);
+	}
+
+	protected function writeCookie($key, $value)
+	{
+		/*
+		$this->Cookie->configKey('User', [
+			'expires' => '+2 weeks',
+			'httponly' => true
+		]);
+		exit;
+		*/
+		
+		/*
+		//クッキーに書き込み設定を作る
+		//とりあえずデフォルト設定でキーと値だけ渡す
+		$this->response = $this->response->withCookie(new Cookie('key', 'value'));
+
+		//パラメータを渡す場合
+		$cookie = (new Cookie($key))
+			->withValue($value)  //value
+			->withExpiry(new Time('+2 weeks'))  //タイムアウト
+//			->withPath('/')
+//			->withDomain('example.com')  //ドメインを指定する場合
+			->withSecure(false);
+//			->withHttpOnly(true);  //HTTPSだけにする
+
+		//クッキーの書き込み
+		$this->response = $this->response->withCookie($cookie);
+		*/
+	}
+
+	/**
+	 * クエリストリングの取得
+	 * @param string $key キー
+	 * @param string $default キーが存在しない場合に返す値
+	 */
+	protected function getQuery($key, $default = '')
+	{
+		$val = $this->getRequest()->getQuery($key);
+		
+		if($val == null)
+			return $default;
+		
+		return $val;
+	}
+
+	/**
+	 * クエリストリングの存在確認
+	 * @param string $key キー
+	 * @return bool true : 存在する, false : 存在しない
+	 */
+	protected function hasQuery($key)
+	{
+		$val = $this->getRequest()->getQuery($key);
+		
+		return ($val != null);
+	}
+
+	/**
+	 * ルート要素とリクエストパラメータを取得
+	 * @param string $key キー
+	 * @param string $default キーが存在しない場合に返す値
+	 */
+	protected function getParam($key, $default = '')
+	{
+		$val = $this->getRequest()->getParam($key);
+
+		if($val == null)
+			return $default;
+		
+		return $val;
+	}
+
+	/**
+	 * POSTデータの取得
+	 * @param string $key キー
+	 * @param string $default キーが存在しない場合に返す値
+	 */
+	protected function getData($key = null, $default = null)
+	{
+		$val = $this->getRequest()->getData();
+		
+		if(!$val)
+			return $default;
+		
+		if($key)
+			$val = empty($val[$key]) ? $default :$val[$key];
+		
+		return $val;
 	}
 
 	/**
