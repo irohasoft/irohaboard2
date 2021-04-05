@@ -188,4 +188,24 @@ class UsersTable extends AppTable
 
 		return $rules;
 	}
+
+	/**
+	 * 学習履歴の削除
+	 * 
+	 * @param int array $user_id 学習履歴を削除するユーザのID
+	 */
+	public function deleteUserRecords($user_id)
+	{
+		$sql = 'DELETE FROM ib_records_questions WHERE record_id IN (SELECT id FROM ib_records WHERE user_id = :user_id)';
+		
+		$params = [
+			'user_id' => $user_id,
+		];
+		
+		$this->db_execute($sql, $params);
+		
+		
+		$this->Records = new RecordsTable();
+		$this->Records->deleteAll(['Records.user_id' => $user_id], false);
+	}
 }

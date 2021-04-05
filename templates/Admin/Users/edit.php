@@ -40,6 +40,13 @@ $this->Form->setConfig('errorClass', 'form-control form-error');
 			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
 			echo $this->Form->button(__('保存'), Configure::read('form_submit_defaults'));
 			echo $this->Form->end();
+			
+			if($this->isEditPage())
+			{
+				echo $this->Form->postLink(__('学習履歴を削除'),
+					['action' => 'clear', $user->id],
+					['class' => 'btn btn-default pull-right btn-clear', 'confirm' => __('学習履歴を削除してもよろしいですか？')]);
+			}
 			?>
 		</div>
 	</div>
