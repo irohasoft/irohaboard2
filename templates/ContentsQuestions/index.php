@@ -7,6 +7,30 @@ use Cake\Core\Configure;
 use Cake\Routing\Router;
 use App\Vendor\Utils;
 ?>
+<?php $this->start('css-embedded'); ?>
+<style type='text/css'>
+	<?php if($is_admin_record) { // 管理者による学習履歴表示モードの場合、ロゴのリンクを無効化 ?>
+	.ib-navi-item
+	{
+		display: none;
+	}
+	
+	.ib-logo a
+	{
+		pointer-events: none;
+	}
+	<?php }?>
+</style>
+<?php $this->end(); ?>
+
+<?php $this->start('script-embedded'); ?>
+<script>
+	var TIMELIMIT_SEC	= parseInt('<?= $content->timelimit ?>') * 60;	// 制限時間（単位：秒）
+	var IS_RECORD		= '<?= $is_record ?>';							// テスト結果表示フラグ
+</script>
+<?= $this->Html->script('contents_questions.js?20190401');?>
+<?php $this->end(); ?>
+
 <div class="contents-questions-index">
 	<div class="breadcrumb">
 	<?php
@@ -28,30 +52,6 @@ use App\Vendor\Utils;
 	</div>
 	
 	<div id="lblStudySec" class="btn btn-info"></div>
-	<?php $this->start('css-embedded'); ?>
-	<style type='text/css'>
-		<?php if($is_admin_record) { // 管理者による学習履歴表示モードの場合、ロゴのリンクを無効化 ?>
-		.ib-navi-item
-		{
-			display: none;
-		}
-		
-		.ib-logo a
-		{
-			pointer-events: none;
-		}
-		<?php }?>
-	</style>
-	<?php $this->end(); ?>
-	
-	<?php $this->start('script-embedded'); ?>
-	<script>
-	var TIMELIMIT_SEC	= parseInt('<?= $content->timelimit ?>') * 60;	// 制限時間（単位：秒）
-	var IS_RECORD		= '<?= $is_record ?>';										// テスト結果表示フラグ
-	</script>
-	<?= $this->Html->script('contents_questions.js?20190401');?>
-	<?php $this->end(); ?>
-	
 	<!-- テスト結果ヘッダ表示 -->
 	<?php if($is_record){ ?>
 		<?php
@@ -75,6 +75,7 @@ use App\Vendor\Utils;
 		</table>
 	<?php }?>
 	
+	<!-- 問題一覧 -->
 	<?php
 		$question_index = 1; // 設問番号
 		
@@ -87,9 +88,10 @@ use App\Vendor\Utils;
 				$question_records[$rec['question_id']] = $rec;
 			}
 		}
+		
+		echo $this->Form->create(null);
 	?>
-	<?= $this->Form->create(null); ?>
-		<?php foreach ($contentsQuestions as $contentsQuestion){ ?>
+		<?php foreach ($contentsQuestions as $contentsQuestion): ?>
 			<?php
 			$question		= $contentsQuestion;						// 問題情報
 			$title			= $question['title'];						// 問題のタイトル
@@ -103,7 +105,11 @@ use App\Vendor\Utils;
 			$option_index	= 1;										// 選択肢番号
 			$option_list	= explode('|', $question['options']);		// 選択肢リスト
 			$correct_list	= explode(',', $question['correct']);		// 正解リスト
-			$answer_list	= explode(',', @$question_records[$question_id]['answer']); // 選択した解答リスト
+			$answer_list	= [];										// 選択した解答リスト
+			
+			// 解答済みの場合、解答リストを作成
+			if(isset($question_records[$question_id]))
+				$answer_list = explode(',', $question_records[$question_id]['answer']);
 			
 			foreach($option_list as $option)
 			{
@@ -113,7 +119,7 @@ use App\Vendor\Utils;
 				// 複数選択(順不同)問題の場合
 				if(count($correct_list) > 1)
 				{
-					$is_checked = (in_array($option_index, $answer_list)) ? " checked" : "";
+					$is_checked = (in_array($option_index, $answer_list)) ? ' checked' : '';
 					
 					// 選択肢チェックボックス
 					$option_tag .= sprintf('<input type="checkbox" value="%s" name="data[answer_%s][]" %s %s> %s<br>',
@@ -121,17 +127,18 @@ use App\Vendor\Utils;
 				}
 				else
 				{
-					$is_checked = (@$answer_list[0]==$option_index) ? 'checked' : '';
+					// 解答リストがある場合
+					if(count($answer_list) > 0)
+						$is_checked = ($answer_list[0] == $option_index) ? 'checked' : '';
+					
 					// 選択肢ラジオボタン
 					$option_tag .= sprintf('<input type="radio" value="%s" name="data[answer_%s]" %s %s> %s<br>',
 							$option_index, $question_id, $is_checked, $is_disabled, h($option));
 				}
 				
-				
 				$option_index++;
 			}
 			
-
 			//------------------------------//
 			//	正解、解説情報を出力		//
 			//------------------------------//
@@ -142,7 +149,11 @@ use App\Vendor\Utils;
 			// テスト結果表示モードの場合
 			if($is_record)
 			{
-				$is_correct	= (@$question_records[$question_id]['is_correct']=='1');
+				// 正誤判定
+				if(isset($question_records[$question_id]['is_correct']))
+					$is_correct = ($question_records[$question_id]['is_correct'] == '1');
+				
+				// 不正解時の表示モード
 				$wrong_mode	= $content->wrong_mode;
 				
 				// 正解番号から正解ラベルへ変換
@@ -150,15 +161,13 @@ use App\Vendor\Utils;
 				
 				foreach($correct_list as $correct_no)
 				{
-					$correct_label .= ($correct_label=='') ? $option_list[$correct_no - 1] : ', '.$option_list[$correct_no - 1];
+					$correct_label .= ($correct_label == '') ? $option_list[$correct_no - 1] : ', '.$option_list[$correct_no - 1];
 				}
 								
 				// 正解時は、解説のみを表示
 				if($is_correct)
 				{
-//					$correct_tag = sprintf('<p class="correct-text bg-success">%s : %s</p>',__('正解'), $correct_label);
 					$result_tag  = sprintf('<p>%s<span class="result-currect">%s</span></p>', $this->Html->image('correct.png', ['width'=>'60','height'=>'60']), __('正解'));
-					
 					$explain_tag = getExplain($question['explain']);
 				}
 				else
@@ -196,16 +205,16 @@ use App\Vendor\Utils;
 						<!--選択肢-->
 						<?= $option_tag; ?>
 					</div>
-					<!--正解-->
-					<?= $correct_tag ?>
 					<!--正誤画像-->
 					<?= $result_tag ?>
+					<!--正解-->
+					<?= $correct_tag ?>
 					<!--解説文-->
 					<?= $explain_tag ?>
 				</div>
 			</div>
 			<?php $question_index++;?>
-		<?php } ?>
+		<?php endforeach; ?>
 		
 		<?php
 			echo '<div class="form-inline"><!--start-->';
@@ -229,7 +238,10 @@ function getExplain($explain)
 {
 	$tag = '';
 	
-	if($explain!='')
+	$check = str_replace(['<p>','</p>','<br>'], '', $explain);
+	
+	// pタグ、brタグのみの場合、解説を表示しない
+	if($check != '')
 	{
 		$tag = sprintf('<div class="correct-text bg-danger">%s : %s</div>', __('解説'), $explain);
 	}
