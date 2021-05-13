@@ -37,7 +37,7 @@ class ContentsQuestionsController extends AppController
 		//	権限チェック				//
 		//------------------------------//
 		// 管理者以外の場合、コンテンツの閲覧権限の確認
-		if($this->readAuthUser('role') == 'user')
+		if(!$this->isAdminPage())
 		{
 			$this->loadModel('Courses');
 			
@@ -129,7 +129,6 @@ class ContentsQuestionsController extends AppController
 			$my_score	= 0;									// 得点
 			$pass_rate	= $content->pass_rate;					// 合格得点率
 			$data		= $this->getData('data');				// 解答データ
-			$study_sec	= $this->getData('study_sec');			// テスト実施時間
 			
 			//------------------------------//
 			//	成績の詳細情報の作成		//
@@ -137,9 +136,10 @@ class ContentsQuestionsController extends AppController
 			$i = 0;
 			foreach($contentsQuestions as $contentsQuestion)
 			{
-				$question_id	= $contentsQuestion->id;			// 問題ID
-				$answer			= @$data['answer_' . $question_id];	// 解答
-				$correct		= $contentsQuestion->correct;		// 正解
+				$question_id	= $contentsQuestion->id;							// 問題ID
+				$answer			= $data['answer_' . $question_id];					// 解答
+				
+				$correct		= $contentsQuestion->correct;						// 正解
 				$corrects		= explode(',', $correct);							// 複数選択
 				
 				$is_correct		= ($answer == $correct) ? 1 : 0;					// 正誤判定
@@ -149,14 +149,13 @@ class ContentsQuestionsController extends AppController
 				// 複数選択問題の場合
 				if(count($corrects) > 1)
 				{
-					$answers	= @$data['answer_'.$question_id];
+					$answers	= $data['answer_' . $question_id];
 					$answer		= @implode(',', $answers);
 					$is_correct	= $this->isMultiCorrect($answers, $corrects) ? 1 : 0;
-					//debug($is_correct);
 				}
 				else
 				{
-					$answer		= @$data['answer_'.$question_id];
+					$answer		= $data['answer_' . $question_id];
 					$is_correct	= ($answer == $correct) ? 1 : 0;
 				}
 				
@@ -179,6 +178,9 @@ class ContentsQuestionsController extends AppController
 			
 			// 合格基準得点を超えていた場合、合格とする
 			$is_passed = ($my_score >= $pass_score) ? 1 : 0;
+			
+			// テスト実施時間
+			$study_sec = $this->getData('study_sec');
 			
 			// 追加する成績情報
 			$data = [
