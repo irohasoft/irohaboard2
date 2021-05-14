@@ -6,7 +6,7 @@ $url = Router::url(['controller' => 'users', 'action' => 'login', 'prefix' => 'A
 <div class="update-index">
 	<div class="panel panel-info" style="margin:20px;">
 		<div class="panel-heading">
-			iroha Board Updater
+			<?= APP_NAME; ?> Updater
 		</div>
 		<div class="panel-body">
 			<p style="margin:20px">データベースのアップデートが完了しました。</p>
