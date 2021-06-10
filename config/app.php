@@ -64,8 +64,8 @@ return [
         'paths' => [
             'plugins' => [ROOT . DS . 'plugins' . DS],
             'templates' => [
-            	ROOT . DS . 'src/Custom/View' . DS,
-            	ROOT . DS . 'templates' . DS
+            	ROOT . DS . 'src/Custom/templates' . DS,
+            	ROOT . DS . 'src/templates' . DS
             ],
             'locales' => [RESOURCES . 'locales' . DS],
         ],
