@@ -55,6 +55,6 @@
     "prefer-stable": true,
     "config": {
         "sort-packages": true,
-        "vendor-dir": "../vendor"
+        "vendor-dir": "vendor"
     }
 }
