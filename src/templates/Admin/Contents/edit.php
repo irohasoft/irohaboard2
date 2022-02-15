@@ -155,7 +155,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 <div class="admin-contents-edit">
 	<?php
 		$this->Breadcrumbs->add(__('コース一覧'), ['controller' => 'courses', 'action' => 'index']);
-		$this->Breadcrumbs->add($course['Course']['title'],  ['controller' => 'contents', 'action' => 'index', $course['Course']['id']]);
+		$this->Breadcrumbs->add($course->title,  ['controller' => 'contents', 'action' => 'index', $course->id]);
 
 		echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
 	?>
