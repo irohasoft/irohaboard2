@@ -136,6 +136,33 @@ class ContentsController extends AdminController
 	}
 
 	/**
+	 * プレビュー用に入力内容をセッションに保存
+	 */
+	public function preview()
+	{
+		$this->autoRender = FALSE;
+		
+		if($this->request->is('ajax'))
+		{
+			$content = (object) [
+				'id'	 => 0,
+				'title'  => $this->getData('content_title'),
+				'kind'	 => $this->getData('content_kind'),
+				'url'	 => $this->getData('content_url'),
+				'body'	 => $this->getData('content_body')
+			];
+			
+			$course = (object) [
+				'id'	 => 0,
+			];
+				
+			$data = ['content' => $content, 'course' => $course];
+			
+			$this->writeSession("Iroha.preview_content", $content);
+		}
+	}
+
+	/**
 	 * ファイル（配布資料、動画）のアップロード
 	 *
 	 * @param int $file_type ファイルの種類

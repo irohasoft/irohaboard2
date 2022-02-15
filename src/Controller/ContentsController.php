@@ -107,7 +107,7 @@ class ContentsController extends AppController
 	public function preview()
 	{
 		// ヘッダー、フッターを非表示
-		$this->layout = '';
+		$this->viewBuilder()->disableAutoLayout();
 		$this->set('content', $this->readSession('Iroha.preview_content'));
 		$this->render('view');
 	}

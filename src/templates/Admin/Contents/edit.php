@@ -19,42 +19,38 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 <script>
 	$(document).ready(function()
 	{
-		$url = $('.form-control-upload');
+		// アップロードボタンを追加
+		$('.form-control-upload').after('<input id="btnUpload" type="button" value="ファイルを指定">');
 
-		$url.after('<input id="btnUpload" type="button" value="ファイルを指定">');
-
+		// アップロードボタンクリック時の処理
 		$("#btnUpload").click(function() {
-			var val = $('input[name="kind"]:checked').val();
+			var content_kind = $('input[name="kind"]:checked').val();
 			
-			if(!val)
+			if(!content_kind)
 				return false;
 			
-			if(
-				(val == 'text')||
-				(val == 'test')
-			)
-				return false;
+			// 動画以外の場合にはアップロードの種別を一律ファイルに変更
+			if(content_kind != 'movie')
+				content_kind = 'file';
 			
-			if(val == 'url')
-				val = 'file';
-			
-			//window.open('<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/'+val, '_upload', 'width=650,height=500,resizable=no');
+			// アップロード画面を表示
 			$('#uploadDialog').modal('show');
 
-			//モーダル画面にiframeを追加する
-			$("#uploadFrame").attr("src", "<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/" + val);
+			// アップロード用のページを指定
+			$('#uploadFrame').attr('src', '<?= Router::url(['controller' => 'contents', 'action' => 'upload'])?>/' + content_kind);
 			return false;
 		});
 
+		// コンテンツ種別の変更時の処理
 		$('input[name="kind"]:radio').change( function() {
 			render();
 		});
 
 		// 保存時、コード表示モードの場合、解除する（編集中の内容を反映するため）
-		$("form").submit( function() {
-			var val = $('input[name="kind"]:checked').val();
+		$('form').submit( function() {
+			var content_kind = $('input[name="kind"]:checked').val();
 			
-			if(val == 'html')
+			if(content_kind == 'html')
 			{
 				if ($('#body').summernote('codeview.isActivated'))
 				{
@@ -63,78 +59,86 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			}
 		});
 
+		// 初期表示
 		render();
 	});
 	
+	// コンテンツ種別によって画面の表示要素を制御
 	function render()
 	{
 		var content_kind = $('input[name="kind"]:checked').val();
 		
-		$(".kind").hide();
-		$(".kind-" + content_kind).show();
-		$("#btnPreview").hide();
+		$('.kind').hide();
+		$('.kind-' + content_kind).show(); // コンテンツ種別に紐づく項目のみを表示
+		$('#btnPreview').hide();
 		
 		switch(content_kind)
 		{
 			case 'text': // テキスト
-				$("#body").summernote('destroy');
+				$('#body').summernote('destroy');
 				// テキストが存在しない場合、空文字にする。
-				if($('<span>').html($("#body").val()).text() == '')
-					$("#body").val("");
-				$("#btnPreview").show();
+				if($('<span>').html($('#body').val()).text() == '')
+					$('#body').val('');
+				$('#btnPreview').show();
 				break;
 			case 'html': // リッチテキスト
 				// リッチテキストエディタを起動
 				CommonUtil.setRichTextEditor('#body', <?= Configure::read('upload_image_maxsize') ?>, '<?= $this->webroot ?>');
-				$("#btnPreview").show();
+				$('#btnPreview').show();
 				break;
 			case 'movie': // 動画
-				$(".form-control-upload").css('width', '80%');
-				$("#btnUpload").show();
-				$("#btnPreview").show();
+				$('.form-control-upload').css('width', '80%');
+				$('#btnUpload').show();
+				$('#btnPreview').show();
 				break;
-			case 'url':
-				$(".form-control-upload").css('width', '100%');
-				$("#btnUpload").hide();
-				$("#btnPreview").show();
+			case 'url': // URL
+				$('.form-control-upload').css('width', '100%');
+				$('#btnUpload').hide();
+				$('#btnPreview').show();
 				break;
-			case 'file':
-				$(".form-control-upload").css('width', '80%');
-				$("#btnUpload").show();
+			case 'file': // 配布資料
+				$('.form-control-upload').css('width', '80%');
+				$('#btnUpload').show();
 				break;
-			case 'test':
+			case 'test': // テスト
 				break;
 		}
 	}
 	
+	// コンテンツのプレビュー
 	function preview()
 	{
 		var content_kind = $('input[name="kind"]:checked').val();
+		var csrf = $('input[name=_csrfToken]').val();
 		
+		// プレビュー内容を保存
 		$.ajax({
-			url: "<?= Router::url(['action' => 'preview']) ?>",
-			type: "POST",
-			data: {
+			url  : '<?= Router::url(['action' => 'preview']) ?>',
+			type : 'POST',
+			data : {
 				content_title : $("#title").val(),
 				content_kind  : $('input[name="kind"]:checked').val(),
 				content_url   : $("#url").val(),
 				content_body  : $("#body").val(),
 			},
-			dataType: "text",
-			success : function(response){
-				//通信成功時の処理
-				//alert(response);
-				var url = '<?= Router::url(['controller' => 'contents', 'action' => 'preview'])?>'.replace('admin/', '');
-				
-				window.open(url, '_preview', 'width=1000,height=700,resizable=no');
+			dataType: 'text',
+			beforeSend: function(xhr){
+				xhr.setRequestHeader('X-CSRF-Token', csrf);
 			},
-			error: function(){
+			success : function(response) {
+				//通信成功時の処理
+				var url = '<?= Router::url(['controller' => 'contents', 'action' => 'preview', 'prefix' => false])?>';
+				
+				window.open(url, '_preview', 'width=1200, height=700, resizable=yes');
+			},
+			error: function() {
 				//通信失敗時の処理
 				//alert('通信失敗');
 			}
 		});
 	}
 	
+	// アップロードされたファイルのURLを設定
 	function setURL(url, file_name)
 	{
 		$('.form-control-upload').val(url);
@@ -145,7 +149,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		$('#uploadDialog').modal('hide');
 	}
 	
-	function closeDialog(url, file_name)
+	// アップロード画面を非表示にする
+	function closeDialog()
 	{
 		$('#uploadDialog').modal('hide');
 	}
@@ -167,31 +172,22 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			<?php
 			echo $this->Form->create($content, ['class' => 'form-horizontal']);
 			echo $this->Form->control('title',	['label' => __('コンテンツ名')]);
-			echo $this->Form->control('kind',	[
-				'type' => 'radio',
-				'label' => __('コンテンツ種別'),
-				'separator'=>"<br>",
-				'escape' => false,
-				'disabled'=>false,
-				'legend' => false,
-				'class' => false,
-				'options' => Configure::read('content_kind_comment')
-				]
-			);
+			echo $this->Form->controlRadio('kind', ['label' => __('コンテンツ種別'), 'separator'=>"<br>", 'options' => Configure::read('content_kind_comment'), 'escape' => false]);
 
-			echo "<div class='kind kind-movie kind-url kind-file'>";
+			// URL
+			echo '<div class="kind kind-movie kind-url kind-file">';
 			echo $this->Form->control('url',		['label' => __('URL'), 'class' => 'form-control form-control-upload']);
-			echo "</div>";
+			echo '</div>';
 			
 			// 配布資料
-			echo "<div class='kind kind-file'>";
+			echo '<div class="kind kind-file">';
 			echo $this->Form->control('file_name', ['label' => __('ファイル名'), 'class' => 'form-control-filename', 'readonly' => 'readonly']);
-			echo "</div>";
+			echo '</div>';
 
-			// テキスト・リッチテキスト
-			echo "<div class='kind kind-text kind-html'>";
+			// リッチテキスト
+			echo '<div class="kind kind-text kind-html">';
 			echo $this->Form->control('body',		['label' => __('内容')]);
-			echo "</div>";
+			echo '</div>';
 
 			// テスト用設定 start
 			echo '<span class="kind kind-test">';
@@ -199,10 +195,10 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			echo $this->Form->controlExp('pass_rate', ['label' => __('合格とする得点率 (1-100%)')], __('指定した場合、合否の判定が行われ、指定しない場合は無条件に合格となります。'));
 			
 			// ランダム出題用
-			echo $this->Form->controlExp('question_count', ['label' => __('出題数 (1-100問)')], __('指定した場合、登録した問題の中からランダムに出題され、指定しない場合は全問出題されます。'));
+			echo $this->Form->controlExp('question_count', ['label' => __('出題数 (1-100問)')], __('指定した場合、登録した問題の中からランダムに出題され、指定しない場合は問題一覧画面の並び順で全問出題されます。'));
 			
 			// 問題が不正解時の表示
-			echo $this->Form->controlRadio('wrong_mode', ['label' => __('不正解時の表示'), 'options' => Configure::read('wrong_mode'), 'default' => 2, 'required' => true],
+			echo $this->Form->controlRadio('wrong_mode', ['label' => __('不正解時の表示'), 'options' => Configure::read('wrong_mode'), 'default' => 2],
 				__('テスト結果画面にて不正解の問題の表示方法を指定します。正解時は解説のみが表示されます。'));
 			
 			echo '</span>';
@@ -212,7 +208,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			echo $this->Form->controlRadio('status', ['label' => __('ステータス'), 'options' => Configure::read('content_status'), 'default' => 1, 'required' => true],
 				__('非公開と設定した場合、管理者権限でログインした場合のみ表示されます。'));
 			
-			// コンテンツ移動用
+			// コンテンツ移動用（編集の場合のみ）
 			if($this->isEditPage())
 			{
 				echo $this->Form->control('course_id', [
@@ -222,9 +218,10 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				]);
 			}
 
-			echo "<span class='kind kind-text kind-html kind-movie kind-url kind-file kind-test'>";
+			// 備考
+			echo '<span class="kind kind-text kind-html kind-movie kind-url kind-file kind-test">';
 			echo $this->Form->control('comment', ['label' => __('備考')]);
-			echo "</span>";
+			echo '</span>';
 			?>
 			<div class="form-group">
 				<div class="col col-sm-9 col-sm-offset-3">
