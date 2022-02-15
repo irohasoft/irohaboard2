@@ -76,6 +76,7 @@ class UsersController extends AppController
 				));
 			}
 			*/
+			$this->writeCookie('LoginStatus', 'logined');
 			return $this->redirect(['controller' => 'UsersCourses', 'action' => 'index']);
 		}
 
@@ -91,6 +92,7 @@ class UsersController extends AppController
 	public function logout()
 	{
 		$result = $this->Authentication->getResult();
+		$this->deleteCookie('LoginStatus');
 		
 		// POSTやGETに関係なく、ユーザーがログインしていればリダイレクト
 		if($result->isValid())

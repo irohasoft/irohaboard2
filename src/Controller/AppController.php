@@ -177,6 +177,9 @@ class AppController extends Controller
 	 */
 	protected function deleteCookie($key)
 	{
+		/*
+		暗号化されたクッキーは このメソッドでは削除できない
+		*/
 		$cookie = new Cookie($key);
 		$this->response = $this->response->withExpiredCookie($cookie);
 	}

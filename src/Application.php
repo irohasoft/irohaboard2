@@ -85,7 +85,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 	 */
 	public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
 	{
-
 		$middlewareQueue
 			// Catch any exceptions in the lower layers,
 			// and make an error page/response
@@ -116,7 +115,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 			]))
 			->add(new EncryptedCookieMiddleware(
 				// 保護するクッキーの名前
-				['CookieAuth'],
+				['CookieAuth', 'LoginStatus'],
 				Configure::read('Security.salt')
 			))
 			->add(new AuthenticationMiddleware($this)); // add 2020.10.6
