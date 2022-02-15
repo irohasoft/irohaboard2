@@ -32,8 +32,6 @@
 	?>
 	
 	<?= $this->Html->meta('icon') ?>
-
-	<?= $this->Html->css('cake.css?20200702') ?>
 	
 	<!--custom 2020.10.08-->
 	<?= $this->Html->css('jquery-ui') ?>

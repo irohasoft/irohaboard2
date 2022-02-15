@@ -27,10 +27,12 @@ use App\Vendor\Utils;
 <script>
 	var TIMELIMIT_SEC	= parseInt('<?= $content->timelimit ?>') * 60;	// 制限時間（単位：秒）
 	var IS_RECORD		= '<?= $is_record ?>';							// テスト結果表示フラグ
+	var MSG_TIMELIMIT	= '<?php echo __('制限時間を過ぎましたので自動採点を行います。') ?>';
+	var MSG_REST_TIME	= '<?php echo __('残り時間') ?>';
+	var MSG_TIME		= '<?php echo __('経過') ?>';
 </script>
 <?= $this->Html->script('contents_questions.js?20190401');?>
 <?php $this->end(); ?>
-
 <div class="contents-questions-index">
 	<div class="breadcrumb">
 	<?php
@@ -55,8 +57,8 @@ use App\Vendor\Utils;
 	<!-- テスト結果ヘッダ表示 -->
 	<?php if($is_record){ ?>
 		<?php
-			$result_color  = ($record->is_passed==1) ? 'text-primary' : 'text-danger';
-			$result_label  = ($record->is_passed==1) ? __('合格') : __('不合格');
+			$result_color  = ($record->is_passed == 1) ? 'text-primary' : 'text-danger';
+			$result_label  = ($record->is_passed == 1) ? __('合格') : __('不合格');
 		?>
 		<table class="result-table">
 			<caption><?= __('テスト結果'); ?></caption>
@@ -81,6 +83,7 @@ use App\Vendor\Utils;
 		
 		// 問題IDをキーに問題の成績が参照できる配列を作成
 		$question_records = [];
+		
 		if($is_record)
 		{
 			foreach ($record->records_questions as $rec)
@@ -113,6 +116,8 @@ use App\Vendor\Utils;
 			
 			foreach($option_list as $option)
 			{
+				$is_checked = '';
+				
 				// テスト結果履歴モードの場合、ラジオボタンを無効化
 				$is_disabled = $is_record ? 'disabled' : '';
 				
@@ -122,7 +127,7 @@ use App\Vendor\Utils;
 					$is_checked = (in_array($option_index, $answer_list)) ? ' checked' : '';
 					
 					// 選択肢チェックボックス
-					$option_tag .= sprintf('<input type="checkbox" value="%s" name="data[answer_%s][]" %s %s> %s<br>',
+					$option_tag .= sprintf('<input type="checkbox" value="%s" name="answer_%s[]" %s %s> %s<br>',
 						$option_index, $question_id, $is_checked, $is_disabled, h($option));
 				}
 				else
@@ -132,7 +137,7 @@ use App\Vendor\Utils;
 						$is_checked = ($answer_list[0] == $option_index) ? 'checked' : '';
 					
 					// 選択肢ラジオボタン
-					$option_tag .= sprintf('<input type="radio" value="%s" name="data[answer_%s]" %s %s> %s<br>',
+					$option_tag .= sprintf('<input type="radio" value="%s" name="answer_%s" %s %s> %s<br>',
 							$option_index, $question_id, $is_checked, $is_disabled, h($option));
 				}
 				
@@ -145,6 +150,7 @@ use App\Vendor\Utils;
 			$explain_tag	= ''; // 解説用タグ
 			$correct_tag	= ''; // 正解用タグ
 			$result_tag		= ''; // 正誤用タグ
+			$is_correct		= false; // 正誤
 			
 			// テスト結果表示モードの場合
 			if($is_record)
@@ -187,7 +193,6 @@ use App\Vendor\Utils;
 							$explain_tag = getExplain($question['explain']);
 							break;
 					}
-					
 				}
 			}
 			?>

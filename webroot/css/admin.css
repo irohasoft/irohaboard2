@@ -3,9 +3,9 @@
  * iroha Board Project
  *
  * @author        Kotaro Miura
- * @copyright     2015-2016 iroha Soft, Inc. (http://irohasoft.jp)
- * @link          http://irohaboard.irohasoft.jp
- * @license       http://www.gnu.org/licenses/gpl-3.0.en.html GPL License
+ * @copyright     2015-2021 iroha Soft, Inc. (https://irohasoft.jp)
+ * @link          https://irohaboard.irohasoft.jp
+ * @license       https://www.gnu.org/licenses/gpl-3.0.en.html GPL License
  */
 
 #container,
@@ -205,33 +205,14 @@
 	width			: 300px;
 }
 
-.admin-records-index #RecordFromDateYear,
-.admin-records-index #RecordToDateYear
-{
-	width			: 100px;
-}
-
-.admin-records-index #RecordFromDateMonth,
-.admin-records-index #RecordToDateMonth,
-.admin-records-index #RecordFromDateDay,
-.admin-records-index #RecordToDateDay
-{
-	width			: 80px;
-}
-
-.admin-records-index #RecordCourseId
+.admin-records-index #course-id
 {
 	max-width		: 200px;
 }
 
-.admin-records-index #RecordGroupId
+.admin-records-index #group-id
 {
 	max-width		: 150px;
-}
-
-.admin-records-index #RecordUserId
-{
-	max-width		: 120px;
 }
 
 .admin-records-index input[type='text'],
@@ -263,7 +244,7 @@
 .admin-records-index .ib-row
 {
 	width			: 100%;
-	height			: 40px;
+	height			: 35px;
 	display			: inline-block;
 }
 

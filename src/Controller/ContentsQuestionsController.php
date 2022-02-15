@@ -59,7 +59,7 @@ class ContentsQuestionsController extends AppController
 			]);
 			
 			// 受講者によるテスト結果表示の場合、自身のテスト結果か確認
-			if(!$this->isAdminPage() && $this->isRecordPage() && ($record->user_id != $this->readAuthUser('id')))
+			if(!$this->isAdminRecordPage() && $this->isRecordPage() && ($record->user_id != $this->readAuthUser('id')))
 			{
 				throw new NotFoundException(__('Invalid access'));
 			}
@@ -128,49 +128,49 @@ class ContentsQuestionsController extends AppController
 			$pass_score	= 0;									// 合格基準点
 			$my_score	= 0;									// 得点
 			$pass_rate	= $content->pass_rate;					// 合格得点率
-			$data		= $this->getData('data');				// 解答データ
 			
 			//------------------------------//
 			//	成績の詳細情報の作成		//
 			//------------------------------//
-			$i = 0;
 			foreach($contentsQuestions as $contentsQuestion)
 			{
 				$question_id	= $contentsQuestion->id;							// 問題ID
-				$answer			= $data['answer_' . $question_id];					// 解答
+				$answer			= $this->getData('answer_'.$question_id);			// 解答（複数選択問題の場合、配列）
 				
 				$correct		= $contentsQuestion->correct;						// 正解
-				$corrects		= explode(',', $correct);							// 複数選択
+				$corrects		= explode(',', $correct);							// 複数選択問題の正解（配列）
 				
-				$is_correct		= ($answer == $correct) ? 1 : 0;					// 正誤判定
-				$score			= $contentsQuestion->score;	// 配点
-				$full_score += $score;												// 合計点（配点の合計）
+				$score			= $contentsQuestion->score;							// 配点
 				
 				// 複数選択問題の場合
 				if(count($corrects) > 1)
 				{
-					$answers	= $data['answer_' . $question_id];
-					$answer		= @implode(',', $answers);
-					$is_correct	= $this->isMultiCorrect($answers, $corrects) ? 1 : 0;
+					// 全ての解答と正解が一致するか確認
+					$is_correct	= $this->isMultiCorrect($answer, $corrects) ? 1 : 0;
+					
+					// データベース格納用に解答をカンマ区切りの文字列に変更
+					$answer		= is_array($answer) ? implode(',', $answer) : null;
 				}
 				else
 				{
-					$answer		= $data['answer_' . $question_id];
 					$is_correct	= ($answer == $correct) ? 1 : 0;
 				}
 				
+				// 合計点（配点の合計）
+				$full_score += $score;
+				
+				// 得点（正解した問題の配点の合計）
 				if($is_correct == 1)
 					$my_score += $score;
 				
 				// 問題の正誤
-				$details[$i] = [
+				$details[] = [
 					'question_id'	=> $question_id,	// 問題ID
 					'answer'		=> $answer,			// 解答
 					'correct'		=> $correct,		// 正解
 					'is_correct'	=> $is_correct,		// 正誤
 					'score'			=> $score,			// 配点
 				];
-				$i++;
 			}
 			
 			// 合格基準得点
@@ -267,10 +267,15 @@ class ContentsQuestionsController extends AppController
 	 */
 	private function isMultiCorrect($answers, $corrects)
 	{
-		if(!$answers)
+		// 解答が設定されていない場合、不正解
+		if(!isset($answers))
 			return false;
 		
-		// 解答数と正解数が一致しない場合、不合格
+		// 解答がnullの場合、不正解
+		if($answers == null)
+			return false;
+		
+		// 解答数と正解数が一致しない場合、不正解
 		if(count($answers) != count($corrects))
 			return false;
 		
