@@ -162,44 +162,48 @@ class AppController extends Controller
 		return $this->getRequest()->getAttribute('identity')->get('id') > 0;
 	}
 
+	/**
+	 * クッキーの取得
+	 * @param string $key キー
+	 */
 	protected function readCookie($key)
 	{
 		return $this->getRequest()->getCookie($key);
 	}
 
+	/**
+	 * クッキーの削除
+	 * @param string $key キー
+	 */
 	protected function deleteCookie($key)
 	{
 		$cookie = new Cookie($key);
 		$this->response = $this->response->withExpiredCookie($cookie);
 	}
 
-	protected function writeCookie($key, $value)
+	/**
+	 * クッキーの存在確認
+	 * @param string $key キー
+	 */
+	protected function hasCookie($key)
 	{
+		return ($this->readCookie($key) != null);
+	}
+
+	/**
+	 * クッキーの保存
+	 * @param string $key キー
+	 * @param string $value 値
+	 */
+	protected function writeCookie($key, $value, $encrypt = true, $expires = '+2 weeks')
+	{
+		$cookie = (new Cookie($key, $value))
+			->withExpiry(new DateTime($expires))
+			->withHttpOnly(true);
 		/*
-		$this->Cookie->configKey('User', [
-			'expires' => '+2 weeks',
-			'httponly' => true
-		]);
-		exit;
+		クッキーの暗号化は Middleware にて行う
 		*/
-		
-		/*
-		//クッキーに書き込み設定を作る
-		//とりあえずデフォルト設定でキーと値だけ渡す
-		$this->response = $this->response->withCookie(new Cookie('key', 'value'));
-
-		//パラメータを渡す場合
-		$cookie = (new Cookie($key))
-			->withValue($value)  //value
-			->withExpiry(new Time('+2 weeks'))  //タイムアウト
-//			->withPath('/')
-//			->withDomain('example.com')  //ドメインを指定する場合
-			->withSecure(false);
-//			->withHttpOnly(true);  //HTTPSだけにする
-
-		//クッキーの書き込み
 		$this->response = $this->response->withCookie($cookie);
-		*/
 	}
 
 	/**
