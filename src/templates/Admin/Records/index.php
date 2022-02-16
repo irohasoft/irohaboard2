@@ -41,63 +41,33 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 <div class="admin-records-index">
 	<div class="ib-page-title"><?= __('学習履歴一覧'); ?></div>
 	<div class="ib-horizontal">
-		<?php
-			echo $this->Form->create(null, ['valueSources' => 'query']);
+	<?php
+		echo $this->Form->create(null, ['valueSources' => 'query']);
 
-			echo '<div class="ib-search-buttons">';
-			echo $this->Form->submit(__('検索'),	['class' => 'btn btn-info btn-add']);
-			echo $this->Form->button(__('CSV出力'),	['class' => 'btn btn-default', 'onclick' => 'downloadCSV();']);
-			echo $this->Form->hidden('cmd');
-			echo '</div>';
-			
-			echo '<div class="ib-row">';
-			echo $this->Form->control('course_id',			['label' => __('コース :'), 'options'=>$courses, 'empty' => '全て']);
-			echo $this->Form->control('content_category',	['label' => __('コンテンツ種別 :'), 'options'=>Configure::read('content_category'), 'empty' => '全て']);
-			echo $this->Form->control('contenttitle',		['label' => __('コンテンツ名 :')]);
-			echo '</div>';
-			
-			echo '<div class="ib-row">';
-			echo $this->Form->control('group_id',		['label' => __('グループ :'), 'options'=>$groups, 'empty' => '全て']);
-			echo $this->Form->control('username',		['label' => __('ログインID :')]);
-			echo $this->Form->control('name',			['label' => __('氏名 :')]);
-			echo '</div>';
-			
-			echo '<div class="ib-search-date-container">';
-			echo $this->Form->control('from_date', [
-				'label'		=> __('対象日時 : '),
-				'type'		=> 'date',
-				'value'		=> $from_date,
-//				'default'	=> date('Y-m-d'),
-/*
-				'minYear'	=> date('Y') - 5,
-				'maxYear'	=> date('Y'),
-				'dateFormat' => 'YMD',
-				'monthNames' => false,
-				'timeFormat' => '24',
-*/
-//				'separator' => ' / ',
-//				'class'=>'form-control',
-//				'style' => 'display: inline;',
-			]);
-			echo $this->Form->control('to_date', [
-				'label'		=> '～',
-				'type'		=> 'date',
-				'value'		=> $to_date,
-//				'default'	=> date('Y-m-d')
-/*
-				'dateFormat' => 'YMD',
-				'monthNames' => false,
-				'timeFormat' => '24',
-				'minYear' => date('Y') - 5,
-				'maxYear' => date('Y'),
-				'separator' => ' / ',
-				'class'=>'form-control',
-				'style' => 'display: inline;',
-*/
-			]);
-			echo '</div>';
-			echo $this->Form->end();
-		?>
+		echo '<div class="ib-search-buttons">';
+		echo $this->Form->submit(__('検索'),	['class' => 'btn btn-info btn-add']);
+		echo $this->Form->button(__('CSV出力'),	['class' => 'btn btn-default', 'onclick' => 'downloadCSV();']);
+		echo $this->Form->hidden('cmd');
+		echo '</div>';
+		
+		echo '<div class="ib-row">';
+		echo $this->Form->searchField('course_id',			['label' => __('コース'), 'options' => $courses, 'empty' => '全て']);
+		echo $this->Form->searchField('content_category',	['label' => __('コンテンツ種別'), 'options' => Configure::read('content_category'), 'empty' => '全て']);
+		echo $this->Form->searchField('contenttitle',		['label' => __('コンテンツ名')]);
+		echo '</div>';
+		
+		echo '<div class="ib-row">';
+		echo $this->Form->searchField('group_id',		['label' => __('グループ'), 'options' => $groups, 'empty' => '全て']);
+		echo $this->Form->searchField('username',		['label' => __('ログインID')]);
+		echo $this->Form->searchField('name',			['label' => __('氏名')]);
+		echo '</div>';
+		
+		echo '<div class="ib-search-date-container">';
+		echo $this->Form->searchDate('from_date', ['label'=> __('対象日時'), 'value' => $from_date]);
+		echo $this->Form->searchDate('to_date',   ['label'=> __('～'), 'value' => $to_date]);
+		echo '</div>';
+		echo $this->Form->end();
+	?>
 	</div>
 	<table cellpadding="0" cellspacing="0">
 	<thead>
@@ -117,7 +87,6 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 	<tbody>
 	<?php foreach ($records as $record): ?>
 	<tr>
-		<?php //debug($record);?>
 		<td><?= h($record->user->username); ?>&nbsp;</td>
 		<td><?= h($record->user->name); ?>&nbsp;</td>
 		<td><a href="javascript:openRecord(<?= h($record->course->id); ?>, <?= h($record->user->id); ?>);"><?= h($record->course->title); ?></a></td>
