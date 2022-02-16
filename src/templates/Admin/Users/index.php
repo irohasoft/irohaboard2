@@ -10,18 +10,26 @@ use App\Vendor\Utils;
 
 $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 ?>
+<?php $this->Html->scriptStart(['block' => true]); ?>
+	function downloadCSV()
+	{
+		$('#UserCmd').val('export');
+		$('#UserAdminIndexForm').submit();
+		$('#UserCmd').val('');
+	}
+<?php $this->Html->scriptEnd(); ?>
 <div class="admin-users-index">
 	<div class="ib-page-title"><?= __('ユーザ一覧'); ?></div>
 	<div class="buttons_container">
-		<?php if($this->readAuthUser('role') == 'admin'){ ?>
-		<button type="button" class="btn btn-primary btn-export" onclick="location.href='<?= Router::url(['action' => 'export']) ?>'">エクスポート</button>
+		<?php if($this->readAuthUser('role') == 'admin') { ?>
+		<button type="button" class="btn btn-primary btn-export" onclick="downloadCSV();">エクスポート</button>
 		<button type="button" class="btn btn-primary btn-import" onclick="location.href='<?= Router::url(['action' => 'import']) ?>'">インポート</button>
 		<button type="button" class="btn btn-primary btn-add" onclick="location.href='<?= Router::url(['action' => 'add']) ?>'">+ 追加</button>
 		<?php }?>
 	</div>
 	<div class="ib-horizontal">
 	<?php
-		echo $this->Form->create(null, ['valueSources' => 'query']);
+		echo $this->Form->create(null, ['valueSources' => 'query', 'id' => 'UserAdminIndexForm']);
 		echo $this->Form->searchField('group_id',	[
 			'label'    => __('グループ'),
 			'options'	=> $groups, 
@@ -30,7 +38,8 @@ $this->Form->setTemplates(Configure::read('bootstrap_search_template'));
 		]);
 		echo $this->Form->searchField('username',		['label' => __('ログインID')]);
 		echo $this->Form->searchField('name',			['label' => __('氏名')]);
-		echo $this->Form->hidden('mode',		['value' => 'search']); // グループ選択の解除用
+		echo $this->Form->hidden('mode',				['value' => 'search']); // グループ選択の解除用
+		echo $this->Form->hidden('cmd', 				['id' => 'UserCmd']);
 		echo $this->Form->submit(__('検索'),	['class' => 'btn btn-info btn-add']);
 		echo $this->Form->end();
 	?>

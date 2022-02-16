@@ -58,7 +58,8 @@ class UsersController extends AdminController
 			$this->writeSession('Iroha.group_id', intval($this->getQuery('group_id')));
 		
 		// GETパラメータから検索条件を抽出
-		$group_id	= ($this->getQuery('group_id')) ? $this->getQuery('group_id') : $this->readSession('Iroha.group_id');
+		$group_id = ($this->getQuery('group_id')) ? $this->getQuery('group_id') : $this->readSession('Iroha.group_id');
+		//debug($group_id);
 		
 		$conditions = [];
 		
@@ -96,6 +97,12 @@ class UsersController extends AdminController
 		];
 		
 		$users = $this->paginate();
+
+		// CSV出力モードの場合
+		if($this->getQuery('cmd') == 'export')
+		{
+			$this->export($conditions);
+		}
 		
 		//debug($users);
 		// グループ一覧を取得
@@ -119,10 +126,12 @@ class UsersController extends AdminController
 	 */
 	public function edit($user_id = null)
 	{
-		if(($this->action == 'edit') && !$this->Users->exists(['id' => $user_id]))
+		if($this->isEditPage() && !$this->Users->exists(['id' => $user_id]))
 		{
 			throw new NotFoundException(__('Invalid user'));
 		}
+		
+		$username = '';
 		
 		$user = $this->Users->getOrNew($user_id, ['contain' => ['Courses', 'Groups'],]);
 		
@@ -146,10 +155,13 @@ class UsersController extends AdminController
 			$this->Flash->error(__('ユーザ情報が保存できませんでした'));
 		}
 		
+		if($user)
+			$username = $user->username;
+		
 		$courses = $this->Users->Courses->find('list');
 		$groups = $this->Users->Groups->find('list');
 		
-		$this->set(compact('user', 'courses', 'groups'));
+		$this->set(compact('user', 'courses', 'groups', 'username'));
 	}
 
 	/**
@@ -477,7 +489,7 @@ class UsersController extends AdminController
 	/**
 	 * ユーザ情報のエクスポート
 	 */
-	public function export()
+	public function export($conditions)
 	{
 		$group_count  = Configure::read('import_group_count');		// 所属グループの列数
 		$course_count = Configure::read('import_course_count');		// 受講コースの列数
@@ -525,14 +537,18 @@ class UsersController extends AdminController
 		
 		// パフォーマンスの改善の為、一定件数に分割してデータを取得
 		$limit      = 500;
-		$user_count = $this->Users->find()->count();	// ユーザ数を取得
+		$user_count = $this->Users->find()->where($conditions)->count();	// ユーザ数を取得
 		$page_size  = ceil($user_count / $limit);	// ページ数（ユーザ数 / ページ単位）
 		
 		// ページ単位でユーザを取得
 		for($page=1; $page <= $page_size; $page++)
 		{
 			// ユーザ情報を取得
-			$rows = $this->Users->find('all')->limit($limit)->page($page)->contain(['Groups', 'Courses']);
+			$rows = $this->Users->find('all')
+				->where($conditions)
+				->limit($limit)
+				->page($page)
+				->contain(['Groups', 'Courses']);
 			
 			foreach($rows as $row)
 			{
@@ -543,10 +559,10 @@ class UsersController extends AdminController
 				$courses = [];
 				
 				for($n=0; $n < $group_count; $n++)
-					$groups[count($groups)] = '';
+					$groups[] = '';
 				
 				for($n=0; $n < $course_count; $n++)
-					$courses[count($courses)] = '';
+					$courses[] = '';
 				
 				$i = 0;
 				
