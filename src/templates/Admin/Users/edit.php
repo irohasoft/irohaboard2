@@ -17,9 +17,11 @@ $this->Form->setConfig('errorClass', 'form-control form-error');
 	$(function (e) {
 		$('#groups-ids').select2({placeholder:   "<?= __('所属するグループを選択して下さい。(複数選択可)')?>", closeOnSelect: <?= (Configure::read('close_on_select') ? 'true' : 'false'); ?>,});
 		$('#courses-ids').select2({placeholder:   "<?= __('受講するコースを選択して下さい。(複数選択可)')?>", closeOnSelect: <?= (Configure::read('close_on_select') ? 'true' : 'false'); ?>,});
+		// パスワードの自動復元を防止
+		setTimeout('$("#new-password").val("");', 500);
 	});
 <?php $this->Html->scriptEnd(); ?>
-<div class="admin-infos-edit">
+<div class="admin-users-edit">
 <?= $this->Html->link(__('<< 戻る'), ['action' => 'index'])?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -27,20 +29,29 @@ $this->Form->setConfig('errorClass', 'form-control form-error');
 		</div>
 		<div class="panel-body">
 			<?php
+			echo $this->Form->create($user, ['class' => 'form-horizontal']);
+			
 			$password_label = $this->isEditPage() ? __('新しいパスワード') : __('パスワード');
 			
-			echo $this->Form->create($user, ['class' => 'form-horizontal']);
-			echo $this->Form->control('username',		['label' => __('ログインID'), 'required' => true]);
+			echo $this->Form->control('username',		['label' => __('ログインID')]);
 			echo $this->Form->control('new_password',	['label' => $password_label, 'type' => 'password', 'autocomplete' => 'new-password']);
-			echo $this->Form->control('name',			['label' => __('氏名'), 'required' => true]);
-			echo $this->Form->control('role',			['label' => __('権限'), 'required' => true, 
-				'options' => Configure::read('user_role'), 'type' => 'radio', 'hiddenField' => false]);
-			echo $this->Form->control('email',			['label' => __('メールアドレス'), 'required' => false]);
-			echo $this->Form->control('groups._ids',	['options' => $groups, 'label' => __('対象グループ')]);
-			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
-			echo $this->Form->button(__('保存'), Configure::read('form_submit_defaults'));
+			echo $this->Form->control('name',			['label' => __('氏名')]);
+			
+			// root アカウント、もしくは admin 権限以外の場合、権限変更を許可しない
+			$disabled = (($username == 'root') || ($this->readAuthUser('role') != 'admin'));
+			
+			echo $this->Form->controlRadio('role',	['label' => __('権限'), 'options' => Configure::read('user_role')]);
+
+			echo $this->Form->control('email',				['label' => __('メールアドレス')]);
+			echo $this->Form->control('groups._ids',				['label' => __('所属グループ')]);
+			echo $this->Form->control('courses._ids',				['label' => __('受講コース')]);
+			echo $this->Form->control('comment',				['label' => __('備考')]);
+			echo Configure::read('form_submit_before')
+				.$this->Form->submit(__('保存'), Configure::read('form_submit_defaults'))
+				.Configure::read('form_submit_after');
 			echo $this->Form->end();
 			
+			// 編集の場合のみ、学習履歴削除ボタンを表示
 			if($this->isEditPage())
 			{
 				echo $this->Form->postLink(__('学習履歴を削除'),

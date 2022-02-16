@@ -222,14 +222,14 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 			echo '<span class="kind kind-text kind-html kind-movie kind-url kind-file kind-test">';
 			echo $this->Form->control('comment', ['label' => __('備考')]);
 			echo '</span>';
+			
+			// 保存ボタン
+			echo Configure::read('form_submit_before')
+				.'<button id="btnPreview" class="btn btn-default" value="プレビュー" onclick="preview(); return false;" type="submit">プレビュー</button> '
+				.'<input type="submit" class="btn btn-primary" value="'.__('保存').'">'
+				.Configure::read('form_submit_after');
+			echo $this->Form->end();
 			?>
-			<div class="form-group">
-				<div class="col col-sm-9 col-sm-offset-3">
-					<button id="btnPreview" class="btn btn-default" value="プレビュー" onclick="preview(); return false;" type="submit">プレビュー</button>
-					<input type="submit" class="btn btn-primary" value="<?= __('保存') ?>">
-				</div>
-			</div>
-			<?= $this->Form->end(); ?>
 		</div>
 	</div>
 </div>

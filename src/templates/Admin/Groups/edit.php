@@ -27,9 +27,11 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 		<?php
 			echo $this->Form->create($group, ['class' => 'form-horizontal']);
 			echo $this->Form->control('title',	['label' => __('グループ名')]);
-			echo $this->Form->control('courses._ids',	['options' => $courses, 'label' => __('受講コース')]);
+			echo $this->Form->control('courses._ids',	['label' => __('受講コース'),		'size' => 20]);
 			echo $this->Form->control('comment',	['label' => __('備考')]);
-			echo $this->Form->submit(__('保存'), Configure::read('form_submit_defaults'));
+			echo Configure::read('form_submit_before')
+				.$this->Form->submit(__('保存'), Configure::read('form_submit_defaults'))
+				.Configure::read('form_submit_after');
 			echo $this->Form->end();
 		?>
 		</div>

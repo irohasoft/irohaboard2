@@ -187,8 +187,10 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 				echo $this->Form->control('score',	['label' => __('得点')]);
 				echo $this->Form->control('explain',	['label' => __('解説')]);
 				echo $this->Form->control('comment',	['label' => __('備考')]);
-				echo $this->Form->submit('保存', Configure::read('form_submit_defaults'));
-				$this->Form->end();
+				echo Configure::read('form_submit_before')
+					.$this->Form->submit(__('保存'), Configure::read('form_submit_defaults'))
+					.Configure::read('form_submit_after');
+				echo $this->Form->end();
 			?>
 		</div>
 	</div>

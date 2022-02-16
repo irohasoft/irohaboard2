@@ -3,9 +3,9 @@
  * iroha Board Project
  *
  * @author        Kotaro Miura
- * @copyright     2015-2016 iroha Soft, Inc. (http://irohasoft.jp)
- * @link          http://irohaboard.irohasoft.jp
- * @license       http://www.gnu.org/licenses/gpl-3.0.en.html GPL License
+ * @copyright     2015-2021 iroha Soft, Inc. (https://irohasoft.jp)
+ * @link          https://irohaboard.irohasoft.jp
+ * @license       https://www.gnu.org/licenses/gpl-3.0.en.html GPL License
  */
 
 $config['group_status']		= ['1' => '公開', '0' => '非公開'];
@@ -18,7 +18,7 @@ $config['content_kind']		= [
 	'movie'		=> '動画',
 	'url'		=> 'URL',
 	'file'		=> '配布資料',
-	'test'		=> 'テスト'
+	'test'		=> 'テスト',
 ];
 
 $config['content_kind_comment']		= [
@@ -28,17 +28,17 @@ $config['content_kind_comment']		= [
 	'movie'		=> '動画 <span>(動画をアップロードします。HTML5のVIDEOタグで再生できるものに限られます。)</span>',
 	'url'		=> 'URL <span>(外部のWebページを学習項目として追加します。)</span>',
 	'file'		=> '配布資料 <span>(配布したいファイルをアップロードします。)</span>',
-	'test'		=> 'テスト <span>(テストを作成します。問題はテスト作成後、別画面にて追加します。)'
+	'test'		=> 'テスト <span>(テストを作成します。問題はテスト作成後、別画面にて追加します。)',
 ];
 
 $config['content_category']	= [
 	'study'		=> '学習',
-	'test'		=> 'テスト'
+	'test'		=> 'テスト',
 ];
 
 $config['wrong_mode']	= ['0' => '正解と解説を表示しない', '1' => '正解と解説を表示する', '2' => '解説のみ表示する'];
 
-$config['record_result'] = ['-1' => '', '1' => '合格', '0' => '不合格'];
+$config['record_result'] = ['-1' => '', '1' => '合格', '0' => '不合格', '2' => '回答'];
 $config['record_complete'] = ['1' => '完了', '0' => '未完了'];
 
 // 理解度
@@ -142,6 +142,13 @@ $config['form_submit_defaults'] = [
 	'class' => 'btn btn-primary'
 ];
 
+$config['form_submit_before'] = 
+	 '<div class="form-group">'
+	.'  <div class="col col-sm-9 col-sm-offset-3">';
+
+$config['form_submit_after'] = 
+	 '  </div>'
+	.'</div>';
 
 $config['theme_colors'] = [
 	'#337ab7' => 'default',
