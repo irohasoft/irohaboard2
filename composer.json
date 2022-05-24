@@ -55,6 +55,10 @@
     "prefer-stable": true,
     "config": {
         "sort-packages": true,
-        "vendor-dir": "vendor"
+        "vendor-dir": "vendor",
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "cakephp/plugin-installer": true
+        }
     }
 }
