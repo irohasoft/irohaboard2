@@ -26,7 +26,7 @@ class InstallController extends AppController
 	/**
 	 * AppController の beforeFilter をオーバーライド ※インストールできなくなる為、この function を消さないこと
 	 */
-	function beforeFilter(\Cake\Event\EventInterface $event)
+	public function beforeFilter(\Cake\Event\EventInterface $event)
 	{
 		$this->Authentication->allowUnauthenticated(['index', 'installed', 'complete', 'error']);
 	}
@@ -87,6 +87,7 @@ class InstallController extends AppController
 			$this->err_msg = '各種モジュール（mod_rewrite, mod_headers, mbstring, pdo_mysql）チェック中にエラーが発生いたしました。';
 			$this->error();
 			$this->render('error');
+			return;
 		}
 
 		try
@@ -107,8 +108,21 @@ class InstallController extends AppController
 				if($this->getData())
 				{
 					$data = $this->getData();
+					$username	= $data['username'];
 					$password	= $data['password'];
 					$password2	= $data['password2'];
+					
+					if((strlen($username) < 4)||(strlen($username) > 32))
+					{
+						$this->Flash->error('ログインIDは4文字以上32文字以内で入力して下さい');
+						return;
+					}
+					
+					if(!preg_match("/^[a-zA-Z0-9]+$/", $username))
+					{
+						$this->Flash->error('ログインIDは英数字で入力して下さい');
+						return;
+					}
 					
 					if((strlen($password) < 4)||(strlen($password) > 32))
 					{
@@ -134,7 +148,7 @@ class InstallController extends AppController
 					$this->__install();
 					
 					// 初期管理者アカウントの存在確認および作成
-					$this->__createRootAccount($password);
+					$this->__createRootAccount($username, $password);
 				}
 			}
 		}
@@ -240,7 +254,7 @@ class InstallController extends AppController
 	/**
 	 * rootアカウントの作成
 	 */
-	private function __createRootAccount($password)
+	private function __createRootAccount($username, $password)
 	{
 		// 管理者アカウントの存在確認
 		$this->loadModel('Users');
@@ -251,11 +265,11 @@ class InstallController extends AppController
 		//debug($data);
 		if(!$user)
 		{
-			// 管理者アカウントが１つも存在しない場合、初期管理者アカウント root を作成
+			// 管理者アカウントが存在しない場合のみ、初期管理者アカウントを作成
 			$data = [
-				'username' => 'root',
+				'username' => $username,
 				'password' => $password,
-				'name' => 'root',
+				'name' => $username,
 				'role' => 'admin',
 				'email' => 'info@example.com'
 			];
@@ -267,6 +281,9 @@ class InstallController extends AppController
 		}
 	}
 	
+	/**
+	 * Apache のモジュールのロードをチェック
+	 */
 	private function __apache_module_loaded($module_name)
 	{
 		$modules = apache_get_modules();
@@ -279,4 +296,5 @@ class InstallController extends AppController
 		
 		return false;
 	}
+
 }
