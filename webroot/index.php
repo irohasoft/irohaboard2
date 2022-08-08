@@ -8,6 +8,23 @@
  * @license       https://www.gnu.org/licenses/gpl-3.0.en.html GPL License
  */
 
+// ロードバランサー対応
+if(isset($_SERVER['HTTP_X_FORWARDED_HOST']))
+{
+	// 1.2.3.4, 1.2.3.4 形式をカンマで分解
+	$host_list = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
+	
+	$_SERVER['HTTP_HOST'] = trim($host_list[count($host_list) - 1]); // 先頭のIPアドレスを設定
+	
+	if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']))
+	{
+		if($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+		{
+			$_SERVER['HTTPS'] = 'on'; // HTTPSアクセスを強制
+		}
+	}
+}
+
 // Check platform requirements
 require dirname(__DIR__) . '/config/requirements.php';
 
