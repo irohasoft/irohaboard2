@@ -102,7 +102,7 @@
 	</div>
 	
 	<div class="irohasoft">
-		Powered by <a href="http://irohaboard.irohasoft.jp/">iroha Board</a>
+		Powered by <a href="https://irohaboard.irohasoft.jp/"><?= APP_NAME; ?></a>
 	</div>
 </body>
 </html>
