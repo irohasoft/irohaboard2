@@ -230,3 +230,10 @@ if (!defined('APP_NAME')) {
 	define('APP_NAME', 'iroha Board');
 }
 
+// PHPのバージョンチェック
+if(version_compare(PHP_VERSION, '7.4.0') <= 0)
+{
+	header('Content-Type: text/html; charset=UTF-8');
+	echo 'ERROR-001 : '.APP_NAME.' の動作には 7.4.0 以上が必要です。現在のバージョンは ' . PHP_VERSION . ' です。\n';
+	exit;
+}
