@@ -25,7 +25,8 @@ use App\Vendor\Utils;
 	$title = h($info->title);
 	$date  = h(Utils::getYMD($info->created));
 	$body  = $info->body;
-	$body  = $this->Text->autoLinkUrls($body, [ 'target' => '_blank']);
+	$target = Configure::read('open_link_same_window') ? [] : ['target' => '_blank'];
+	$body  = $this->Text->autoLinkUrls($body, $target);
 	$body  = nl2br($body);
 	?>
 	</div>

@@ -28,7 +28,7 @@ $config['content_kind_comment']		= [
 	'movie'		=> '動画 <span>(動画をアップロードします。HTML5のVIDEOタグで再生できるものに限られます。)</span>',
 	'url'		=> 'URL <span>(外部のWebページを学習項目として追加します。)</span>',
 	'file'		=> '配布資料 <span>(配布したいファイルをアップロードします。)</span>',
-	'test'		=> 'テスト <span>(テストを作成します。問題はテスト作成後、別画面にて追加します。)',
+	'test'		=> 'テスト <span>(テストを作成します。問題はテスト作成後、別画面にて追加します。)</span>',
 ];
 
 $config['content_category']	= [
@@ -41,7 +41,7 @@ $config['wrong_mode']	= ['0' => '正解と解説を表示しない', '1' => '正
 $config['record_result'] = ['-1' => '', '1' => '合格', '0' => '不合格', '2' => '回答'];
 $config['record_complete'] = ['1' => '完了', '0' => '未完了'];
 
-// 理解度
+// 理解度 短縮ラベル（コース目次、学習履歴一覧画面に表示）
 $config['record_understanding'] = ['0' => '中断', '1' => '終了', '2' => '×', '3' => '△', '4' => '〇', '5' => '◎'];
 
 // PC向け理解度ボタンラベル
@@ -175,6 +175,9 @@ $config['theme_colors'] = [
 
 $config['import_group_count']  = 10;
 $config['import_course_count'] = 20;
+
+$config['show_admin_link'] = false;
+$config['open_link_same_window'] = false;
 
 $config['bootstrap_form_template'] = [
 	'inputContainer' => '<div class="form-group {{required}}">{{content}}</div>',
