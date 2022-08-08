@@ -47,7 +47,6 @@
 	<?= $this->Html->script('jquery-1.9.1.min') ?>
 	<?= $this->Html->script('jquery-ui-1.9.2.min.js') ?>
 	<?= $this->Html->script('bootstrap.min.js') ?>
-	<?= $this->Html->script('moment.js') ?>
 	<?= $this->Html->script('common.js?20200701') ?>
 
 	<?= $this->fetch('meta') ?>
