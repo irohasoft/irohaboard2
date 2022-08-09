@@ -54,7 +54,14 @@ $routes->scope('/', function (RouteBuilder $builder) {
     //$builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 	// edit 2020.10.2
     $builder->connect('/', ['controller' => 'UsersCourses', 'action' => 'index']);
-
+    $builder->connect('/users_courses', ['controller' => 'UsersCourses', 'action' => 'index']);
+    
+    /*
+    $builder->connect('/contents_questions/index/{id}', ['controller' => 'ContentsQuestions', 'action' => 'index'])
+        ->setPatterns(['id' => '\d+'])
+        ->setPass(['id']);
+    */
+    
     /*
      * ...and connect the rest of 'Pages' controller's URLs.
      */
@@ -88,9 +95,10 @@ $routes->scope('/', function (RouteBuilder $builder) {
  * ```
  */
 
-    // add 2020.6.7
-	Router::prefix('admin', function ($routes) {
-        $routes->fallbacks('DashedRoute');
-        $routes->connect('/', ['controller' => 'Users', 'action' => 'index']);
+// add 2020.6.7
+return static function (RouteBuilder $routes) {
+    $routes->prefix('admin', function (RouteBuilder $builder) {
+        $builder->connect('/', ['controller' => 'Users', 'action' => 'index']);
+        $builder->fallbacks();
     });
-
+};
