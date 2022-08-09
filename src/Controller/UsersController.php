@@ -108,6 +108,7 @@ class UsersController extends AppController
 	public function setting()
 	{
 		$user = $this->Users->get($this->readAuthUser('id'));
+		$this->set(compact('user'));
 		
 		if($this->request->is(['post', 'put']))
 		{
@@ -116,10 +117,15 @@ class UsersController extends AppController
 			
 			$data = $this->getData();
 			
+			if($data['new_password'] == '')
+			{
+				$this->Flash->error(__('パスワードを入力して下さい'));
+				return;
+			}
+			
 			if($data['new_password'] != $data['new_password2'])
 			{
 				$this->Flash->error(__('入力された「パスワード」と「パスワード（確認用）」が一致しません'));
-				$this->set(compact('user'));
 				return;
 			}
 			
@@ -138,12 +144,6 @@ class UsersController extends AppController
 					$this->Flash->error(__('パスワードが保存できませんでした'));
 				}
 			}
-			else
-			{
-				$this->Flash->error(__('パスワードを入力して下さい'));
-			}
 		}
-		
-		$this->set(compact('user'));
 	}
 }

@@ -205,6 +205,7 @@ class UsersController extends AdminController
 	public function setting()
 	{
 		$user = $this->Users->get($this->readAuthUser('id'));
+		$this->set(compact('user'));
 		
 		if($this->request->is(['post', 'put']))
 		{
@@ -213,7 +214,11 @@ class UsersController extends AdminController
 			
 			$data = $this->getData();
 			
-			//debug($data);
+			if($data['new_password'] == '')
+			{
+				$this->Flash->error(__('パスワードを入力して下さい'));
+				return;
+			}
 			
 			if($data['new_password'] != $data['new_password2'])
 			{
@@ -224,7 +229,7 @@ class UsersController extends AdminController
 			if($data['new_password'] !== '')
 			{
 				$user->password = $data['new_password'];
-				$user = $this->Users->patchEntity($user, $this->getData());
+				$user = $this->Users->patchEntity($user, $data);
 				
 				if($this->Users->save($user))
 				{
@@ -236,13 +241,7 @@ class UsersController extends AdminController
 					$this->Flash->error(__('パスワードが保存できませんでした'));
 				}
 			}
-			else
-			{
-				$this->Flash->error(__('パスワードを入力して下さい'));
-			}
 		}
-		
-		$this->set(compact('user'));
 	}
 
 	/**
