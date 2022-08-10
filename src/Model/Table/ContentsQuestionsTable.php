@@ -78,27 +78,31 @@ class ContentsQuestionsTable extends AppTable
         $validator
             ->scalar('title')
             ->maxLength('title', 200)
-            ->notEmptyString('title');
+            ->allowEmptyString('title');
 
         $validator
-            ->scalar('body')
-            ->requirePresence('body', 'create')
-            ->notEmptyString('body');
+            ->scalar('body');
 
+/*
         $validator
             ->scalar('image')
             ->maxLength('image', 200)
             ->allowEmptyFile('image');
+*/
 
         $validator
             ->scalar('options')
             ->maxLength('options', 200)
             ->allowEmptyString('options');
 
+/*
         $validator
             ->scalar('correct')
             ->maxLength('correct', 200)
             ->notEmptyString('correct');
+*/
+        $validator
+            ->notEmptyString('option_list', '正解を選択してください');
 
         $validator
             ->integer('score')
