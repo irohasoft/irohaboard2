@@ -543,11 +543,12 @@ class UsersController extends AdminController
 		for($page=1; $page <= $page_size; $page++)
 		{
 			// ユーザ情報を取得
-			$rows = $this->Users->find('all')
+			$rows = $this->Users->find()
 				->where($conditions)
 				->limit($limit)
 				->page($page)
-				->contain(['Groups', 'Courses']);
+				->contain(['Groups', 'Courses'])
+				->all();
 			
 			foreach($rows as $row)
 			{

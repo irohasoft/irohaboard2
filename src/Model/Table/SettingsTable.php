@@ -107,7 +107,7 @@ EOF;
 	{
 		$result = [];
 		
-		$settings = $this->find('all')->toList();
+		$settings = $this->find()->all()->toList();
 		
 		foreach ($settings as $setting)
 		{
