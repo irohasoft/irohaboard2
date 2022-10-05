@@ -101,9 +101,9 @@ class ContentsQuestionsController extends AppController
 			// 問題IDの一覧を作成
 			$question_id_list = [];
 			
-			foreach($contentsQuestions as $question)
+			foreach($contentsQuestions as $contentsQuestion)
 			{
-				$question_id_list[] = $question->id;
+				$question_id_list[] = $contentsQuestion->id;
 			}
 			
 			// ランダム出題情報を一時的にセッションに格納（リロードによる変化や、採点時の問題情報との矛盾を防ぐため）

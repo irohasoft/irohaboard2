@@ -10,18 +10,11 @@ use App\Vendor\Utils;
 <div class="infos-view">
 	<div class="breadcrumb">
 	<?php
-	$this->Breadcrumbs->add('HOME', [
-		'controller' => 'users_courses',
-		'action' => 'index'
-	]);
-
-	$this->Breadcrumbs->add(__('お知らせ一覧'), [
-		'controller' => 'infos',
-		'action' => 'index'
-	]);
-
-	echo $this->Breadcrumbs->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
-	
+	echo $this->Breadcrumbs
+		->add('HOME', ['controller' => 'users_courses', 'action' => 'index'])
+		->add(__('お知らせ一覧'), ['controller' => 'infos', 'action' => 'index'	])
+		->render(['class' => 'ib-breadcrumbs'], ['separator' => ' / ']);
+		
 	$title = h($info->title);
 	$date  = h(Utils::getYMD($info->created));
 	$body  = $info->body;

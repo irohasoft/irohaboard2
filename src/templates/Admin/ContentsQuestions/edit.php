@@ -143,7 +143,7 @@ $this->Form->setTemplates(Configure::read('bootstrap_form_template'));
 	<div class="ib-breadcrumb">
 	<?php 
 		//debug($content);
-		$this->Breadcrumbs->add('コース一覧',  ['controller' => 'courses', 'action' => 'index']);
+		$this->Breadcrumbs->add(__('コース一覧'),  ['controller' => 'courses', 'action' => 'index']);
 		$this->Breadcrumbs->add($content->course->title,  ['controller' => 'contents', 'action' => 'index', $content->course->id]);
 		$this->Breadcrumbs->add($content->title, ['controller' => 'contents_questions', 'action' => 'index', $content->id]);
 		
