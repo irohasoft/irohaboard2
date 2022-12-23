@@ -48,6 +48,7 @@ class AppController extends Controller
 
 		$this->loadComponent('RequestHandler');
 		$this->loadComponent('Flash');
+		$this->loadComponent('FormProtection');
 
 		// add 2020.10.6
 		$this->loadComponent('Authentication.Authentication');
