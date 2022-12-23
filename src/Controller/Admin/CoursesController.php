@@ -23,16 +23,10 @@ use Cake\Event\EventInterface;
  */
 class CoursesController extends AdminController
 {
-	public function initialize():void
-	{
-		parent::initialize();
-		$this->loadComponent('Security');
-	}
-
 	public function beforeFilter(EventInterface $event)
 	{
 		parent::beforeFilter($event);
-		$this->Security->setConfig('unlockedActions', ['order']);
+		$this->FormProtection->setConfig('unlockedActions', ['order']);
 	}
 
 	/**

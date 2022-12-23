@@ -21,6 +21,13 @@ use Cake\Datasource\ConnectionManager;
  */
 class ContentsQuestionsController extends AdminController
 {
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+		parent::beforeFilter($event);
+
+		$this->FormProtection->setConfig('unlockedActions', ['order']);
+	}
+
 	/**
 	 * 問題一覧を表示
 	 * @param int $content_id 表示するコンテンツ(テスト)のID

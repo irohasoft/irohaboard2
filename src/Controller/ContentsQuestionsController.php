@@ -20,6 +20,13 @@ namespace App\Controller;
  */
 class ContentsQuestionsController extends AppController
 {
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+		parent::beforeFilter($event);
+
+		$this->FormProtection->setConfig('unlockedActions', ['index']);
+	}
+
 	/**
 	 * 問題を出題
 	 * @param int $content_id 表示するコンテンツ(テスト)のID

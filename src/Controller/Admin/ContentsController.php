@@ -27,6 +27,13 @@ use App\Vendor\FileUpload;
  */
 class ContentsController extends AdminController
 {
+	public function beforeFilter(\Cake\Event\EventInterface $event)
+	{
+		parent::beforeFilter($event);
+
+		$this->FormProtection->setConfig('unlockedActions', ['order']);
+	}
+
 	/**
 	 * コンテンツ一覧の表示
 	 *
