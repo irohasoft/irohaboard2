@@ -87,8 +87,7 @@ class AppController extends Controller
 		// データベース内に格納された設定情報をセッションに格納
 		if(!$this->hasSession('Setting'))
 		{
-			$this->loadModel('Settings');
-			$settings = $this->Settings->getSettings();
+			$settings = $this->fetchTable('Settings')->getSettings();
 			
 			$this->writeSession('Setting.app_dir', APP_DIR);
 			
@@ -363,7 +362,7 @@ class AppController extends Controller
 		];
 		
 		
-		$this->loadModel('Log');
+		$this->fetchTable('Log');
 		$this->Log->create();
 		$this->Log->save($data);
 	}

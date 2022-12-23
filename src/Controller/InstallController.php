@@ -253,7 +253,7 @@ class InstallController extends AppController
 	private function __createRootAccount($username, $password)
 	{
 		// 管理者アカウントの存在確認
-		$this->loadModel('Users');
+		$this->fetchTable('Users');
 		$user = $this->Users->find()
 			->where(['Users.role' => 'admin'])
 			->first();

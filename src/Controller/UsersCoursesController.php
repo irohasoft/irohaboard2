@@ -30,8 +30,7 @@ class UsersCoursesController extends AppController
 		$user_id = $this->readAuthUser('id');
 
 		// 全体のお知らせの取得
-		$this->loadModel('Settings');
-		$data = $this->Settings->find()
+		$data = $this->fetchTable('Settings')->find()
 			->where(['setting_key' => 'information'])
 			->first();
 		
@@ -39,8 +38,7 @@ class UsersCoursesController extends AppController
 		$info = $data->setting_value;
 
 		// お知らせ一覧を取得
-		$this->loadModel('Infos');
-		$infos = $this->Infos->getInfos($user_id, 2);
+		$infos = $this->fetchTable('Infos')->getInfos($user_id, 2);
 		//debug($infos);
 
 		$no_info = '';

@@ -30,9 +30,7 @@ class ContentsController extends AppController
 		$course_id = intval($course_id);
 		
 		// コースの情報を取得
-		$this->loadModel('Courses');
-		
-		$course = $this->Courses->get($course_id);
+		$course = $this->fetchTable('Courses')->get($course_id);
 		
 		// ロールを取得
 		$role = $this->readAuthUser('role');
@@ -45,7 +43,7 @@ class ContentsController extends AppController
 		else
 		{
 			// コースの閲覧権限の確認
-			if(!$this->Courses->hasRight($this->readAuthUser('id'), $course_id))
+			if(!$this->fetchTable('Courses')->hasRight($this->readAuthUser('id'), $course_id))
 			{
 				throw new NotFoundException(__('Invalid access'));
 			}
@@ -77,9 +75,7 @@ class ContentsController extends AppController
 		$content = $this->Contents->get($content_id, ['contain' => ['Courses'],]);
 
 		// コンテンツの閲覧権限の確認
-		$this->loadModel('Courses');
-		
-		if(!$this->Courses->hasRight($this->readAuthUser('id'), $content->course_id))
+		if(!$this->fetchTable('Courses')->hasRight($this->readAuthUser('id'), $content->course_id))
 		{
 			throw new NotFoundException(__('Invalid access'));
 		}

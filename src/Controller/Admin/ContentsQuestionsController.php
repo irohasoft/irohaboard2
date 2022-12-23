@@ -30,8 +30,7 @@ class ContentsQuestionsController extends AdminController
 		$content_id = intval($content_id);
 		
 		// コンテンツ情報を取得
-		$this->loadModel('Contents');
-		$content = $this->Contents->get($content_id, [
+		$content = $this->fetchTable('Contents')->get($content_id, [
 			'contain' => ['Courses'],
 		]);
 		

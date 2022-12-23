@@ -30,8 +30,7 @@ class ContentsQuestionsController extends AppController
 		//------------------------------//
 		//	コンテンツ情報を取得		//
 		//------------------------------//
-		$this->loadModel('Contents');
-		$content = $this->Contents->get($content_id, ['contain' => ['Courses']]);
+		$content = $this->fetchTable('Contents')->get($content_id, ['contain' => ['Courses']]);
 		
 		//------------------------------//
 		//	権限チェック				//
@@ -39,9 +38,7 @@ class ContentsQuestionsController extends AppController
 		// 管理者以外の場合、コンテンツの閲覧権限の確認
 		if(!$this->isAdminPage())
 		{
-			$this->loadModel('Courses');
-			
-			if(!$this->Courses->hasRight($this->readAuthUser('id'), $content->course_id))
+			if(!$this->fetchTable('Courses')->hasRight($this->readAuthUser('id'), $content->course_id))
 				throw new NotFoundException(__('Invalid access'));
 		}
 		
@@ -53,8 +50,8 @@ class ContentsQuestionsController extends AppController
 		if($record_id != null) // テスト結果表示モードの場合
 		{
 			// テスト結果情報を取得
-			$this->loadModel('Records');
-			$record = $this->Records->get($record_id, [
+			$this->fetchTable('Records');
+			$record = $this->fetchTable('Records')->get($record_id, [
 				'contain' => ['Courses', 'RecordsQuestions'],
 			]);
 			
@@ -195,26 +192,23 @@ class ContentsQuestionsController extends AppController
 				'is_complete'	=> 1
 			];
 			
-			$this->loadModel('Records');
-			$record = $this->Records->newEmptyEntity();
-			$record = $this->Records->patchEntity($record, $data);
+			$record = $this->fetchTable('Records')->newEmptyEntity();
+			$record = $this->fetchTable('Records')->patchEntity($record, $data);
 			
 			//------------------------------//
 			//	テスト結果の保存			//
 			//------------------------------//
-			if($this->Records->save($record))
+			if($this->fetchTable('Records')->save($record))
 			{
-				$this->loadModel('RecordsQuestions');
-				
 				// 問題単位の成績を保存
 				foreach($details as $detail)
 				{
 					$detail['record_id'] = $record->id;
-					$new_data = $this->RecordsQuestions->newEmptyEntity();
-					$new_data = $this->RecordsQuestions->patchEntity($new_data, $detail);
+					$new_data = $this->fetchTable('RecordsQuestions')->newEmptyEntity();
+					$new_data = $this->fetchTable('RecordsQuestions')->patchEntity($new_data, $detail);
 					
 					//debug($new_data);
-					$this->RecordsQuestions->save($new_data);
+					$this->fetchTable('RecordsQuestions')->save($new_data);
 				}
 				
 				// ランダム出題用の問題IDリストを削除

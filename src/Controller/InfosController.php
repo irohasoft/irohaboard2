@@ -24,7 +24,7 @@ class InfosController extends AppController
     public function index()
     {
 		// お知らせ一覧を取得
-		$this->loadModel('Infos');
+		$this->fetchTable('Infos');
 		$this->paginate = $this->Infos->getInfoOption($this->readAuthUser('id'));
 		
 		$infos = $this->paginate();

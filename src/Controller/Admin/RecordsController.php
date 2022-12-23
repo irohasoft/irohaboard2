@@ -52,9 +52,6 @@ class RecordsController extends AdminController
 		$conditions = $this->addCondition($conditions, 'username',		'Users.username LIKE');
 		$conditions = $this->addCondition($conditions, 'name', 			'Users.name LIKE');
 		
-		$this->loadModel('Groups');
-		$this->loadModel('Courses');
-		
 		// グループ
 		if($this->getQuery('group_id'))
 			$conditions['Users.id IN'] = $this->Groups->getUserIdByGroupID($this->getQuery('group_id'));
@@ -78,8 +75,8 @@ class RecordsController extends AdminController
 				->bind(':to_date',	 $to_date.' 23:59:50', 'datetime')
 		);
 		
-		$groups = $this->Groups->find('list');
-		$courses = $this->Courses->find('list');
+		$groups = $this->fetchTable('Groups')->find('list');
+		$courses = $this->fetchTable('Courses')->find('list');
 		
 		$this->set(compact('records', 'groups', 'courses', 'from_date', 'to_date'));
 	}

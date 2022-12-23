@@ -34,8 +34,7 @@ class RecordsController extends AppController
 		$this->autoRender = FALSE;
 		
 		// コンテンツ情報を取得
-		$this->loadModel('Contents');
-		$content = $this->Contents->get($content_id, ['contain' => ['Courses']]);
+		$content = $this->fetchTable('Contents')->get($content_id, ['contain' => ['Courses']]);
 		
 		$data = [
 			'user_id'		=> $this->readAuthUser('id'),
