@@ -92,7 +92,7 @@ class InstallController extends AppController
 			
 			//debug($db);
 			$sql = "SHOW TABLES FROM `".$this->db->config('default')['database']."` LIKE 'ib_users'";
-			$data = $this->db->query($sql);
+			$data = $this->db->execute($sql)->fetchAll('assoc');
 
 			// ユーザテーブルが存在する場合、インストール済みと判断
 			if(count($data) > 0)

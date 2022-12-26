@@ -92,7 +92,7 @@ class UpdateController extends AppController
 			{
 				try
 				{
-					$this->db->query($statement);
+					$this->db->execute($statement);
 				}
 				catch (\PDOException $e)
 				{
