@@ -10,9 +10,9 @@ https://irohaboard.irohasoft.jp/
 https://demoib.irohasoft.com/
 
 ## 動作環境
-* PHP : 7.2以上
+* PHP : 7.4以上
 * MySQL : 5.1以上
-* CakePHP : 4.1
+* CakePHP : 4.5
 
 ## インストール方法
 1. ソースファイルをダウンロードし、データベース(config/database.php)の設定を行います。
